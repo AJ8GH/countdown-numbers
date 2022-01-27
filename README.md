@@ -7,6 +7,8 @@ For those who never watched Countdown, [here is an “extraordinary” example](
 ## WHAT IS THE CHALLENGE
 So here is the coding challenge, each participant (or team) needs to do two parts
 
+**[RULES HERE](https://confluence.app.betfair/pages/viewpage.action?spaceKey=PST&title=Coding+Challenge+2022)**
+
 ### Question bank generator
 The requirement is simply to generate x many random large numbers (25, 50, 75 or 100) and 6-x many random small numbers (from 1 till 10) for any given x, and to generate a 3 digit number that all these 6 numbers can generate by using operators +, -, *, / and each number precisely once.
 
