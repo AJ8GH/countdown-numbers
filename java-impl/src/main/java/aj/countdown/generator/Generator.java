@@ -1,6 +1,7 @@
 package aj.countdown.generator;
 
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.Queue;
 
 import static aj.countdown.generator.Operator.DIVIDE;
 
+@Slf4j
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final List<Operator> OPERATORS = Arrays.asList(Operator.values());
@@ -44,6 +46,9 @@ public class Generator {
         while (true) {
             int target = questionNumbers.get(0);
             for (int i = 1; i < TOTAL_OPERATIONS + 1; i++) {
+                if (target == 0 || questionNumbers.get(i) == 0) {
+                    log.info("What's happened here?? x: {}, y: {}", questionNumbers.get(i), target);
+                }
                 target = operate(questionNumbers.get(i), target);
             }
             if (isAcceptable(target)) {
@@ -51,6 +56,7 @@ public class Generator {
                 return target;
             }
             solutionBuilder = new StringBuilder();
+            log.info("Back to start...");
         }
     }
 
@@ -66,15 +72,26 @@ public class Generator {
 
     private int operate(int x, int y) {
         Operator operator = getOperator();
-        while (operator.apply(x, y) <= 0 ||
-                operator.equals(DIVIDE) && x % y != 0 ||
-                operator.apply(x, y) >= 1000) {
-            operator = getOperator();
+
+        while (true) {
+            if (applyOperator(operator, x, y) == 0) {
+                operator = getOperator();
+            } else {
+                solutionBuilder.append(x)
+                        .append(operator)
+                        .append(y)
+                        .append(", ");
+                return applyOperator(operator, x, y);
+            }
         }
-        solutionBuilder.append(x)
-                .append(operator)
-                .append(y)
-                .append(", ");
+    }
+
+    private int applyOperator(Operator operator, int x, int y) {
+        if (operator.equals(DIVIDE)) {
+            if (x % y == 0) return operator.apply(x, y);
+            if (y % x == 0) return operator.apply(y, x);
+            return 0;
+        }
         return operator.apply(x, y);
     }
 
