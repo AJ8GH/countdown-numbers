@@ -1,4 +1,4 @@
-package aj.countdown;
+package aj.countdown.generator;
 
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public class Generator {
+public class QuestionInputGenerator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final List<Integer> LARGE_NUMBER_LIST = Arrays.asList(25, 50, 75, 100);
 

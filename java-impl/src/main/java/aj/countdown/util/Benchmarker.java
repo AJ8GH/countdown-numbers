@@ -1,4 +1,4 @@
-package aj.countdown;
+package aj.countdown.util;
 
 import lombok.extern.slf4j.Slf4j;
 
