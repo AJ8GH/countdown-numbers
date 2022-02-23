@@ -8,8 +8,8 @@ public enum Operator {
         }
 
         @Override
-        public boolean isOrderSensitive() {
-            return false;
+        public boolean isCommutative() {
+            return true;
         }
     },
 
@@ -20,8 +20,8 @@ public enum Operator {
         }
 
         @Override
-        public boolean isOrderSensitive() {
-            return true;
+        public boolean isCommutative() {
+            return false;
         }
     },
 
@@ -32,8 +32,8 @@ public enum Operator {
         }
 
         @Override
-        public boolean isOrderSensitive() {
-            return false;
+        public boolean isCommutative() {
+            return true;
         }
     },
 
@@ -44,8 +44,8 @@ public enum Operator {
         }
 
         @Override
-        public boolean isOrderSensitive() {
-            return true;
+        public boolean isCommutative() {
+            return false;
         }
     };
 
@@ -56,7 +56,7 @@ public enum Operator {
     }
 
     public abstract int apply(int x, int y);
-    public abstract boolean isOrderSensitive();
+    public abstract boolean isCommutative();
 
     @Override
     public String toString() {
