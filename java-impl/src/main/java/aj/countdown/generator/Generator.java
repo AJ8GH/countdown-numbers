@@ -5,57 +5,78 @@ import aj.countdown.domain.Calculator;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntPredicate;
+
+import static aj.countdown.generator.Filter.IN_RANGE;
 
 @Slf4j
 public class Generator {
+    private static final Clock CLOCK = Clock.systemUTC();
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
+
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
-    private static final short MIN = 100;
-    private static final short MAX = 999;
 
     private final List<Integer> questionNumbers = new ArrayList<>();
+    private final AtomicInteger attempts = new AtomicInteger(0);
     private final Calculator calculator;
+    private final IntPredicate filter;
 
+    private double time;
     private Queue<Integer> largeNumbers;
-    private int numbersLeft;
-    private int numberOfLarge;
 
-    public Generator(Calculator calculator) {
+    public Generator(Calculator calculator, int warmUps, IntPredicate filter) {
         this.calculator = calculator;
-        Collections.shuffle(LARGE_NUMBERS);
-        this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
-        this.numberOfLarge = RANDOM.nextInt(5);
-        this.numbersLeft = TOTAL_NUMBERS;
+        this.filter = filter;
+        partialReset();
+        warmUp(warmUps);
     }
 
-    public Calculation generateTarget() {
-        var target = calculator.calculate(generateQuestionNumbers());
-        while (!inRange(target.getResult())) {
-            reInitialize();
-            target = calculator.calculate(generateQuestionNumbers());
+    public Calculation generateTarget(int numberOfLarge) {
+        var startTime = getCurrentTime();
+        var target = calculator.calculate(generateQuestionNumbers(numberOfLarge));
+        while (!IN_RANGE.and(filter).test(target.getResult())) {
+            attempts.incrementAndGet();
+            partialReset();
+            target = calculator.calculate(generateQuestionNumbers(numberOfLarge));
         }
+        questionNumbers.add(target.getResult());
+        this.time = getCurrentTime() - startTime;
         return target;
     }
 
-    public List<Integer> generateQuestionNumbers() {
-        while (numbersLeft > 0) {
-            questionNumbers.add(getNumber());
+    public List<Integer> generateQuestionNumbers(int numberOfLarge) {
+        int numberOfSmall = TOTAL_NUMBERS - numberOfLarge;
+        for (int i = 0; i < numberOfLarge; i++) {
+            try {
+                questionNumbers.add(largeNumbers.remove());
+            } catch (NoSuchElementException e) {
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < numberOfSmall; i++) {
+            questionNumbers.add(RANDOM.nextInt(10) + 1);
         }
         return questionNumbers;
     }
 
-    public void reInitialize() {
+    public void fullReset() {
+        partialReset();
+        attempts.getAndSet(0);
+    }
+
+    private void partialReset() {
         Collections.shuffle(LARGE_NUMBERS);
         this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
-        this.numberOfLarge = RANDOM.nextInt(5);
-        this.numbersLeft = TOTAL_NUMBERS;
         this.questionNumbers.clear();
     }
 
@@ -63,23 +84,25 @@ public class Generator {
         return questionNumbers;
     }
 
-    private boolean inRange(int target) {
-        return target >= MIN && target <= MAX;
+    public double getTime() {
+        return time;
     }
 
-    private int getNumber() {
-        numbersLeft--;
-        if (numberOfLarge == 0) return getSmallNumber();
-        if (numberOfLarge == numbersLeft) return getLargeNumber();
-        return RANDOM.nextBoolean() ? getLargeNumber() : getSmallNumber();
+    public int getAttempts() {
+        return attempts.get();
     }
 
-    private int getSmallNumber() {
-        return RANDOM.nextInt(10) + 1;
+    private double getCurrentTime() {
+        var timeNow = CLOCK.instant();
+        var second = timeNow.getEpochSecond();
+        var nano = timeNow.getNano();
+        return (second * 1000) + (nano / 1_000_000.0);
     }
 
-    private int getLargeNumber() {
-        numberOfLarge--;
-        return largeNumbers.remove();
+    private void warmUp(int warmUps) {
+        for (int i = 0; i < warmUps; i++) {
+            generateTarget(RANDOM.nextInt(5));
+            fullReset();
+        }
     }
 }

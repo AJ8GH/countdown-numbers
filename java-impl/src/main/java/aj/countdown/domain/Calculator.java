@@ -6,7 +6,6 @@ import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static aj.countdown.generator.Operator.DIVIDE;
 
@@ -17,7 +16,7 @@ public class Calculator {
     public Calculation calculate(List<Integer> numbers) {
         List<Calculation> calculations = numbers.stream()
                 .map(Calculation::new)
-                .collect(Collectors.toList());
+                .toList();
 
         return calculateTarget(calculations);
     }
@@ -28,8 +27,7 @@ public class Calculator {
             Calculation x = inputs.get(i);
             Calculation y =
                     (i == 0 || (i < inputs.size() - 1 && RANDOM.nextBoolean())) ?
-                    inputs.get(++i) :
-                    results.remove(RANDOM.nextInt(results.size()));
+                    inputs.get(++i) : results.remove(RANDOM.nextInt(results.size()));
 
             results.add(calculate(x, y));
         }
