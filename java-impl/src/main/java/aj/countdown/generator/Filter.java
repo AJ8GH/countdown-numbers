@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.function.IntPredicate;
 
 public class Filter {
-    private static final Set<Integer> PRIMES = Set.of(
+    private static final Set<Integer> VALID_PRIMES = Set.of(
             101, 103, 107, 109, 113, 127, 131, 137, 139, 149,
             151, 157, 163, 167, 173, 179, 181, 191, 193, 197,
             199, 211, 223, 227, 229, 233, 239, 241, 251, 257,
@@ -30,7 +30,5 @@ public class Filter {
 
     public static final IntPredicate NOT_TEN = target -> target % 10 != 0;
 
-    public static final IntPredicate ODD_AND_NOT_FIVE = ODD.and(NOT_FIVE);
-
-    public static final IntPredicate PRIME = PRIMES::contains;
+    public static final IntPredicate PRIME = VALID_PRIMES::contains;
 }

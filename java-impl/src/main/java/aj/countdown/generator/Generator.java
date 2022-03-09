@@ -27,24 +27,28 @@ public class Generator {
     private static final int TOTAL_NUMBERS = 6;
 
     private final List<Integer> questionNumbers = new ArrayList<>();
-    private final AtomicInteger attempts = new AtomicInteger(0);
+    private final AtomicInteger attempts = new AtomicInteger(1);
     private final Calculator calculator;
-    private final IntPredicate filter;
 
-    private double time;
+    private IntPredicate filter = IN_RANGE;
     private Queue<Integer> largeNumbers;
+    private double time;
 
-    public Generator(Calculator calculator, int warmUps, IntPredicate filter) {
+    public Generator(Calculator calculator, int warmUps) {
         this.calculator = calculator;
-        this.filter = filter;
         partialReset();
         warmUp(warmUps);
+    }
+
+    public Generator(Calculator calculator) {
+        this.calculator = calculator;
+        partialReset();
     }
 
     public Calculation generateTarget(int numberOfLarge) {
         var startTime = getCurrentTime();
         var target = calculator.calculate(generateQuestionNumbers(numberOfLarge));
-        while (!IN_RANGE.and(filter).test(target.getResult())) {
+        while (!filter.test(target.getResult())) {
             attempts.incrementAndGet();
             partialReset();
             target = calculator.calculate(generateQuestionNumbers(numberOfLarge));
@@ -69,15 +73,14 @@ public class Generator {
         return questionNumbers;
     }
 
-    public void fullReset() {
-        partialReset();
-        attempts.getAndSet(0);
+    public Generator addFilter(IntPredicate predicate) {
+        this.filter = filter.and(predicate);
+        return this;
     }
 
-    private void partialReset() {
-        Collections.shuffle(LARGE_NUMBERS);
-        this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
-        this.questionNumbers.clear();
+    public void fullReset() {
+        partialReset();
+        attempts.getAndSet(1);
     }
 
     public List<Integer> getQuestionNumbers() {
@@ -90,6 +93,12 @@ public class Generator {
 
     public int getAttempts() {
         return attempts.get();
+    }
+
+    private void partialReset() {
+        Collections.shuffle(LARGE_NUMBERS);
+        this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
+        this.questionNumbers.clear();
     }
 
     private double getCurrentTime() {

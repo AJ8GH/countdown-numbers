@@ -21,6 +21,15 @@ public class Calculator {
         return calculateTarget(calculations);
     }
 
+    public Calculation calculateSolution(List<Integer> numbers) {
+        int target = numbers.remove(numbers.size() - 1);
+        List<Calculation> calculations = numbers.stream()
+                .map(Calculation::new)
+                .toList();
+
+        return calculateSolution(calculations, target);
+    }
+
     private Calculation calculateTarget(List<Calculation> inputs) {
         List<Calculation> results = new ArrayList<>();
         for (int i = 0; i < inputs.size(); i++) {
@@ -29,6 +38,20 @@ public class Calculator {
                     (i == 0 || (i < inputs.size() - 1 && RANDOM.nextBoolean())) ?
                     inputs.get(++i) : results.remove(RANDOM.nextInt(results.size()));
 
+            results.add(calculate(x, y));
+        }
+        return results.size() == 1 ? results.get(0) : calculateTarget(results);
+    }
+
+    private Calculation calculateSolution(List<Calculation> inputs, int target) {
+        List<Calculation> results = new ArrayList<>();
+        for (int i = 0; i < inputs.size(); i++) {
+            Calculation x = inputs.get(i);
+            Calculation y =
+                    (i == 0 || (i < inputs.size() - 1 && RANDOM.nextBoolean())) ?
+                            inputs.get(++i) : results.remove(RANDOM.nextInt(results.size()));
+            Calculation result = calculate(x, y);
+            if (result.getResult() == target) return result;
             results.add(calculate(x, y));
         }
         return results.size() == 1 ? results.get(0) : calculateTarget(results);

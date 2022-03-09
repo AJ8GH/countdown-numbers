@@ -25,11 +25,12 @@ public class Solver {
 
     public Calculation solve(List<Integer> question) {
         double startTime = getCurrentTime();
-        int target = question.remove(question.size() - 1);
-        Calculation result = calculator.calculate(question);
+        int target = question.get(question.size() - 1);
+        Calculation result = calculator.calculateSolution(question);
         while (result.getResult() != target) {
             result = calculator.calculate(question);
             attempts.incrementAndGet();
+            if (attempts.get() % 10_000_000 == 0) log.info("Attempts: {}, Time: {}", attempts.get(), getCurrentTime() - startTime);
         }
         this.time = getCurrentTime() - startTime;
         return result;
