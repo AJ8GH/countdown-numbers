@@ -1,27 +1,22 @@
 package aj.countdown.runner;
 
-import aj.countdown.domain.Calculation;
 import aj.countdown.domain.Calculator;
 import aj.countdown.generator.Generator;
 import aj.countdown.solver.Solver;
-import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import static aj.countdown.generator.Filter.NOT_FIVE;
 import static aj.countdown.generator.Filter.ODD;
 
-@Slf4j
 public class Main {
+    private static final Logger LOG = new Logger();
     private static final Calculator CALCULATOR = new Calculator();
     private static final Generator GENERATOR = new Generator(CALCULATOR, 5);
     private static final Solver SOLVER = new Solver(CALCULATOR);
 
     private static final int NUMBER_OF_LARGE = 1;
-    private static final int TIME_SCALE = 6;
     private static final int RUNS = 10;
     private static final int WARM_UPS = 10;
 
@@ -47,57 +42,22 @@ public class Main {
     private static void runSolver() {
         for (int i = 0; i < RUNS; i++) {
             var target = GENERATOR.generateTarget(NUMBER_OF_LARGE);
-            var solution = SOLVER.solve(new ArrayList<>(GENERATOR.getQuestionNumbers()));
-            logQuestionAndSolution(target, solution);
+            var solution = SOLVER.solve(GENERATOR.getQuestionNumbers());
+            LOG.logQuestionAndSolution(target, solution, GENERATOR, SOLVER);
             reset();
         }
     }
 
     private static void solve(List<Integer> input) {
         var solution = SOLVER.solve(new ArrayList<>(input));
-        logSolution(input, solution);
+        LOG.logSolution(input, solution, SOLVER);
         reset();
-    }
-
-    private static void logQuestionAndSolution(Calculation target, Calculation solution) {
-        log.info(
-                """
-                    
-                    Question: {}
-                    Generator solution: {} = {}, generated in {} ms with {} attempts
-                    Solver solution: {} = {}, solved in {} ms with {} attempts
-                    ***""",
-                GENERATOR.getQuestionNumbers(),
-                target.getSolution(),
-                target.getResult(),
-                BigDecimal.valueOf(GENERATOR.getTime()).setScale(TIME_SCALE, RoundingMode.HALF_UP),
-                GENERATOR.getAttempts(),
-                solution.getSolution(),
-                solution.getResult(),
-                BigDecimal.valueOf(SOLVER.getTime()).setScale(TIME_SCALE, RoundingMode.HALF_UP),
-                SOLVER.getAttempts()
-        );
-    }
-
-    private static void logSolution(List<Integer> input, Calculation solution) {
-        log.info(
-                """
-                    
-                    Question: {}
-                    Solver solution: {} = {}, solved in {} ms with {} attempts
-                    ***""",
-                input,
-                solution.getSolution(),
-                solution.getResult(),
-                BigDecimal.valueOf(SOLVER.getTime()).setScale(TIME_SCALE, RoundingMode.HALF_UP),
-                SOLVER.getAttempts()
-        );
     }
 
     private static void warmUp() {
         for (int i = 0; i < WARM_UPS; i++) {
             GENERATOR.generateTarget(NUMBER_OF_LARGE);
-            SOLVER.solve(new ArrayList<>(GENERATOR.getQuestionNumbers()));
+            SOLVER.solve(GENERATOR.getQuestionNumbers());
             reset();
         }
     }

@@ -24,7 +24,7 @@ public class Filter {
 
     public static final IntPredicate IN_RANGE = target -> target > 100 && target < 999;
 
-    public static final IntPredicate ODD = target -> target % 2 == 1;
+    public static final IntPredicate ODD = target -> target % 2 != 0;
 
     public static final IntPredicate NOT_FIVE = target -> target % 5 != 0;
 

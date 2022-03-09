@@ -40,11 +40,6 @@ public class Generator {
         warmUp(warmUps);
     }
 
-    public Generator(Calculator calculator) {
-        this.calculator = calculator;
-        partialReset();
-    }
-
     public Calculation generateTarget(int numberOfLarge) {
         var startTime = getCurrentTime();
         var target = calculator.calculate(generateQuestionNumbers(numberOfLarge));
@@ -84,7 +79,7 @@ public class Generator {
     }
 
     public List<Integer> getQuestionNumbers() {
-        return questionNumbers;
+        return new ArrayList<>(questionNumbers);
     }
 
     public double getTime() {
