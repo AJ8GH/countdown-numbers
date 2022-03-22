@@ -4,9 +4,9 @@ import java.util.function.IntBinaryOperator;
 
 public enum Operator {
     ADD("+", Integer::sum),
-    SUBTRACT("-", (x, y) -> x - y),
-    MULTIPLY("*", (x, y) -> x * y),
-    DIVIDE("/", (x, y) -> x / y);
+    SUBTRACT("-", (left, right) -> left - right),
+    MULTIPLY("*", (left, right) -> left * right),
+    DIVIDE("/", (left, right) -> left / right);
 
     private final String symbol;
     private final IntBinaryOperator op;
@@ -16,8 +16,8 @@ public enum Operator {
         this.op = op;
     }
 
-    public int apply(int x, int y) {
-        return op.applyAsInt(x, y);
+    public int apply(int left, int right) {
+        return op.applyAsInt(left, right);
     }
 
     @Override
