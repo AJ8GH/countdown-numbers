@@ -1,62 +1,24 @@
 package aj.countdown.generator;
 
+import java.util.function.IntBinaryOperator;
+
 public enum Operator {
-    ADD("+") {
-        @Override
-        public int apply(int x, int y) {
-            return x + y;
-        }
-
-        @Override
-        public boolean isCommutative() {
-            return true;
-        }
-    },
-
-    SUBTRACT("-") {
-        @Override
-        public int apply(int x, int y) {
-            return x - y;
-        }
-
-        @Override
-        public boolean isCommutative() {
-            return false;
-        }
-    },
-
-    MULTIPLY("*") {
-        @Override
-        public int apply(int x, int y) {
-            return x * y;
-        }
-
-        @Override
-        public boolean isCommutative() {
-            return true;
-        }
-    },
-
-    DIVIDE("/") {
-        @Override
-        public int apply(int x, int y) {
-            return x / y;
-        }
-
-        @Override
-        public boolean isCommutative() {
-            return false;
-        }
-    };
+    ADD("+", Integer::sum),
+    SUBTRACT("-", (x, y) -> x - y),
+    MULTIPLY("*", (x, y) -> x * y),
+    DIVIDE("/", (x, y) -> x / y);
 
     private final String symbol;
+    private final IntBinaryOperator op;
 
-    Operator(String symbol) {
+    Operator(String symbol, IntBinaryOperator op) {
         this.symbol = symbol;
+        this.op = op;
     }
 
-    public abstract int apply(int x, int y);
-    public abstract boolean isCommutative();
+    public int apply(int x, int y) {
+        return op.applyAsInt(x, y);
+    }
 
     @Override
     public String toString() {
