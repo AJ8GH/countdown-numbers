@@ -50,7 +50,8 @@ public class Calculator {
         for (int i = 0; i < inputs.size(); i++) {
             Calculation x = inputs.get(i);
             Calculation y = (i == 0 || (i < inputs.size() - 1 && RANDOM.nextBoolean())) ?
-                    inputs.get(++i) : results.remove(RANDOM.nextInt(results.size()));
+                    inputs.get(++i) :
+                    results.remove(RANDOM.nextInt(results.size()));
             results.add(calculate(x, y));
         }
         return results.size() == 1 ? results.get(0) : calculateTarget(results);
@@ -61,7 +62,8 @@ public class Calculator {
         for (int i = 0; i < inputs.size(); i++) {
             Calculation x = inputs.get(i);
             Calculation y = (i == 0 || (i < inputs.size() - 1 && RANDOM.nextBoolean())) ?
-                    inputs.get(++i) : results.remove(RANDOM.nextInt(results.size()));
+                    inputs.get(++i) :
+                    results.remove(RANDOM.nextInt(results.size()));
             Calculation result = calculate(x, y);
             if (result.getResult() == target) return result;
             results.add(calculate(x, y));
