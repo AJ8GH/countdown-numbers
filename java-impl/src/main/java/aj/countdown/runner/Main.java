@@ -9,6 +9,7 @@ import java.util.List;
 
 import static aj.countdown.generator.Filter.NOT_FIVE;
 import static aj.countdown.generator.Filter.ODD;
+import static aj.countdown.solver.Solver.SolveMode.RUNNING;
 
 public class Main {
     private static final Logger LOG = new Logger();
@@ -16,22 +17,24 @@ public class Main {
     private static final Generator GENERATOR = new Generator(CALCULATOR, 5);
     private static final Solver SOLVER = new Solver(CALCULATOR);
 
-    private static final int NUMBER_OF_LARGE = 1;
+    private static final int NUMBER_OF_LARGE = 2;
     private static final int RUNS = 10;
     private static final int WARM_UPS = 10;
 
     private static final List<List<Integer>> testInputs = List.of(
             List.of(50, 25, 75, 2, 1, 100, 199),
             List.of(6, 100, 4, 6, 8, 2, 752),
+            List.of(25, 50, 75, 100, 3, 6, 952),
             List.of(75, 5, 25, 6, 50, 100, 426)
     );
 
     static {
+        SOLVER.setMode(RUNNING);
+        GENERATOR.addFilter(ODD).addFilter(NOT_FIVE);
         warmUp();
     }
 
     public static void main(String[] args) {
-        GENERATOR.addFilter(ODD).addFilter(NOT_FIVE);
         runSolver();
     }
 
