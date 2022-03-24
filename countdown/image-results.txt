@@ -1,0 +1,40 @@
+10:10:35.065 [main] INFO aj.countdown.runner.Logger - 
+Question: [75, 25, 10, 1, 10, 2, 101]
+Solver solution: ((75 / 25) - (2 - (10 * (10 * 1)))) = 101, solved in 0.202881 ms with 90 attempts, mode: INTERMEDIATE
+***
+10:10:35.089 [main] INFO aj.countdown.runner.Logger - 
+Question: [100, 50, 10, 3, 6, 3, 319]
+Solver solution: ((((6 + 100) - 3) * 3) + 10) = 319, solved in 23.099121 ms with 10198 attempts, mode: RUNNING
+***
+10:10:35.089 [main] INFO aj.countdown.runner.Logger - 
+Question: [50, 100, 3, 10, 1, 4, 166]
+Solver solution: ((10 + (3 + (50 + 100))) - (1 - 4)) = 166, solved in 0.227051 ms with 101 attempts, mode: INTERMEDIATE
+***
+10:10:35.121 [main] INFO aj.countdown.runner.Logger - 
+Question: [75, 50, 3, 10, 5, 4, 331]
+Solver solution: ((((75 * 5) + 10) - 4) - 50) = 331, solved in 31.865967 ms with 13282 attempts, mode: RUNNING
+***
+10:10:35.125 [main] INFO aj.countdown.runner.Logger - 
+Question: [100, 75, 9, 9, 3, 4, 163]
+Solver solution: ((9 * 3) + (4 * (9 + (100 - 75)))) = 163, solved in 3.770996 ms with 1683 attempts, mode: INTERMEDIATE
+***
+10:10:35.127 [main] INFO aj.countdown.runner.Logger - 
+Question: [25, 100, 2, 9, 7, 5, 253]
+Solver solution: ((2 * (25 + 100)) + (5 - (9 - 7))) = 253, solved in 1.949951 ms with 869 attempts, mode: INTERMEDIATE
+***
+10:10:35.130 [main] INFO aj.countdown.runner.Logger - 
+Question: [100, 75, 2, 9, 2, 8, 269]
+Solver solution: ((2 - 8) + ((100 - 75) * (2 + 9))) = 269, solved in 3.542969 ms with 1580 attempts, mode: INTERMEDIATE
+***
+10:10:35.130 [main] INFO aj.countdown.runner.Logger - 
+Question: [25, 100, 2, 6, 10, 4, 506]
+Solver solution: ((10 - 4) - ((25 + 100) * (2 - 6))) = 506, solved in 0.085938 ms with 37 attempts, mode: INTERMEDIATE
+***
+10:10:35.162 [main] INFO aj.countdown.runner.Logger - 
+Question: [75, 100, 8, 7, 1, 6, 566]
+Solver solution: ((((100 - 7) / 1) * 6) + 8) = 566, solved in 32.011963 ms with 13969 attempts, mode: RUNNING
+***
+10:10:35.187 [main] INFO aj.countdown.runner.Logger - 
+Question: [50, 25, 1, 4, 10, 1, 429]
+Solver solution: (((((10 - 1) / 1) * 50) + 4) - 25) = 429, solved in 24.627930 ms with 10536 attempts, mode: RUNNING
+***
