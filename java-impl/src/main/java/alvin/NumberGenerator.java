@@ -1,6 +1,7 @@
 package alvin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +26,10 @@ public class NumberGenerator {
             largeNums.add(LARGE_NUMBERS[r]);
         }
         return largeNums;
+    }
+
+    public static List<Integer> generateTestNums(){
+        return Arrays.asList(2, 5, 25, 50);
     }
 
 }

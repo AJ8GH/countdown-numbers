@@ -26,7 +26,7 @@ public class OperationSelector {
     /**
      * Defines the number of math operations. Cannot change.
      */
-    private static final int MAX_OPERATION_SIZE = 4;
+    private static final int MAX_OPERATION_SIZE = 3;
 
     private boolean hasMoreOperations = true;
 
@@ -35,12 +35,18 @@ public class OperationSelector {
     }
 
     private MathOperation selectOperator(int select){
-        return switch (select) {
-            case 0 -> Operations.add;
-            case 1 -> Operations.subtract;
-            case 2 -> Operations.multiply;
-            default -> Operations.divide;
-        };
+//        return switch (select) {
+//            case 0 -> Operations.add;
+//            case 1 -> Operations.subtract;
+//            case 2 -> Operations.multiply;
+//            default -> Operations.divide;
+//        };
+        switch (select) {
+            case 0: return Operations.add;
+            case 1: return Operations.subtract;
+            case 2: return Operations.multiply;
+            default: return Operations.divide;
+        }
     }
 
     /**
@@ -50,7 +56,7 @@ public class OperationSelector {
      */
     public MathOperation getOperation(){
         MathOperation mathOperation = selectOperator(operationArray[selectorIndex++]);
-        System.out.println("opArray: " + operationArray[0] + " " + operationArray[1] + " " + operationArray[2] + " " + operationArray[3]);
+//        System.out.println("opArray: " + operationArray[0] + " " + operationArray[1] + " " + operationArray[2] + " " + operationArray[3]);
         if(selectorIndex == operationArray.length){
             selectorIndex = 0;
             incrementNextArrayPosition(incrementPointer);
