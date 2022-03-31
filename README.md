@@ -1,12 +1,6 @@
 # Countdown Number Game
 
-Chernyang: This has been a promise for a while, and I wish to announce that we will hold a coding challenge in the first quarter of 2022. 
-The topic this time round is Countdown Number Game. 
 For those who never watched Countdown, [here is an “extraordinary” example](https://www.youtube.com/watch?v=0q6PT4ad6BY&ab_channel=8ertie).
-
-## WHAT IS THE CHALLENGE
-So here is the coding challenge, each participant (or team) needs to do two parts
-
 **[RULES HERE](https://confluence.app.betfair/pages/viewpage.action?spaceKey=PST&title=Coding+Challenge+2022)**
 
 ### Question bank generator
@@ -30,9 +24,6 @@ Every participant can copy the any key implementations of others during these tw
     (at most 2 ppl per participation unit, and strict rule for distinct squad)
 
 ## JUDGING AND PRIZES
-Michael, Nico, Saji, Jack and I have agreed to form the base of the judging panel and our responsibility is organise these meetups, 
-measuring and validating the runs of each participant’s code, identifying efficient, smart designs or breakthrough implementations to recommend everyone else.
-
 We will have prizes in 4 categories: (all to be decided on the April end meeting) and the prizes will be like what you would expect from winning a hackday
 
 * **Best generator**: by how quick and random the question bank can be generated
