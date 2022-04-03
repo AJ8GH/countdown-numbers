@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>countdown</artifactId>
-        <groupId>aj.countdown</groupId>
+        <groupId>io.github.aj8gh</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -13,24 +13,20 @@
     <artifactId>solver</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <start-class>aj.countdown.solver.Main</start-class>
+        <start-class>io.github.aj8gh.countdown.solver.Main</start-class>
     </properties>
 
     <build>
+        <finalName>solver</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -39,6 +35,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>calculator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.aj8gh</groupId>
+            <artifactId>generator</artifactId>
         </dependency>
     </dependencies>
 </project>
