@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.calculator;
+package io.github.aj8gh.countdown.util.calculator;
 
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode.RUNNING;
-import static io.github.aj8gh.countdown.calculator.Operator.DIVIDE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
+import static io.github.aj8gh.countdown.util.calculator.Operator.DIVIDE;
 import static java.util.Collections.shuffle;
 
 public class Calculator {

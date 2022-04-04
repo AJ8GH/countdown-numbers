@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.util;
 
-import io.github.aj8gh.countdown.calculator.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.Solver;
 import lombok.extern.slf4j.Slf4j;

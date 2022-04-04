@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.generator;
 
-import io.github.aj8gh.countdown.calculator.Calculator;
-import io.github.aj8gh.countdown.calculator.timer.Timer;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.timer.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

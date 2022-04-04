@@ -1,8 +1,8 @@
 package io.github.aj8gh.countdown.generator;
 
-import io.github.aj8gh.countdown.calculator.Calculation;
-import io.github.aj8gh.countdown.calculator.Calculator;
-import io.github.aj8gh.countdown.calculator.timer.Timer;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.timer.Timer;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode;
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
 
 public class Generator {
@@ -46,17 +46,17 @@ public class Generator {
     public Calculation generateTarget(int numberOfLarge) {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
-        var target = calculator.calculate(numbers, mode);
-        while (!filter.test(target.getResult())) {
+        var newTarget = calculator.calculate(numbers, mode);
+        while (!filter.test(newTarget.getResult())) {
             attempts.incrementAndGet();
             setUp();
             numbers = generateQuestionNumbers(numberOfLarge);
-            target = calculator.calculate(numbers, mode);
+            newTarget = calculator.calculate(numbers, mode);
         }
-        questionNumbers.add(target.getResult());
+        questionNumbers.add(newTarget.getResult());
         timer.stop();
-        this.target = target;
-        return target;
+        this.target = newTarget;
+        return newTarget;
     }
 
     public List<Integer> generateQuestionNumbers(int numberOfLarge) {

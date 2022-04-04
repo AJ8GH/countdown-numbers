@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.calculator;
+package io.github.aj8gh.countdown.util.calculator;
 
 public class Calculation {
 

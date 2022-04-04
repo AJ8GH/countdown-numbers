@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.solver;
 
-import io.github.aj8gh.countdown.calculator.Calculation;
-import io.github.aj8gh.countdown.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
 
 import java.util.List;
 

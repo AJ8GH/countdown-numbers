@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.calculator.timer;
+package io.github.aj8gh.countdown.util.timer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,9 +46,9 @@ public class Timer {
     }
 
     private double getCurrentTime() {
-        var timeNow = CLOCK.instant();
-        var second = timeNow.getEpochSecond();
-        var nano = timeNow.getNano();
+        var currentTime = CLOCK.instant();
+        var second = currentTime.getEpochSecond();
+        var nano = currentTime.getNano();
         return (second * MILLIS_IN_SECOND) + (nano / NANOS_IN_MILLI);
     }
 

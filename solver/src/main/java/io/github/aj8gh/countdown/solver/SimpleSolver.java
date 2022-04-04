@@ -1,16 +1,16 @@
 package io.github.aj8gh.countdown.solver;
 
-import io.github.aj8gh.countdown.calculator.Calculation;
-import io.github.aj8gh.countdown.calculator.Calculator;
-import io.github.aj8gh.countdown.calculator.timer.Timer;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.timer.Timer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode.RUNNING;
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class SimpleSolver implements Solver {
     private static final CalculationMode DEFAULT_MODE = RUNNING;

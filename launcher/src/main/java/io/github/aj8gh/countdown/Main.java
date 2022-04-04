@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown;
 
-import io.github.aj8gh.countdown.calculator.Calculator;
-import io.github.aj8gh.countdown.calculator.timer.Timer;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.timer.Timer;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.SimpleSolver;
 import io.github.aj8gh.countdown.solver.Solver;
@@ -11,9 +11,9 @@ import io.github.aj8gh.countdown.util.TestInputs;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode.RUNNING;
-import static io.github.aj8gh.countdown.calculator.Calculator.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class Main {
     private static final CountdownLogger LOG = new CountdownLogger();
