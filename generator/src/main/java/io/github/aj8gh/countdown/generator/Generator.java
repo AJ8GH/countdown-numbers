@@ -12,12 +12,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
+import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
@@ -34,6 +35,7 @@ public class Generator {
     private Queue<Integer> largeNumbers;
     private CalculationMode mode = DEFAULT_MODE;
     private IntPredicate filter = DEFAULT_FILTER;
+    private Set<IntPredicate> filters = Set.of(DEFAULT_FILTER);
     private Calculation target;
 
     public Generator(Calculator calculator, Timer timer, int warmUps) {
@@ -43,7 +45,7 @@ public class Generator {
         warmUp(warmUps);
     }
 
-    public Calculation generateTarget(int numberOfLarge) {
+    public Calculation generate(int numberOfLarge) {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
         var newTarget = calculator.calculate(numbers, mode);
@@ -56,7 +58,7 @@ public class Generator {
         questionNumbers.add(newTarget.getResult());
         timer.stop();
         this.target = newTarget;
-        return newTarget;
+        return target;
     }
 
     public List<Integer> generateQuestionNumbers(int numberOfLarge) {
@@ -75,17 +77,20 @@ public class Generator {
     }
 
     public Generator addFilter(IntPredicate predicate) {
-        this.filter = filter.and(predicate);
+        if (!filters.contains(predicate)) {
+            this.filter = filter.and(predicate);
+        }
         return this;
+    }
+
+    public void resetFilters() {
+        this.filter = DEFAULT_FILTER;
+        this.filters = Set.of(DEFAULT_FILTER);
     }
 
     public void reset() {
         setUp();
         attempts.getAndSet(1);
-    }
-
-    public void setMode(CalculationMode mode) {
-        this.mode = mode;
     }
 
     public List<Integer> getQuestionNumbers() {
@@ -100,17 +105,12 @@ public class Generator {
         return attempts.get();
     }
 
-    private void setUp() {
-        Collections.shuffle(LARGE_NUMBERS);
-        this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
-        this.questionNumbers.clear();
+    public void setMode(CalculationMode mode) {
+        this.mode = mode;
     }
 
-    private void warmUp(int warmUps) {
-        for (int i = 0; i < warmUps; i++) {
-            generateTarget(RANDOM.nextInt(5));
-            reset();
-        }
+    public void setTimeScale(int timeScale) {
+        timer.setTimescale(timeScale);
     }
 
     @Override
@@ -126,5 +126,18 @@ public class Generator {
                 getTime(),
                 attempts
         );
+    }
+
+    private void setUp() {
+        Collections.shuffle(LARGE_NUMBERS);
+        this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
+        this.questionNumbers.clear();
+    }
+
+    private void warmUp(int warmUps) {
+        for (int i = 0; i < warmUps; i++) {
+            generate(RANDOM.nextInt(5));
+            reset();
+        }
     }
 }

@@ -24,7 +24,7 @@ public class Main {
             try {
                 int numberOfLarge = Integer.parseInt(arg);
                 if (inRange(numberOfLarge)) {
-                    GENERATOR.generateTarget(numberOfLarge);
+                    GENERATOR.generate(numberOfLarge);
                     LOG.info("{}", GENERATOR);
                 } else {
                     LOG.warn("{} is not in range {} to {}", arg, MIN_LARGE, MAX_LARGE);

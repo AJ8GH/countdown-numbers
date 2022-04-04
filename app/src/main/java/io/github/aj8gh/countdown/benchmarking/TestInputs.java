@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.util;
+package io.github.aj8gh.countdown.benchmarking;
 
 import java.util.List;
 
@@ -17,15 +17,9 @@ public class TestInputs {
     );
 
     public static final List<List<Integer>> TRICKY = List.of(
-//            List.of(50, 25, 75, 2, 1, 100, 199),
-//            List.of(6, 100, 4, 6, 8, 2, 752),
-//            List.of(25, 50, 75, 100, 3, 6, 952),
+            List.of(50, 25, 75, 2, 1, 100, 199),
+            List.of(6, 100, 4, 6, 8, 2, 752),
+            List.of(25, 50, 75, 100, 3, 6, 952),
             List.of(75, 5, 25, 6, 50, 100, 426)
     );
 }
-
-// 50 25 75 2 1 100 199
-// 6 100 4 6 8 2 752
-// 25 50 75 100 3 6 952
-// 75 5 25 6 50 100 426
-// 75 25 10 1 10 2 101
