@@ -1,27 +1,59 @@
 package alvin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Solver {
 
+    private int targetNumber;
+    private boolean targetFound = false;
+
     public static void main(String[] args) {
-//        int numToSolve = 0;
-        List<Integer> numList = Stream.concat(NumberGenerator.generateLargeNums(4).stream(), NumberGenerator.generateSmallNums(2).stream()).collect(Collectors.toList());
+        Solver solver = new Solver(105);
 
-        //TODO pass through every permutation of the number list to the solver
-        //TODO pass through every subset and permutation of subset to the solver
+//        List<Integer> numList = Stream.concat(NumberGenerator.generateLargeNums(1).stream(), NumberGenerator.generateSmallNums(2).stream()).collect(Collectors.toList());
+        List<Integer> numList = NumberGenerator.generateTestNums();
+        System.out.println("### Original list ###");
+        System.out.println(numList);
+        System.out.println(numList.size() + "\n");
 
-//
-//        OperationSelector op = new OperationSelector();
-//
-//        while(op.hasMoreOperations()){
-//            System.out.println("1 " + stringify(op.getOperation()) + " 1 " + stringify(op.getOperation()) + " 1 " + stringify(op.getOperation()) + " 1 " + stringify(op.getOperation()) + " 1");
-//        }
+        List<List<Integer>> numListSubsets;
+        List<List<Integer>> numListPerms = new ArrayList<>();
 
-        solver(numList);
+        //get subsets (subset will include whole set)
+        numListSubsets = new Subset().getSubsets(numList)
+                .stream().distinct().collect(Collectors.toList()); //remove identical lists (will have duplicate solutions)
+        System.out.println("### Subset list ###");
+        System.out.println(numListSubsets);
+        System.out.println(numListSubsets.size() + "\n");
 
+
+        //run subset through permuatations
+        for (List<Integer> list : numListSubsets) {
+            numListPerms.addAll(new Permutation().getAllPermutations(list));
+        }
+        System.out.println("### Permutations & subsets list ###");
+        System.out.println(numListPerms);
+        System.out.println(numListPerms.size() + "\n");
+
+        //pass new subset+perms list into solver
+        int n = 0;
+        while(!solver.targetFound){
+
+            solver.solve(numListPerms.get(n));
+
+            if(n+1 == numListPerms.size()){
+                System.out.println("#####   TARGET NOT FOUND    #####");
+                break;
+            }else{
+                n++;
+            }
+        }
+    }
+
+    public Solver(int targetNumber){
+        this.targetNumber = targetNumber;
     }
 
     private static String stringify(MathOperation mo){
@@ -41,11 +73,15 @@ public class Solver {
      * Use multiple threads. As many as possible for the machine
      *
      */
-    public static void solver(List<Integer> numList){
+    public void solve(List<Integer> numList){
         OperationSelector operationSelector = new OperationSelector(numList.size()-1);
 
         while(operationSelector.hasMoreOperations()){
             int res = numList.get(0);
+            if(numList.size()==1){
+                System.out.println("##Countdown: " + res);
+                break;
+            }
             for (int i = 1; i < numList.size(); i++) {
                 MathOperation mathOperation = operationSelector.getOperation();
 
