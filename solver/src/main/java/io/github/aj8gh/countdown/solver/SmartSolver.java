@@ -18,7 +18,7 @@ public class SmartSolver implements Solver {
     private final Timer timer;
     private final AtomicInteger attempts = new AtomicInteger(1);
 
-    private Calculation result;
+    private Calculation solution;
     private List<Integer> questionNumbers;
     private CalculationMode mode = DEFAULT_MODE;
     private int modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
@@ -29,7 +29,7 @@ public class SmartSolver implements Solver {
     }
 
     @Override
-    public Calculation solve(List<Integer> question) {
+    public void solve(List<Integer> question) {
 //        [75, 5, 25, 6, 50, 100, 426]
 //        (((100 + 50) / 25) * (75 - 5)) + 6
 //        (((n0 - n1) / n2) * (n4 + n5)) + n3
@@ -38,13 +38,17 @@ public class SmartSolver implements Solver {
         // 75 - 5 = 70
         // 70 * 6 = 420
         // 420 + 6 = 426
-        return null;
     }
 
     @Override
     public void reset() {
         this.attempts.set(1);
         timer.reset();
+    }
+
+    @Override
+    public Calculation getSolution() {
+        return solution;
     }
 
     @Override
@@ -80,10 +84,5 @@ public class SmartSolver implements Solver {
     @Override
     public void setTimeScale(int timeScale) {
         timer.setTimescale(timeScale);
-    }
-
-    @Override
-    public void log() {
-        // implement
     }
 }

@@ -3,8 +3,6 @@ package io.github.aj8gh.countdown.solver;
 import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,6 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
 
 public class SimpleSolver implements Solver {
-    private static final Logger LOG = LoggerFactory.getLogger(SimpleSolver.class);
     private static final CalculationMode DEFAULT_MODE = RUNNING;
     private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 500;
 
@@ -23,8 +20,7 @@ public class SimpleSolver implements Solver {
     private final Timer timer;
     private final AtomicInteger attempts = new AtomicInteger(1);
 
-    private Calculation result;
-    private List<Integer> questionNumbers;
+    private Calculation solution;
     private CalculationMode mode = DEFAULT_MODE;
     private int modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
 
@@ -34,8 +30,7 @@ public class SimpleSolver implements Solver {
     }
 
     @Override
-    public Calculation solve(List<Integer> question) {
-        this.questionNumbers = question;
+    public void solve(List<Integer> question) {
         timer.start();
         int target = question.get(question.size() - 1);
         Calculation calculation = calculator.calculateSolution(new ArrayList<>(question), mode);
@@ -45,21 +40,14 @@ public class SimpleSolver implements Solver {
                 switchMode();
             }
         }
+        this.solution = calculation;
         timer.stop();
-        this.result = calculation;
-        log();
-        return calculation;
     }
 
     @Override
     public void reset() {
         this.attempts.set(1);
         timer.reset();
-    }
-
-    @Override
-    public void setMode(Calculator.CalculationMode mode) {
-        this.mode = mode;
     }
 
     @Override
@@ -78,6 +66,16 @@ public class SimpleSolver implements Solver {
     }
 
     @Override
+    public void setMode(Calculator.CalculationMode mode) {
+        this.mode = mode;
+    }
+
+    @Override
+    public Calculation getSolution() {
+        return solution;
+    }
+
+    @Override
     public void setModeSwitchThreshold(int modeSwitchThreshold) {
         this.modeSwitchThreshold = modeSwitchThreshold;
     }
@@ -90,25 +88,6 @@ public class SimpleSolver implements Solver {
     @Override
     public void setTimeScale(int timeScale) {
         timer.setTimescale(timeScale);
-    }
-
-    @Override
-    public void log() {
-        LOG.info("""
-                        
-                        ============================================================================
-                          SOLVER
-                        * Solution:     {} = {}
-                        * Attempts:     {}
-                        * Time:         {} ms
-                        * Mode:         {}
-                        ============================================================================""",
-                result.getSolution(),
-                result.getResult(),
-                attempts,
-                getTime(),
-                mode
-        );
     }
 
     private void switchMode() {

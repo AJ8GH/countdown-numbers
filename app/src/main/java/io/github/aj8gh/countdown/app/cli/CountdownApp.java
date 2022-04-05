@@ -105,6 +105,7 @@ public class CountdownApp {
                 .forEach(number -> {
                     validateGeneratorInput(number);
                     generator.generate(number);
+                    SHELL.logGenerator(generator);
                     generator.reset();
                 });
     }
@@ -112,6 +113,7 @@ public class CountdownApp {
     private void solve() {
         validateSolverInput();
         solver.solve(args.stream().map(Integer::parseInt).toList());
+        SHELL.logSolver(solver);
         solver.reset();
     }
 
@@ -119,7 +121,9 @@ public class CountdownApp {
         args.stream().map(Integer::parseInt).forEach(number -> {
             validateGeneratorInput(number);
             generator.generate(number);
+            SHELL.logGenerator(generator);
             solver.solve(generator.getQuestionNumbers());
+            SHELL.logSolver(solver);
             reset();
         });
     }

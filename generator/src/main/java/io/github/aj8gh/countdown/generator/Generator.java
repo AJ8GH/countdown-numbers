@@ -4,8 +4,6 @@ import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +21,6 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 
 public class Generator {
-    private static final Logger LOG = LoggerFactory.getLogger(Generator.class);
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE;
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
@@ -61,7 +58,6 @@ public class Generator {
         questionNumbers.add(newTarget.getResult());
         timer.stop();
         this.target = newTarget;
-        log();
         return target;
     }
 
@@ -101,6 +97,10 @@ public class Generator {
         return new ArrayList<>(questionNumbers);
     }
 
+    public Calculation getTarget() {
+        return target;
+    }
+
     public double getTime() {
         return timer.getLastTime();
     }
@@ -109,33 +109,16 @@ public class Generator {
         return attempts.get();
     }
 
+    public CalculationMode getMode() {
+        return mode;
+    }
+
     public void setMode(CalculationMode mode) {
         this.mode = mode;
     }
 
     public void setTimeScale(int timeScale) {
         timer.setTimescale(timeScale);
-    }
-
-    public void log() {
-        var formattedNumbers = questionNumbers.toString().replaceAll("[^\\d\s]", "");
-        LOG.info("""
-                        
-                        ============================================================================
-                          GENERATOR
-                        * Question:     {}
-                        * Method:       {} = {}
-                        * Attempts:     {}
-                        * Time:         {} ms
-                        * Mode:         {}
-                        ============================================================================""",
-                formattedNumbers,
-                target.getSolution(),
-                target.getResult(),
-                attempts,
-                getTime(),
-                mode
-        );
     }
 
     private void setUp() {
