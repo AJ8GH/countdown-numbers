@@ -4,6 +4,8 @@ import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 
 public class Generator {
+    private static final Logger LOG = LoggerFactory.getLogger(Generator.class);
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE;
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
@@ -58,6 +61,7 @@ public class Generator {
         questionNumbers.add(newTarget.getResult());
         timer.stop();
         this.target = newTarget;
+        log();
         return target;
     }
 
@@ -113,18 +117,24 @@ public class Generator {
         timer.setTimescale(timeScale);
     }
 
-    @Override
-    public String toString() {
-        return String.format("""
-                                            
-                        Question: %s
-                        Generator solution: %s = %s, generated in %s ms, %s attempts
-                        ***""",
-                questionNumbers,
+    public void log() {
+        var formattedNumbers = questionNumbers.toString().replaceAll("[^\\d\s]", "");
+        LOG.info("""
+                        
+                        ============================================================================
+                          GENERATOR
+                        * Question:     {}
+                        * Method:       {} = {}
+                        * Attempts:     {}
+                        * Time:         {} ms
+                        * Mode:         {}
+                        ============================================================================""",
+                formattedNumbers,
                 target.getSolution(),
                 target.getResult(),
+                attempts,
                 getTime(),
-                attempts
+                mode
         );
     }
 

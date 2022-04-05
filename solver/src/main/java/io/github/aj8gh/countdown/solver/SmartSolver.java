@@ -83,18 +83,7 @@ public class SmartSolver implements Solver {
     }
 
     @Override
-    public String toString() {
-        return String.format("""
-                                            
-                        Question: %s
-                        Solver solution: %s = %s, solved in %s ms with %s attempts, mode: %s,
-                        ***""",
-                questionNumbers,
-                result.getSolution(),
-                result.getResult(),
-                getTime(),
-                attempts,
-                mode
-        );
+    public void log() {
+        // implement
     }
 }

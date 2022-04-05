@@ -3,16 +3,19 @@ package io.github.aj8gh.countdown.solver;
 import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class SimpleSolver implements Solver {
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleSolver.class);
     private static final CalculationMode DEFAULT_MODE = RUNNING;
     private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 500;
 
@@ -44,6 +47,7 @@ public class SimpleSolver implements Solver {
         }
         timer.stop();
         this.result = calculation;
+        log();
         return calculation;
     }
 
@@ -89,17 +93,20 @@ public class SimpleSolver implements Solver {
     }
 
     @Override
-    public String toString() {
-        return String.format("""
-                                            
-                        Question: %s
-                        Solver solution: %s = %s, solved in %s ms with %s attempts, mode: %s,
-                        ***""",
-                questionNumbers,
+    public void log() {
+        LOG.info("""
+                        
+                        ============================================================================
+                          SOLVER
+                        * Solution:     {} = {}
+                        * Attempts:     {}
+                        * Time:         {} ms
+                        * Mode:         {}
+                        ============================================================================""",
                 result.getSolution(),
                 result.getResult(),
-                getTime(),
                 attempts,
+                getTime(),
                 mode
         );
     }

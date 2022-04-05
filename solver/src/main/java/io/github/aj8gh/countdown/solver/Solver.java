@@ -15,4 +15,5 @@ public interface Solver {
     void setMode(Calculator.CalculationMode mode);
     void setModeSwitchThreshold(int modeSwitchThreshold);
     void setTimeScale(int timeScale);
+    void log();
 }

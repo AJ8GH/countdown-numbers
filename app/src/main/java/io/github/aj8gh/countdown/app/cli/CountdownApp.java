@@ -48,10 +48,10 @@ public class CountdownApp {
     }
 
     private void processInput() {
-        var argsArray = input.split(ARG_DELIMITER);
-        this.command = argsArray[0];
-        this.args = Arrays.asList(argsArray).subList(1, argsArray.length);
         try {
+            var argsArray = input.split(ARG_DELIMITER);
+            this.command = argsArray[0];
+            this.args = Arrays.asList(argsArray).subList(1, argsArray.length);
             handleCommand();
         } catch (Exception e) {
             handleError(e);
@@ -70,7 +70,7 @@ public class CountdownApp {
             case SET_GEN_MODE -> setGenMode();
             case SET_MODE_SWITCH_THRESHOLD -> setModeSwitchThreshold();
             case SET_TIME_SCALE -> setTimeScale();
-            default -> unknown();
+            default -> handleUnknown();
         }
     }
 
@@ -93,11 +93,11 @@ public class CountdownApp {
     }
 
     private void setGenMode() {
-        generator.setMode(CalculationMode.valueOf(args.get(0)));
+        generator.setMode(CalculationMode.valueOf(args.get(0).toUpperCase()));
     }
 
     private void setSolveMode() {
-        solver.setMode(CalculationMode.valueOf(args.get(0)));
+        solver.setMode(CalculationMode.valueOf(args.get(0).toUpperCase()));
     }
 
     private void generate() {
@@ -105,7 +105,6 @@ public class CountdownApp {
                 .forEach(number -> {
                     validateGeneratorInput(number);
                     generator.generate(number);
-                    LOG.info("{}", generator);
                     generator.reset();
                 });
     }
@@ -113,18 +112,19 @@ public class CountdownApp {
     private void solve() {
         validateSolverInput();
         solver.solve(args.stream().map(Integer::parseInt).toList());
-        LOG.info("{}", solver);
         solver.reset();
     }
 
     private void generateToSolve() {
-        generate();
-        solver.solve(generator.getQuestionNumbers());
-        LOG.info("{}", solver);
-        reset();
+        args.stream().map(Integer::parseInt).forEach(number -> {
+            validateGeneratorInput(number);
+            generator.generate(number);
+            solver.solve(generator.getQuestionNumbers());
+            reset();
+        });
     }
 
-    private void unknown() {
+    private void handleUnknown() {
         LOG.warn("Unknown command {}", command);
     }
 
@@ -139,13 +139,14 @@ public class CountdownApp {
     }
 
     private void validateSolverInput() {
-        if (args.size() == 7) {
+        if (args.size() != 7) {
             throw new IllegalArgumentException("Solver needs 7 ints");
         }
     }
 
     private void exit() {
-        LOG.info("*** Countdown App Shutting Down ***");
+        SHELL.logExitMessage();
+        System.exit(0);
     }
 
     private void reset() {
