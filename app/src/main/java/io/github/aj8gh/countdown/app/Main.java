@@ -1,6 +1,6 @@
-package io.github.aj8gh.countdown;
+package io.github.aj8gh.countdown.app;
 
-import io.github.aj8gh.countdown.app.CountdownApp;
+import io.github.aj8gh.countdown.app.cli.CountdownApp;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.SimpleSolver;
 import io.github.aj8gh.countdown.solver.Solver;

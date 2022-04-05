@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.app;
+package io.github.aj8gh.countdown.app.cli;
 
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.Solver;
@@ -8,15 +8,16 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.aj8gh.countdown.app.Commands.ADD_FILTER;
-import static io.github.aj8gh.countdown.app.Commands.EXIT;
-import static io.github.aj8gh.countdown.app.Commands.GENERATE;
-import static io.github.aj8gh.countdown.app.Commands.RESET_FILTERS;
-import static io.github.aj8gh.countdown.app.Commands.SET_GEN_MODE;
-import static io.github.aj8gh.countdown.app.Commands.SET_MODE_SWITCH_THRESHOLD;
-import static io.github.aj8gh.countdown.app.Commands.SET_SOLVE_MODE;
-import static io.github.aj8gh.countdown.app.Commands.SET_TIME_SCALE;
-import static io.github.aj8gh.countdown.app.Commands.SOLVE;
+import static io.github.aj8gh.countdown.app.cli.Commands.ADD_FILTER;
+import static io.github.aj8gh.countdown.app.cli.Commands.EXIT;
+import static io.github.aj8gh.countdown.app.cli.Commands.GENERATE;
+import static io.github.aj8gh.countdown.app.cli.Commands.GENERATE_TO_SOLVE;
+import static io.github.aj8gh.countdown.app.cli.Commands.RESET_FILTERS;
+import static io.github.aj8gh.countdown.app.cli.Commands.SET_GEN_MODE;
+import static io.github.aj8gh.countdown.app.cli.Commands.SET_MODE_SWITCH_THRESHOLD;
+import static io.github.aj8gh.countdown.app.cli.Commands.SET_SOLVE_MODE;
+import static io.github.aj8gh.countdown.app.cli.Commands.SET_TIME_SCALE;
+import static io.github.aj8gh.countdown.app.cli.Commands.SOLVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class CountdownApp {
@@ -60,9 +61,11 @@ public class CountdownApp {
     private void handleCommand() {
         switch (command) {
             case ADD_FILTER -> addFilter();
+            case EXIT -> exit();
             case RESET_FILTERS -> resetFilters();
             case SOLVE -> solve();
             case GENERATE -> generate();
+            case GENERATE_TO_SOLVE -> generateToSolve();
             case SET_SOLVE_MODE -> setSolveMode();
             case SET_GEN_MODE -> setGenMode();
             case SET_MODE_SWITCH_THRESHOLD -> setModeSwitchThreshold();
@@ -100,6 +103,7 @@ public class CountdownApp {
     private void generate() {
         args.stream().map(Integer::parseInt)
                 .forEach(number -> {
+                    validateGeneratorInput(number);
                     generator.generate(number);
                     LOG.info("{}", generator);
                     generator.reset();
@@ -107,13 +111,17 @@ public class CountdownApp {
     }
 
     private void solve() {
-        if (args.size() == 7) {
-            solver.solve(args.stream().map(Integer::parseInt).toList());
-            LOG.info("{}", solver);
-            solver.reset();
-            return;
-        }
-        throw new IllegalArgumentException("Solver needs 7 ints");
+        validateSolverInput();
+        solver.solve(args.stream().map(Integer::parseInt).toList());
+        LOG.info("{}", solver);
+        solver.reset();
+    }
+
+    private void generateToSolve() {
+        generate();
+        solver.solve(generator.getQuestionNumbers());
+        LOG.info("{}", solver);
+        reset();
     }
 
     private void unknown() {
@@ -122,5 +130,26 @@ public class CountdownApp {
 
     private void handleError(Exception e) {
         LOG.error("Invalid args {} for {}, {}", args, command, e.getMessage());
+    }
+
+    private void validateGeneratorInput(int number) {
+        if (number < MIN_LARGE || number > MAX_LARGE) {
+            throw new IllegalArgumentException(number + " Not in range");
+        }
+    }
+
+    private void validateSolverInput() {
+        if (args.size() == 7) {
+            throw new IllegalArgumentException("Solver needs 7 ints");
+        }
+    }
+
+    private void exit() {
+        LOG.info("*** Countdown App Shutting Down ***");
+    }
+
+    private void reset() {
+        generator.reset();
+        solver.reset();
     }
 }

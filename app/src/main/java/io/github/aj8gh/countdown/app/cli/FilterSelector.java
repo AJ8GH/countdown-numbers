@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.app;
+package io.github.aj8gh.countdown.app.cli;
 
 import io.github.aj8gh.countdown.generator.Filter;
 import io.github.aj8gh.countdown.generator.Generator;

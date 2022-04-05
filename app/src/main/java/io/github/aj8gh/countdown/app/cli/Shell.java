@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.app;
+package io.github.aj8gh.countdown.app.cli;
 
 import java.util.Scanner;
 
@@ -7,7 +7,7 @@ public class Shell {
     String line;
 
     public String getInput() {
-        System.out.println("Let's go ...");
+        System.out.println("Waiting for input...");
         this.line = SCANNER.nextLine();
         return this.line;
     }
