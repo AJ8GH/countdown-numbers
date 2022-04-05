@@ -1,14 +1,16 @@
 package io.github.aj8gh.countdown.app.cli;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Scanner;
 
 public class Shell {
+    private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
     private static final Scanner SCANNER = new Scanner(System.in);
-    String line;
 
     public String getInput() {
-        System.out.println("Waiting for input...");
-        this.line = SCANNER.nextLine();
-        return this.line;
+        LOG.info("Ready for input...");
+        return SCANNER.nextLine();
     }
 }
