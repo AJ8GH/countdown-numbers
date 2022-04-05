@@ -3,6 +3,7 @@ package io.github.aj8gh.countdown.app;
 import io.github.aj8gh.countdown.app.cli.CountdownApp;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.SimpleSolver;
+import io.github.aj8gh.countdown.solver.SolutionCache;
 import io.github.aj8gh.countdown.solver.Solver;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
@@ -18,7 +19,8 @@ public class Main {
     private static final int WARM_UPS = 20;
 
     private static final Generator GENERATOR = new Generator(new Calculator(), new Timer(), 5);
-    private static final Solver SOLVER = new SimpleSolver(new Calculator(), new Timer());
+    private static final Solver SOLVER = new SimpleSolver(
+            new Calculator(), new SolutionCache(), new Timer());
     private static final CountdownApp APP = new CountdownApp(GENERATOR, SOLVER);
 
     static {

@@ -14,7 +14,7 @@ public class Main {
     private static final int WARM_UPS = 20;
     private static final Calculator CALCULATOR = new Calculator();
     private static final Generator GENERATOR = new Generator(CALCULATOR, new Timer(), WARM_UPS);
-    private static final Solver SOLVER = new SimpleSolver(CALCULATOR, new Timer());
+    private static final Solver SOLVER = new SimpleSolver(CALCULATOR, new SolutionCache(), new Timer());
 
     static {
         warmUp();

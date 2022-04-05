@@ -17,6 +17,7 @@ public class SimpleSolver implements Solver {
     private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 500;
 
     private final Calculator calculator;
+    private final SolutionCache cache;
     private final Timer timer;
     private final AtomicInteger attempts = new AtomicInteger(1);
 
@@ -24,14 +25,21 @@ public class SimpleSolver implements Solver {
     private CalculationMode mode = DEFAULT_MODE;
     private int modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
 
-    public SimpleSolver(Calculator calculator, Timer timer) {
+    public SimpleSolver(Calculator calculator, SolutionCache cache, Timer timer) {
         this.calculator = calculator;
+        this.cache = cache;
         this.timer = timer;
     }
 
     @Override
     public void solve(List<Integer> question) {
         timer.start();
+        var cachedSolution = cache.get(question);
+        if (cachedSolution != null) {
+            this.solution = cachedSolution;
+            timer.stop();
+            return;
+        }
         int target = question.get(question.size() - 1);
         Calculation calculation = calculator.calculateSolution(new ArrayList<>(question), mode);
         while (calculation.getResult() != target) {
@@ -42,6 +50,7 @@ public class SimpleSolver implements Solver {
         }
         this.solution = calculation;
         timer.stop();
+        cache.put(question, solution);
     }
 
     @Override
