@@ -10,10 +10,10 @@ import io.github.aj8gh.countdown.util.timer.Timer;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
 
 public class Main {
-    private static final CalculationMode SOLVE_MODE = RUNNING;
+    private static final CalculationMode SOLVE_MODE = SEQUENTIAL;
     private static final CalculationMode GEN_MODE = INTERMEDIATE;
     private static final int MODE_SWITCH_THRESHOLD = 20_000;
     private static final int WARM_UPS = 20;

@@ -16,7 +16,7 @@ public class Main {
     private static final Generator GENERATOR = new Generator(CALCULATOR, new Timer(), WARM_UPS);
 
     static {
-        GENERATOR.setMode(Calculator.CalculationMode.RUNNING);
+        GENERATOR.setMode(Calculator.CalculationMode.SEQUENTIAL);
     }
 
     public static void main(String... args) {

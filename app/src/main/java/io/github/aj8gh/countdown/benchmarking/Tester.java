@@ -14,11 +14,11 @@ import java.util.List;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
 
 public class Tester {
     private static final Logger LOG = LoggerFactory.getLogger(Tester.class);
-    private static final CalculationMode SOLVE_MODE = RUNNING;
+    private static final CalculationMode SOLVE_MODE = SEQUENTIAL;
     private static final CalculationMode GEN_MODE = INTERMEDIATE;
     private static final int NUMBER_OF_LARGE = 2;
     private static final int WARM_UPS = 20;

@@ -7,18 +7,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
 import static io.github.aj8gh.countdown.util.calculator.Operator.DIVIDE;
 import static java.util.Collections.shuffle;
 
 public class Calculator {
     public enum CalculationMode {
-        RUNNING, MIXED, INTERMEDIATE
+        SEQUENTIAL, INTERMEDIATE, MIXED
     }
 
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final List<Operator> OPERATORS = Arrays.asList(Operator.values());
-    private static final CalculationMode DEFAULT_MODE = RUNNING;
+    private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
 
     private CalculationMode mode = DEFAULT_MODE;
 
@@ -26,7 +26,7 @@ public class Calculator {
         List<Calculation> calculations = numbers.stream()
                 .map(Calculation::new)
                 .toList();
-        if (mode.equals(RUNNING)) {
+        if (mode.equals(SEQUENTIAL)) {
             return calculateRunning(calculations, 0);
         }
         return calculateTarget(calculations);
@@ -38,7 +38,7 @@ public class Calculator {
                 .map(Calculation::new)
                 .toList();
 
-        return mode.equals(RUNNING) ?
+        return mode.equals(SEQUENTIAL) ?
                 calculateRunning(calculations, target) :
                 calculateTarget(calculations, target);
     }
@@ -103,7 +103,7 @@ public class Calculator {
     private boolean takeFromInput(int i, List<Calculation> inputs) {
         if (i == 0 || (6 - i <= inputs.size() - 1)) return true;
         if (mode.equals(MIXED)) return RANDOM.nextBoolean();
-        return mode.equals(RUNNING);
+        return mode.equals(SEQUENTIAL);
     }
 
     private Operator getOperator() {

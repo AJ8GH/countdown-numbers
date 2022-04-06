@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
 
 public class SimpleSolver implements Solver {
     private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 500;
@@ -91,9 +90,9 @@ public class SimpleSolver implements Solver {
 
     private void switchMode() {
         switch (calculator.getMode()) {
-            case INTERMEDIATE -> calculator.setMode(MIXED);
-            case RUNNING -> calculator.setMode(INTERMEDIATE);
-            case MIXED -> calculator.setMode(RUNNING);
+            case INTERMEDIATE -> calculator.setMode(SEQUENTIAL); // temporary hack while MIXED mode is broken
+            case SEQUENTIAL -> calculator.setMode(INTERMEDIATE);
+            case MIXED -> calculator.setMode(SEQUENTIAL);
         }
     }
 
