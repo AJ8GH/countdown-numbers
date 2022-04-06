@@ -67,6 +67,11 @@ public class SmartSolver implements Solver {
     }
 
     @Override
+    public int getModeSwitchThreshold() {
+        return modeSwitchThreshold;
+    }
+
+    @Override
     public Calculator.CalculationMode getMode() {
         return mode;
     }

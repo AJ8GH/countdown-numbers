@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
 
 public class SimpleSolver implements Solver {
-    private static final CalculationMode DEFAULT_MODE = RUNNING;
     private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 500;
 
     private final Calculator calculator;
@@ -22,7 +21,6 @@ public class SimpleSolver implements Solver {
     private final AtomicInteger attempts = new AtomicInteger(1);
 
     private Calculation solution;
-    private CalculationMode mode = DEFAULT_MODE;
     private int modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
 
     public SimpleSolver(Calculator calculator, SolutionCache cache, Timer timer) {
@@ -34,16 +32,11 @@ public class SimpleSolver implements Solver {
     @Override
     public void solve(List<Integer> question) {
         timer.start();
-        var cachedSolution = cache.get(question);
-        if (cachedSolution != null) {
-            this.solution = cachedSolution;
-            timer.stop();
-            return;
-        }
+        if (isCached(question)) return;
         int target = question.get(question.size() - 1);
-        Calculation calculation = calculator.calculateSolution(new ArrayList<>(question), mode);
+        Calculation calculation = calculator.calculateSolution(new ArrayList<>(question));
         while (calculation.getResult() != target) {
-            calculation = calculator.calculateSolution(new ArrayList<>(question), mode);
+            calculation = calculator.calculateSolution(new ArrayList<>(question));
             if (attempts.incrementAndGet() % modeSwitchThreshold == 0) {
                 switchMode();
             }
@@ -71,17 +64,22 @@ public class SimpleSolver implements Solver {
 
     @Override
     public Calculator.CalculationMode getMode() {
-        return mode;
+        return calculator.getMode();
     }
 
     @Override
     public void setMode(Calculator.CalculationMode mode) {
-        this.mode = mode;
+        calculator.setMode(mode);
     }
 
     @Override
     public Calculation getSolution() {
         return solution;
+    }
+
+    @Override
+    public int getModeSwitchThreshold() {
+        return modeSwitchThreshold;
     }
 
     @Override
@@ -100,6 +98,20 @@ public class SimpleSolver implements Solver {
     }
 
     private void switchMode() {
-        this.mode = mode.equals(RUNNING) ? INTERMEDIATE : RUNNING;
+        switch (calculator.getMode()) {
+            case INTERMEDIATE -> calculator.setMode(MIXED);
+            case RUNNING -> calculator.setMode(INTERMEDIATE);
+            case MIXED -> calculator.setMode(RUNNING);
+        }
+    }
+
+    private boolean isCached(List<Integer> question) {
+        var cachedSolution = cache.get(question);
+        if (cachedSolution != null) {
+            this.solution = cachedSolution;
+            timer.stop();
+            return true;
+        }
+        return false;
     }
 }

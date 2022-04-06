@@ -6,19 +6,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RUNNING;
 import static io.github.aj8gh.countdown.util.calculator.Operator.DIVIDE;
 import static java.util.Collections.shuffle;
 
 public class Calculator {
     public enum CalculationMode {
-        RUNNING, TRIPLE_SUM, INTERMEDIATE
+        RUNNING, MIXED, INTERMEDIATE
     }
 
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final List<Operator> OPERATORS = Arrays.asList(Operator.values());
+    private static final CalculationMode DEFAULT_MODE = RUNNING;
 
-    public Calculation calculate(List<Integer> numbers, CalculationMode mode) {
+    private CalculationMode mode = DEFAULT_MODE;
+
+    public Calculation calculate(List<Integer> numbers) {
         List<Calculation> calculations = numbers.stream()
                 .map(Calculation::new)
                 .toList();
@@ -28,17 +32,23 @@ public class Calculator {
         return calculateTarget(calculations);
     }
 
-    public Calculation calculateSolution(List<Integer> numbers,
-                                         CalculationMode mode) {
+    public Calculation calculateSolution(List<Integer> numbers) {
         int target = numbers.remove(numbers.size() - 1);
         List<Calculation> calculations = numbers.stream()
                 .map(Calculation::new)
                 .toList();
 
-        if (mode.equals(RUNNING)) {
-            return calculateRunning(calculations, target);
-        }
-        return calculateTarget(calculations, target);
+        return mode.equals(RUNNING) ?
+                calculateRunning(calculations, target) :
+                calculateTarget(calculations, target);
+    }
+
+    public CalculationMode getMode() {
+        return mode;
+    }
+
+    public void setMode(CalculationMode mode) {
+        this.mode = mode;
     }
 
     private Calculation calculateRunning(List<Calculation> calculations, int target) {
@@ -60,8 +70,7 @@ public class Calculator {
         List<Calculation> results = new ArrayList<>();
         for (int i = 0; i < inputs.size(); i++) {
             Calculation x = inputs.get(i);
-            Calculation y = (i == 0 || (i < inputs.size() - 1 && RANDOM.nextBoolean())) ?
-                    inputs.get(++i) :
+            Calculation y = (takeFromInput(i, inputs)) ? inputs.get(++i) :
                     results.remove(RANDOM.nextInt(results.size()));
             Calculation result = calculate(x, y);
             if (target > 0 && result.getResult() == target) return result;
@@ -89,6 +98,12 @@ public class Calculator {
             return null;
         }
         return x.calculate(operator, y);
+    }
+
+    private boolean takeFromInput(int i, List<Calculation> inputs) {
+        if (i == 0 || (i < inputs.size() - 1)) return true;
+        if (mode.equals(MIXED)) return RANDOM.nextBoolean();
+        return mode.equals(RUNNING);
     }
 
     private Operator getOperator() {

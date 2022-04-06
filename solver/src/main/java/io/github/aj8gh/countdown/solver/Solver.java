@@ -12,6 +12,7 @@ public interface Solver {
     double getTime();
     double getTotalTime();
     int getAttempts();
+    int getModeSwitchThreshold();
     Calculator.CalculationMode getMode();
     void setMode(Calculator.CalculationMode mode);
     void setModeSwitchThreshold(int modeSwitchThreshold);

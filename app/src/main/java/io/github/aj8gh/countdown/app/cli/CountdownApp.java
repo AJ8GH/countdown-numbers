@@ -5,6 +5,7 @@ import io.github.aj8gh.countdown.solver.Solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +13,9 @@ import static io.github.aj8gh.countdown.app.cli.Commands.ADD_FILTER;
 import static io.github.aj8gh.countdown.app.cli.Commands.EXIT;
 import static io.github.aj8gh.countdown.app.cli.Commands.GENERATE;
 import static io.github.aj8gh.countdown.app.cli.Commands.GENERATE_TO_SOLVE;
+import static io.github.aj8gh.countdown.app.cli.Commands.GET_GENERATOR_MODE;
+import static io.github.aj8gh.countdown.app.cli.Commands.GET_MODE_SWITCH_THRESHOLD;
+import static io.github.aj8gh.countdown.app.cli.Commands.GET_SOLVE_MODE;
 import static io.github.aj8gh.countdown.app.cli.Commands.RESET_FILTERS;
 import static io.github.aj8gh.countdown.app.cli.Commands.SET_GEN_MODE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SET_MODE_SWITCH_THRESHOLD;
@@ -66,6 +70,9 @@ public class CountdownApp {
             case SOLVE -> solve();
             case GENERATE -> generate();
             case GENERATE_TO_SOLVE -> generateToSolve();
+            case GET_GENERATOR_MODE -> printAttribute(generator.getMode().toString());
+            case GET_MODE_SWITCH_THRESHOLD -> printAttribute(solver.getModeSwitchThreshold());
+            case GET_SOLVE_MODE -> printAttribute(solver.getMode().toString());
             case SET_SOLVE_MODE -> setSolveMode();
             case SET_GEN_MODE -> setGenMode();
             case SET_MODE_SWITCH_THRESHOLD -> setModeSwitchThreshold();
@@ -78,6 +85,14 @@ public class CountdownApp {
         var timeScale = Integer.parseInt(args.get(0));
         solver.setTimeScale(timeScale);
         generator.setTimeScale(timeScale);
+    }
+
+    private void printAttribute(String attribute) {
+        SHELL.print(attribute);
+    }
+
+    private void printAttribute(int attribute) {
+        SHELL.print(NumberFormat.getInstance().format(attribute));
     }
 
     private void setModeSwitchThreshold() {

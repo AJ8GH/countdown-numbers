@@ -18,12 +18,10 @@ import java.util.function.IntPredicate;
 
 import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE;
-    private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
 
@@ -33,7 +31,6 @@ public class Generator {
     private final AtomicInteger attempts = new AtomicInteger(1);
 
     private Queue<Integer> largeNumbers;
-    private CalculationMode mode = DEFAULT_MODE;
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = Set.of(DEFAULT_FILTER);
     private Calculation target;
@@ -48,12 +45,12 @@ public class Generator {
     public Calculation generate(int numberOfLarge) {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
-        var newTarget = calculator.calculate(numbers, mode);
+        var newTarget = calculator.calculate(numbers);
         while (!filter.test(newTarget.getResult())) {
             attempts.incrementAndGet();
             setUp();
             numbers = generateQuestionNumbers(numberOfLarge);
-            newTarget = calculator.calculate(numbers, mode);
+            newTarget = calculator.calculate(numbers);
         }
         questionNumbers.add(newTarget.getResult());
         timer.stop();
@@ -110,11 +107,11 @@ public class Generator {
     }
 
     public CalculationMode getMode() {
-        return mode;
+        return calculator.getMode();
     }
 
     public void setMode(CalculationMode mode) {
-        this.mode = mode;
+        calculator.setMode(mode);
     }
 
     public void setTimeScale(int timeScale) {

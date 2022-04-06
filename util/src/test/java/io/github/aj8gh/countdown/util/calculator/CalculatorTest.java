@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CalculatorTest {
+class CalculatorTest {
     private Calculator calculator;
 
     @BeforeEach
@@ -17,8 +17,13 @@ public class CalculatorTest {
 
     @Test
     void calculate() {
-        var input = List.of(1, 2, 3, 4, 5, 6, 100);
+        var target = 100;
+        var input = List.of(1, 2, 3, 4, 5, 6, target);
+
         var result = calculator.calculate(input);
+        while (result.getResult() != target) {
+            result = calculator.calculate(input);
+        }
 
         assertEquals(100, result.getResult());
     }

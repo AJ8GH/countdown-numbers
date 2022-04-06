@@ -64,4 +64,8 @@ public class Shell {
                 solver.getMode()
         );
     }
+
+    void print(String message) {
+        OUT.println(message);
+    }
 }
