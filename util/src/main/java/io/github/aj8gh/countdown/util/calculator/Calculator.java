@@ -101,7 +101,7 @@ public class Calculator {
     }
 
     private boolean takeFromInput(int i, List<Calculation> inputs) {
-        if (i == 0 || (i < inputs.size() - 1)) return true;
+        if (i == 0 || (6 - i <= inputs.size() - 1)) return true;
         if (mode.equals(MIXED)) return RANDOM.nextBoolean();
         return mode.equals(RUNNING);
     }

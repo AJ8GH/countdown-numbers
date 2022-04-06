@@ -33,17 +33,9 @@ public class SimpleSolver implements Solver {
     public void solve(List<Integer> question) {
         timer.start();
         if (isCached(question)) return;
-        int target = question.get(question.size() - 1);
-        Calculation calculation = calculator.calculateSolution(new ArrayList<>(question));
-        while (calculation.getResult() != target) {
-            calculation = calculator.calculateSolution(new ArrayList<>(question));
-            if (attempts.incrementAndGet() % modeSwitchThreshold == 0) {
-                switchMode();
-            }
-        }
-        this.solution = calculation;
-        timer.stop();
+        this.solution = calculateTarget(question);
         cache.put(question, solution);
+        timer.stop();
     }
 
     @Override
@@ -105,6 +97,16 @@ public class SimpleSolver implements Solver {
         }
     }
 
+    private Calculation calculateTarget(List<Integer> question) {
+        int target = question.get(question.size() - 1);
+        Calculation calculation = calculator.calculateSolution(new ArrayList<>(question));
+        while (calculation.getResult() != target) {
+            calculation = calculator.calculateSolution(new ArrayList<>(question));
+            if (isSwitchThresholdBreached()) switchMode();
+        }
+        return calculation;
+    }
+
     private boolean isCached(List<Integer> question) {
         var cachedSolution = cache.get(question);
         if (cachedSolution != null) {
@@ -113,5 +115,9 @@ public class SimpleSolver implements Solver {
             return true;
         }
         return false;
+    }
+
+    private boolean isSwitchThresholdBreached() {
+        return attempts.incrementAndGet() % modeSwitchThreshold == 0;
     }
 }

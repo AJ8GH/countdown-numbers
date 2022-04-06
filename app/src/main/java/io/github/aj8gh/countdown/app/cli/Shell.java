@@ -37,7 +37,8 @@ public class Shell {
                         Attempts:     %s
                         Time:         %s ms
                         Mode:         %s
-                        ============================================================================""",
+                        ============================================================================
+                        """,
                 formattedNumbers,
                 generator.getTarget(),
                 generator.getTarget().getResult(),
@@ -56,7 +57,8 @@ public class Shell {
                         Attempts:     %s
                         Time:         %s ms
                         Mode:         %s
-                        ============================================================================""",
+                        ============================================================================
+                        """,
                 solver.getSolution(),
                 solver.getSolution().getResult(),
                 solver.getAttempts(),
