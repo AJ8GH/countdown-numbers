@@ -99,7 +99,7 @@ public class SimpleSolver implements Solver {
     private Calculation calculateTarget(List<Integer> question) {
         int target = question.get(question.size() - 1);
         Calculation calculation = calculator.calculateSolution(new ArrayList<>(question));
-        while (calculation.getResult() != target) {
+        while (calculation.getValue() != target) {
             calculation = calculator.calculateSolution(new ArrayList<>(question));
             if (isSwitchThresholdBreached()) switchMode();
         }
