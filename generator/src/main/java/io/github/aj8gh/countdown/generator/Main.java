@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.generator;
 
-import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
 import io.github.aj8gh.countdown.util.serialisation.Deserializer;
 import io.github.aj8gh.countdown.util.serialisation.Serializer;
 import io.github.aj8gh.countdown.util.timer.Timer;
@@ -9,18 +9,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static io.github.aj8gh.countdown.util.calculator.CalculationMode.SEQUENTIAL;
-import static io.github.aj8gh.countdown.util.calculator.CalculationMode;
-
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
 
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final int WARM_UPS = 50;
-    private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
+    private static final CalculatorImpl.CalculationMode DEFAULT_MODE = SEQUENTIAL;
 
     private static final Deserializer DESERIALIZER = new Deserializer();
     private static final Serializer SERIALIZER = new Serializer();
-    private static final Generator GENERATOR = new Generator(new Calculator(), new Timer(), WARM_UPS);
+    private static final Generator GENERATOR = new Generator(new CalculatorImpl(), new Timer(), WARM_UPS);
 
     static {
         GENERATOR.setMode(DEFAULT_MODE);

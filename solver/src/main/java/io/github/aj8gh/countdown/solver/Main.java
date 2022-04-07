@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.solver;
 
 import io.github.aj8gh.countdown.generator.Generator;
-import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
 import io.github.aj8gh.countdown.util.serialisation.Deserializer;
 import io.github.aj8gh.countdown.util.serialisation.Serializer;
 import io.github.aj8gh.countdown.util.timer.Timer;
@@ -17,8 +17,8 @@ public class Main {
 
     private static final Deserializer DESERIALIZER = new Deserializer();
     private static final Serializer SERIALIZER = new Serializer();
-    private static final Generator GENERATOR = new Generator(new Calculator(), new Timer(), WARM_UPS);
-    private static final Solver SOLVER = new SimpleSolver(new Calculator(), new SolutionCache(), new Timer());
+    private static final Generator GENERATOR = new Generator(new CalculatorImpl(), new Timer(), WARM_UPS);
+    private static final Solver SOLVER = new SimpleSolver();
 
     public static void main(String... args) {
         var input = readFromFile(args);

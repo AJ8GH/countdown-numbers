@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.generator;
 
 import io.github.aj8gh.countdown.util.calculator.Calculation;
-import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
@@ -10,14 +10,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
 import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl.CalculationMode;
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
@@ -25,7 +24,7 @@ public class Generator {
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
 
-    private final Calculator calculator;
+    private final CalculatorImpl calculatorImpl;
     private final Timer timer;
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final AtomicInteger attempts = new AtomicInteger(1);
@@ -35,8 +34,8 @@ public class Generator {
     private Set<IntPredicate> filters = Set.of(DEFAULT_FILTER);
     private Calculation target;
 
-    public Generator(Calculator calculator, Timer timer, int warmUps) {
-        this.calculator = calculator;
+    public Generator(CalculatorImpl calculatorImpl, Timer timer, int warmUps) {
+        this.calculatorImpl = calculatorImpl;
         this.timer = timer;
         setUp();
         warmUp(warmUps);
@@ -45,27 +44,23 @@ public class Generator {
     public Calculation generate(int numberOfLarge) {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
-        var newTarget = calculator.calculate(numbers);
-        while (!filter.test(newTarget.getResult())) {
+        var newTarget = calculatorImpl.calculate(numbers);
+        while (!filter.test(newTarget.getValue())) {
             attempts.incrementAndGet();
             setUp();
             numbers = generateQuestionNumbers(numberOfLarge);
-            newTarget = calculator.calculate(numbers);
+            newTarget = calculatorImpl.calculate(numbers);
         }
-        questionNumbers.add(newTarget.getResult());
-        timer.stop();
+        questionNumbers.add(newTarget.getValue());
         this.target = newTarget;
+        timer.stop();
         return target;
     }
 
     public List<Integer> generateQuestionNumbers(int numberOfLarge) {
         int numberOfSmall = TOTAL_NUMBERS - numberOfLarge;
         for (int i = 0; i < numberOfLarge; i++) {
-            try {
-                questionNumbers.add(largeNumbers.remove());
-            } catch (NoSuchElementException e) {
-                e.printStackTrace();
-            }
+            questionNumbers.add(largeNumbers.remove());
         }
         for (int i = 0; i < numberOfSmall; i++) {
             questionNumbers.add(RANDOM.nextInt(10) + 1);
@@ -107,11 +102,11 @@ public class Generator {
     }
 
     public CalculationMode getMode() {
-        return calculator.getMode();
+        return calculatorImpl.getMode();
     }
 
     public void setMode(CalculationMode mode) {
-        calculator.setMode(mode);
+        calculatorImpl.setMode(mode);
     }
 
     public void setTimeScale(int timeScale) {

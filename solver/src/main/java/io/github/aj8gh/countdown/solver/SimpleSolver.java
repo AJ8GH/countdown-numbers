@@ -2,37 +2,45 @@ package io.github.aj8gh.countdown.solver;
 
 import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
+import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
+import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
+import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl.CalculationMode;
 
 public class SimpleSolver implements Solver {
-    private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 500;
+    private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 5_000_000;
+    private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
 
-    private final Calculator calculator;
-    private final SolutionCache cache;
-    private final Timer timer;
+    private final SolutionCache cache = new SolutionCache();
+    private final Timer timer = new Timer();
     private final AtomicInteger attempts = new AtomicInteger(1);
+    private final Map<CalculationMode, Calculator> calculators = Map.of(
+            SEQUENTIAL, new SequentialCalculator(),
+            INTERMEDIATE, new IntermediateCalculator(),
+            RECURSIVE, new RecursiveCalculator(),
+            MIXED, new CalculatorImpl()
+    );
 
+    private Calculator calculator = calculators.get(DEFAULT_MODE);
     private Calculation solution;
     private int modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
-
-    public SimpleSolver(Calculator calculator, SolutionCache cache, Timer timer) {
-        this.calculator = calculator;
-        this.cache = cache;
-        this.timer = timer;
-    }
 
     @Override
     public void solve(List<Integer> question) {
         timer.start();
         if (isCached(question)) return;
-        this.solution = calculateTarget(question);
+        this.solution = calculate(question);
         cache.put(question, solution);
         timer.stop();
     }
@@ -54,13 +62,13 @@ public class SimpleSolver implements Solver {
     }
 
     @Override
-    public Calculator.CalculationMode getMode() {
+    public CalculatorImpl.CalculationMode getMode() {
         return calculator.getMode();
     }
 
     @Override
-    public void setMode(Calculator.CalculationMode mode) {
-        calculator.setMode(mode);
+    public void setMode(CalculationMode mode) {
+        this.calculator = calculators.get(mode);
     }
 
     @Override
@@ -88,19 +96,11 @@ public class SimpleSolver implements Solver {
         timer.setTimescale(timeScale);
     }
 
-    private void switchMode() {
-        switch (calculator.getMode()) {
-            case INTERMEDIATE -> calculator.setMode(SEQUENTIAL); // temporary hack while MIXED mode is broken
-            case SEQUENTIAL -> calculator.setMode(INTERMEDIATE);
-            case MIXED -> calculator.setMode(SEQUENTIAL);
-        }
-    }
-
-    private Calculation calculateTarget(List<Integer> question) {
+    private Calculation calculate(List<Integer> question) {
         int target = question.get(question.size() - 1);
-        Calculation calculation = calculator.calculateSolution(new ArrayList<>(question));
-        while (calculation.getResult() != target) {
-            calculation = calculator.calculateSolution(new ArrayList<>(question));
+        Calculation calculation = calculator.calculate(question);
+        while (calculation.getValue() != target) {
+            calculation = calculator.calculate(question);
             if (isSwitchThresholdBreached()) switchMode();
         }
         return calculation;
@@ -118,5 +118,12 @@ public class SimpleSolver implements Solver {
 
     private boolean isSwitchThresholdBreached() {
         return attempts.incrementAndGet() % modeSwitchThreshold == 0;
+    }
+
+    private void switchMode() {
+        switch (calculator.getMode()) {
+            case INTERMEDIATE -> this.calculator = calculators.get(SEQUENTIAL);
+            case SEQUENTIAL -> this.calculator = calculators.get(INTERMEDIATE);
+        }
     }
 }

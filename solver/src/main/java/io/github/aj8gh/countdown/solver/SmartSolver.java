@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.solver;
 
 import io.github.aj8gh.countdown.util.calculator.Calculation;
-import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
 import io.github.aj8gh.countdown.util.timer.Timer;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SmartSolver implements Solver {
     private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 500;
 
-    private final Calculator calculator;
+    private final CalculatorImpl calculatorImpl;
     private final Timer timer;
     private final AtomicInteger attempts = new AtomicInteger(1);
 
@@ -18,8 +18,8 @@ public class SmartSolver implements Solver {
     private List<Integer> questionNumbers;
     private int modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
 
-    public SmartSolver(Calculator calculator, Timer timer) {
-        this.calculator = calculator;
+    public SmartSolver(CalculatorImpl calculatorImpl, Timer timer) {
+        this.calculatorImpl = calculatorImpl;
         this.timer = timer;
     }
 
@@ -67,13 +67,13 @@ public class SmartSolver implements Solver {
     }
 
     @Override
-    public Calculator.CalculationMode getMode() {
-        return calculator.getMode();
+    public CalculatorImpl.CalculationMode getMode() {
+        return calculatorImpl.getMode();
     }
 
     @Override
-    public void setMode(Calculator.CalculationMode mode) {
-        calculator.setMode(mode);
+    public void setMode(CalculatorImpl.CalculationMode mode) {
+        calculatorImpl.setMode(mode);
     }
 
     @Override

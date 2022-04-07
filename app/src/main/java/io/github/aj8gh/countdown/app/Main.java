@@ -3,14 +3,13 @@ package io.github.aj8gh.countdown.app;
 import io.github.aj8gh.countdown.app.cli.CountdownApp;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.SimpleSolver;
-import io.github.aj8gh.countdown.solver.SolutionCache;
 import io.github.aj8gh.countdown.solver.Solver;
-import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
 import io.github.aj8gh.countdown.util.timer.Timer;
 
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl.CalculationMode;
 
 public class Main {
     private static final CalculationMode SOLVE_MODE = SEQUENTIAL;
@@ -18,9 +17,8 @@ public class Main {
     private static final int MODE_SWITCH_THRESHOLD = 20_000;
     private static final int WARM_UPS = 20;
 
-    private static final Generator GENERATOR = new Generator(new Calculator(), new Timer(), 5);
-    private static final Solver SOLVER = new SimpleSolver(
-            new Calculator(), new SolutionCache(), new Timer());
+    private static final Generator GENERATOR = new Generator(new CalculatorImpl(), new Timer(), 5);
+    private static final Solver SOLVER = new SimpleSolver();
     private static final CountdownApp APP = new CountdownApp(GENERATOR, SOLVER);
 
     static {

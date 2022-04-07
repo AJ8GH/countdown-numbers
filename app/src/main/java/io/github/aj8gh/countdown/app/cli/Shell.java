@@ -2,6 +2,7 @@ package io.github.aj8gh.countdown.app.cli;
 
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.Solver;
+import io.github.aj8gh.countdown.util.serialisation.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ public class Shell {
     private static final String PROMPT = "\n>> Ready for input...\n>> ";
 
     private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
+    private static final Serializer SERIALIZER = new Serializer();
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final PrintStream OUT = System.out;
 
@@ -26,6 +28,8 @@ public class Shell {
     }
 
     void logGenerator(Generator generator) {
+        SERIALIZER.serializeGenerator(generator.getTarget().getSolution(),
+                generator.getTarget().getValue(), generator.getTime());
         var formattedNumbers = generator.getQuestionNumbers()
                 .toString().replaceAll("[^\\d\s]", "");
         OUT.printf("""
@@ -41,7 +45,7 @@ public class Shell {
                         """,
                 formattedNumbers,
                 generator.getTarget(),
-                generator.getTarget().getResult(),
+                generator.getTarget().getValue(),
                 generator.getAttempts(),
                 generator.getTime(),
                 generator.getMode()
@@ -49,6 +53,7 @@ public class Shell {
     }
 
     void logSolver(Solver solver) {
+        SERIALIZER.serializeSolver(solver.getSolution().getSolution(), solver.getTime());
         OUT.printf("""
                         
                         ============================================================================
@@ -60,7 +65,7 @@ public class Shell {
                         ============================================================================
                         """,
                 solver.getSolution(),
-                solver.getSolution().getResult(),
+                solver.getSolution().getValue(),
                 solver.getAttempts(),
                 solver.getTime(),
                 solver.getMode()
