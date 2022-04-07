@@ -26,3 +26,4 @@ notes.md
 *.pyc
 *.pyo
 target
+**/input-output

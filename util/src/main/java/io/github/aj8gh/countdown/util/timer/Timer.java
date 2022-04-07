@@ -2,15 +2,12 @@ package io.github.aj8gh.countdown.util.timer;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Timer {
-    private static final Clock CLOCK = Clock.systemUTC();
-    private static final double MILLIS_IN_SECOND = 1000;
     private static final double NANOS_IN_MILLI = 1_000_000;
-    private static final int DEFAULT_TIMESCALE = 6;
+    private static final int DEFAULT_TIMESCALE = 4;
 
     private final List<Double> times = new ArrayList<>();
     private int timescale = DEFAULT_TIMESCALE;
@@ -46,10 +43,7 @@ public class Timer {
     }
 
     private double getCurrentTime() {
-        var currentTime = CLOCK.instant();
-        var second = currentTime.getEpochSecond();
-        var nano = currentTime.getNano();
-        return (second * MILLIS_IN_SECOND) + (nano / NANOS_IN_MILLI);
+        return System.nanoTime() / NANOS_IN_MILLI;
     }
 
     private double format(double time) {

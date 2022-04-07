@@ -1,40 +1,71 @@
 package io.github.aj8gh.countdown.solver;
 
-import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.timer.Timer;
 import io.github.aj8gh.countdown.generator.Generator;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.serialisation.Deserializer;
+import io.github.aj8gh.countdown.util.serialisation.Serializer;
+import io.github.aj8gh.countdown.util.timer.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final int WARM_UPS = 20;
-    private static final Calculator CALCULATOR = new Calculator();
-    private static final Generator GENERATOR = new Generator(CALCULATOR, new Timer(), WARM_UPS);
-    private static final Solver SOLVER = new SimpleSolver(CALCULATOR, new SolutionCache(), new Timer());
 
-    static {
+    private static final Deserializer DESERIALIZER = new Deserializer();
+    private static final Serializer SERIALIZER = new Serializer();
+    private static final Generator GENERATOR = new Generator(new Calculator(), new Timer(), WARM_UPS);
+    private static final Solver SOLVER = new SimpleSolver(new Calculator(), new SolutionCache(), new Timer());
+
+    public static void main(String... args) {
+        var input = readFromFile(args);
         warmUp();
+        SOLVER.solve(input);
+        writeToFile();
+        logSolver();
     }
 
-    public static void main(String[] args) {
-        try {
-            var numbers = Arrays.stream(args).map(Integer::parseInt).toList();
-            SOLVER.solve(numbers);
-            LOG.info("{}", SOLVER);
-        } catch (Exception e) {
-            LOG.error("Error processing {}", Arrays.asList(args));
-        }
+    private static List<Integer> readFromFile(String... args) {
+        LOG.info("*** Reading From sol.in ***");
+        var file = args.length == 0 ? null : args[0];
+        return DESERIALIZER.forSolver(file);
+    }
+
+    private static void writeToFile() {
+        LOG.info("*** Writing To sol.out ***");
+        SERIALIZER.serializeSolver(SOLVER.getSolution().getRpn(), SOLVER.getTime());
     }
 
     private static void warmUp() {
         for (int i = 0; i < WARM_UPS; i++) {
-            SOLVER.solve(GENERATOR.generateQuestionNumbers(ThreadLocalRandom.current().nextInt(5)));
+            GENERATOR.generate(ThreadLocalRandom.current().nextInt(5));
+            SOLVER.solve(GENERATOR.getQuestionNumbers());
             SOLVER.reset();
             GENERATOR.reset();
         }
+    }
+
+    private static void logSolver() {
+        LOG.info("""
+                        
+                        ============================================================================
+                        SOLVER
+                        Solution:     {} = {}
+                        RPN:          {}
+                        Attempts:     {}
+                        Time:         {} ms
+                        Mode:         {}
+                        ============================================================================
+                        """,
+                SOLVER.getSolution(),
+                SOLVER.getSolution().getValue(),
+                SOLVER.getSolution().getRpn(),
+                SOLVER.getAttempts(),
+                SOLVER.getTime(),
+                SOLVER.getMode()
+        );
     }
 }
