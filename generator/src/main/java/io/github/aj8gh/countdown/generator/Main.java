@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static io.github.aj8gh.countdown.util.calculator.CalculationMode.SEQUENTIAL;
-import static io.github.aj8gh.countdown.util.calculator.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 
 public class Main {

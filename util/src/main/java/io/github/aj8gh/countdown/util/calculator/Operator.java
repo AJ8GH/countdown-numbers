@@ -20,6 +20,10 @@ public enum Operator {
         return op.applyAsInt(left, right);
     }
 
+    public String symbol() {
+        return symbol;
+    }
+
     @Override
     public String toString() {
         return " " + symbol + " ";

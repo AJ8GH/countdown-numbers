@@ -46,13 +46,13 @@ public class Generator {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
         var newTarget = calculator.calculate(numbers);
-        while (!filter.test(newTarget.getResult())) {
+        while (!filter.test(newTarget.getValue())) {
             attempts.incrementAndGet();
             setUp();
             numbers = generateQuestionNumbers(numberOfLarge);
             newTarget = calculator.calculate(numbers);
         }
-        questionNumbers.add(newTarget.getResult());
+        questionNumbers.add(newTarget.getValue());
         timer.stop();
         this.target = newTarget;
         return target;

@@ -56,7 +56,7 @@ public class Calculator {
         shuffle(calculations);
         var x = calculations.get(0);
         for (int i = 1; i < calculations.size(); i++) {
-            if (target > 0 && x.getResult() == target) return x;
+            if (target > 0 && x.getValue() == target) return x;
             x = calculate(x, calculations.get(i));
         }
         return x;
@@ -73,7 +73,7 @@ public class Calculator {
             Calculation y = (takeFromInput(i, inputs)) ? inputs.get(++i) :
                     results.remove(RANDOM.nextInt(results.size()));
             Calculation result = calculate(x, y);
-            if (target > 0 && result.getResult() == target) return result;
+            if (target > 0 && result.getValue() == target) return result;
             results.add(result);
         }
         return results.size() == 1 ? results.get(0) : calculateTarget(results);
@@ -82,17 +82,17 @@ public class Calculator {
     private Calculation calculate(Calculation x, Calculation y) {
         Calculation result = null;
         while (result == null) {
-            result = getResult(getOperator(), x, y);
+            result = getValue(getOperator(), x, y);
         }
         return result;
     }
 
-    private Calculation getResult(Operator operator, Calculation x, Calculation y) {
-        if (operator.apply(x.getResult(), y.getResult()) == 0) return null;
+    private Calculation getValue(Operator operator, Calculation x, Calculation y) {
+        if (operator.apply(x.getValue(), y.getValue()) == 0) return null;
         if (operator.equals(DIVIDE)) {
-            if (x.getResult() % y.getResult() == 0) {
+            if (x.getValue() % y.getValue() == 0) {
                 return x.calculate(operator, y);
-            } else if (y.getResult() % x.getResult() == 0) {
+            } else if (y.getValue() % x.getValue() == 0) {
                 return y.calculate(operator, y);
             }
             return null;
