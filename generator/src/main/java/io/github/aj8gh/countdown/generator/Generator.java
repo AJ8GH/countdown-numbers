@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.generator;
 
-import io.github.aj8gh.countdown.util.calculator.Calculation;
+import io.github.aj8gh.countdown.util.calculator.calculation.CalculationImpl;
 import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
@@ -32,7 +32,7 @@ public class Generator {
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = Set.of(DEFAULT_FILTER);
-    private Calculation target;
+    private CalculationImpl target;
 
     public Generator(CalculatorImpl calculatorImpl, Timer timer, int warmUps) {
         this.calculatorImpl = calculatorImpl;
@@ -41,7 +41,7 @@ public class Generator {
         warmUp(warmUps);
     }
 
-    public Calculation generate(int numberOfLarge) {
+    public CalculationImpl generate(int numberOfLarge) {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
         var newTarget = calculatorImpl.calculate(numbers);
@@ -89,7 +89,7 @@ public class Generator {
         return new ArrayList<>(questionNumbers);
     }
 
-    public Calculation getTarget() {
+    public CalculationImpl getTarget() {
         return target;
     }
 

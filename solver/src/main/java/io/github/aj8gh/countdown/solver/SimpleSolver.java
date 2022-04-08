@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.solver;
 
-import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
 import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
@@ -62,7 +62,7 @@ public class SimpleSolver implements Solver {
     }
 
     @Override
-    public CalculatorImpl.CalculationMode getMode() {
+    public CalculationMode getMode() {
         return calculator.getMode();
     }
 
@@ -124,6 +124,7 @@ public class SimpleSolver implements Solver {
         switch (calculator.getMode()) {
             case INTERMEDIATE -> this.calculator = calculators.get(SEQUENTIAL);
             case SEQUENTIAL -> this.calculator = calculators.get(INTERMEDIATE);
+            default -> this.calculator = calculators.get(INTERMEDIATE);
         }
     }
 }

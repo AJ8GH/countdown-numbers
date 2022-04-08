@@ -22,14 +22,14 @@ public class RpnConverter {
             .collect(toSet());
 
     private final Deque<String> dequeue = new ArrayDeque<>();
-    private final List<String> rpn = new LinkedList<>();
+    private final List<String> rpnBuilder = new LinkedList<>();
 
     public String convert(String solution) {
         for (String element : getElements(solution)) {
             convertElement(element);
         }
         addRemainingOperators();
-        return String.join(COMMA, rpn);
+        return buildAndClear();
     }
 
     private String[] getElements(String input) {
@@ -45,7 +45,7 @@ public class RpnConverter {
         } else if (isRightParenthesis(element)) {
             addUntilLeftParenthesis();
         } else {
-            rpn.add(element);
+            rpnBuilder.add(element);
         }
     }
 
@@ -63,7 +63,7 @@ public class RpnConverter {
 
     private void addUntilLeftParenthesis() {
         while (isNotLeftParenthesisNext()) {
-            rpn.add(dequeue.pop());
+            rpnBuilder.add(dequeue.pop());
         }
         dequeue.pop();
     }
@@ -74,7 +74,14 @@ public class RpnConverter {
 
     private void addRemainingOperators() {
         while (!dequeue.isEmpty()) {
-            rpn.add(dequeue.pop());
+            rpnBuilder.add(dequeue.pop());
         }
+    }
+
+    private String buildAndClear() {
+        var rpn = String.join(COMMA, rpnBuilder);
+        dequeue.clear();
+        rpnBuilder.clear();
+        return rpn;
     }
 }

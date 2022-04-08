@@ -32,7 +32,9 @@ public class Serializer {
 
     public void createSolverInput(List<Integer> question) {
         var target = question.remove(question.size() - 1);
-        var numberString = String.join(COMMA, question.stream().map(String::valueOf).toList());
+        var numberString = String.join(COMMA, question.stream()
+                .map(String::valueOf)
+                .toList());
         var data = numberString + COLON + target;
         serialize(SOL_IN_HANDLE, data);
     }

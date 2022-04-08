@@ -18,8 +18,8 @@ public enum Operator {
         this.commutative = commutative;
     }
 
-    public int apply(int x, int y) {
-        return op.applyAsInt(x, y);
+    public int apply(int first, int second) {
+        return op.applyAsInt(first, second);
     }
 
     public String symbol() {

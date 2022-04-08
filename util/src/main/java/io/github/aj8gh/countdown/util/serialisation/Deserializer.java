@@ -35,7 +35,8 @@ public class Deserializer {
         try (var reader = new Scanner(new FileReader(file))) {
             var line = reader.nextLine();
             var questionAndTarget = line.split(COLON);
-            var question = new ArrayList<>(Arrays.stream(questionAndTarget[0].split(COMMA))
+            var question = new ArrayList<>(Arrays
+                    .stream(questionAndTarget[0].split(COMMA))
                     .map(Integer::valueOf)
                     .toList());
             question.add(Integer.valueOf(questionAndTarget[1]));

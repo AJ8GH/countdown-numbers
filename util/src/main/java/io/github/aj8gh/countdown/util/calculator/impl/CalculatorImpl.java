@@ -1,8 +1,9 @@
 package io.github.aj8gh.countdown.util.calculator.impl;
 
-import io.github.aj8gh.countdown.util.calculator.Calculation;
+import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.calculator.Operator;
+import io.github.aj8gh.countdown.util.calculator.calculation.CalculationImpl;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
 import java.util.ArrayList;
@@ -21,10 +22,10 @@ public class CalculatorImpl implements Calculator {
 
     private CalculationMode mode = DEFAULT_MODE;
 
+    @Override
     public Calculation calculate(List<Integer> numbers) {
-
-        List<Calculation> calculations = numbers.stream()
-                .map(Calculation::new)
+        List<? extends Calculation> calculations = numbers.stream()
+                .map(CalculationImpl::new)
                 .toList();
         if (mode.equals(SEQUENTIAL)) {
             return calculateRunning(calculations, 0);
@@ -32,17 +33,7 @@ public class CalculatorImpl implements Calculator {
         return calculateTarget(calculations);
     }
 
-    public Calculation calculateSolution(List<Integer> numbers) {
-        int target = numbers.remove(numbers.size() - 1);
-        List<Calculation> calculations = numbers.stream()
-                .map(Calculation::new)
-                .toList();
-
-        return mode.equals(SEQUENTIAL) ?
-                calculateRunning(calculations, target) :
-                calculateTarget(calculations, target);
-    }
-
+    @Override
     public CalculationMode getMode() {
         return mode;
     }
@@ -51,7 +42,19 @@ public class CalculatorImpl implements Calculator {
         this.mode = mode;
     }
 
-    private Calculation calculateRunning(List<Calculation> calculations, int target) {
+    public Calculation calculateSolution(List<Integer> numbers) {
+        numbers = new ArrayList<>(numbers);
+        int target = numbers.remove(numbers.size() - 1);
+        List<? extends Calculation> calculations = numbers.stream()
+                .map(CalculationImpl::new)
+                .toList();
+
+        return mode.equals(SEQUENTIAL) ?
+                calculateRunning(calculations, target) :
+                calculateTarget(calculations, target);
+    }
+
+    private Calculation calculateRunning(List<? extends Calculation> calculations, int target) {
         calculations = new ArrayList<>(calculations);
         shuffle(calculations);
         var x = calculations.get(0);
@@ -62,11 +65,11 @@ public class CalculatorImpl implements Calculator {
         return x;
     }
 
-    private Calculation calculateTarget(List<Calculation> inputs) {
+    private Calculation calculateTarget(List<? extends Calculation> inputs) {
         return calculateTarget(inputs, 0);
     }
 
-    private Calculation calculateTarget(List<Calculation> inputs, int target) {
+    private Calculation calculateTarget(List<? extends Calculation> inputs, int target) {
         List<Calculation> results = new ArrayList<>();
         for (int i = 0; i < inputs.size(); i++) {
             Calculation x = inputs.get(i);
@@ -91,16 +94,16 @@ public class CalculatorImpl implements Calculator {
         if (operator.apply(x.getValue(), y.getValue()) == 0) return null;
         if (operator.equals(DIVIDE)) {
             if (x.getValue() % y.getValue() == 0) {
-                return Calculation.calculate(x, operator, y);
+                return x.calculate(operator, y);
             } else if (y.getValue() % x.getValue() == 0) {
-                return Calculation.calculate(y, operator, x);
+                return y.calculate(operator, y);
             }
             return null;
         }
-        return Calculation.calculate(x, operator, y);
+        return x.calculate(operator, y);
     }
 
-    private boolean takeFromInput(int i, List<Calculation> inputs) {
+    private boolean takeFromInput(int i, List<? extends Calculation> inputs) {
         if (i == 0 || (6 - i <= inputs.size() - 1)) return true;
         if (mode.equals(MIXED)) return RANDOM.nextBoolean();
         return mode.equals(SEQUENTIAL);
