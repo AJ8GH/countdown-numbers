@@ -41,7 +41,7 @@ public class Shell {
                         """,
                 formattedNumbers,
                 generator.getTarget(),
-                generator.getTarget().getResult(),
+                generator.getTarget().getValue(),
                 generator.getAttempts(),
                 generator.getTime(),
                 generator.getMode()
@@ -60,7 +60,7 @@ public class Shell {
                         ============================================================================
                         """,
                 solver.getSolution(),
-                solver.getSolution().getResult(),
+                solver.getSolution().getValue(),
                 solver.getAttempts(),
                 solver.getTime(),
                 solver.getMode()

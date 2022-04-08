@@ -93,7 +93,7 @@ public class Calculator {
             if (x.getValue() % y.getValue() == 0) {
                 return x.calculate(operator, y);
             } else if (y.getValue() % x.getValue() == 0) {
-                return y.calculate(operator, y);
+                return y.calculate(operator, x);
             }
             return null;
         }
