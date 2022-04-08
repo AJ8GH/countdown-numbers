@@ -91,13 +91,13 @@ public class CalculatorImpl implements Calculator {
         if (operator.apply(x.getValue(), y.getValue()) == 0) return null;
         if (operator.equals(DIVIDE)) {
             if (x.getValue() % y.getValue() == 0) {
-                return x.calculate(operator, y);
+                return Calculation.calculate(x, operator, y);
             } else if (y.getValue() % x.getValue() == 0) {
-                return y.calculate(operator, y);
+                return Calculation.calculate(y, operator, x);
             }
             return null;
         }
-        return x.calculate(operator, y);
+        return Calculation.calculate(x, operator, y);
     }
 
     private boolean takeFromInput(int i, List<Calculation> inputs) {

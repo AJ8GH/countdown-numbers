@@ -12,7 +12,7 @@ import java.util.List;
 public class Serializer {
     private static final Logger LOG = LoggerFactory.getLogger(Serializer.class);
 
-    private static final String IO_DIR = "./io/";
+    private static final String IO_DIR = "./input-output/";
     private static final String GEN_OUT_HANDLE = IO_DIR + "gen.out";
     private static final String SOL_OUT_HANDLE = IO_DIR + "sol.out";
     private static final String SOL_IN_HANDLE = IO_DIR + "sol.in";

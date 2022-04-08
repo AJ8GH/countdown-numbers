@@ -3,21 +3,30 @@ package io.github.aj8gh.countdown.util.calculator;
 import io.github.aj8gh.countdown.util.serialisation.RpnConverter;
 
 public class Calculation implements Comparable<Calculation> {
+    private static final String LEFT_PARENTHESIS = "(";
+    private static final String RIGHT_PARENTHESIS = ")";
     private static final RpnConverter RPN_CONVERTER = new RpnConverter();
 
     private StringBuilder solution;
     private int value;
     private String rpn;
 
-    public Calculation(int x) {
-        this.value = x;
-        this.solution = new StringBuilder(String.valueOf(x));
+    public static Calculation calculate(int first, Operator operator, Calculation second) {
+        var calculation = new Calculation(first);
+        return calculation.calculate(operator, second);
     }
 
-    public Calculation calculate(Operator operator, Calculation calculation) {
-        this.value = operator.apply(value, calculation.value);
-        this.solution = buildSolution(operator, calculation);
-        return this;
+    public static Calculation calculate(int first, Operator operator, int second) {
+        var calculation = new Calculation(first);
+        return calculation.calculate(operator, second);
+    }
+
+    public static Calculation calculate(Calculation first, Operator operator, int second) {
+        return first.calculate(operator, second);
+    }
+
+    public static Calculation calculate(Calculation first, Operator operator, Calculation second) {
+        return first.calculate(operator, second);
     }
 
     public int getValue() {
@@ -45,11 +54,29 @@ public class Calculation implements Comparable<Calculation> {
         return Integer.compare(value, other.getValue());
     }
 
-    private StringBuilder buildSolution(Operator op, Calculation calc) {
-        return new StringBuilder("(")
+    private Calculation(int x) {
+        this.value = x;
+        this.solution = new StringBuilder(String.valueOf(x));
+    }
+
+    private Calculation calculate(Operator operator, Calculation calculation) {
+        this.value = operator.apply(value, calculation.value);
+        this.solution = buildSolution(operator, calculation.toString());
+        return this;
+    }
+
+    private Calculation calculate(Operator operator, int number) {
+        this.value = operator.apply(value, number);
+        this.solution = buildSolution(operator, String.valueOf(number));
+        return this;
+    }
+
+
+    private StringBuilder buildSolution(Operator op, String calc) {
+        return new StringBuilder(LEFT_PARENTHESIS)
                 .append(this)
                 .append(op)
                 .append(calc)
-                .append(")");
+                .append(RIGHT_PARENTHESIS);
     }
 }
