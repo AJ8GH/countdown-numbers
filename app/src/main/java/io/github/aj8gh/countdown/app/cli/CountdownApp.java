@@ -31,6 +31,7 @@ public class CountdownApp {
     private static final String ARG_DELIMITER = " ";
     private static final int MIN_LARGE = 0;
     private static final int MAX_LARGE = 4;
+    private static final int WARM_UPS = 20;
 
     private final Generator generator;
     private final Solver solver;
@@ -119,6 +120,7 @@ public class CountdownApp {
         args.stream().map(Integer::parseInt)
                 .forEach(number -> {
                     validateGeneratorInput(number);
+                    warmUpGenerator();
                     generator.generate(number);
                     SHELL.logGenerator(generator);
                     generator.reset();
@@ -127,6 +129,7 @@ public class CountdownApp {
 
     private void solve() {
         validateSolverInput();
+        warmUpSolver();
         solver.solve(args.stream().map(Integer::parseInt).toList());
         SHELL.logSolver(solver);
         solver.reset();
@@ -135,8 +138,10 @@ public class CountdownApp {
     private void generateToSolve() {
         args.stream().map(Integer::parseInt).forEach(number -> {
             validateGeneratorInput(number);
+            warmUpGenerator();
             generator.generate(number);
             SHELL.logGenerator(generator);
+            warmUpSolver();
             solver.solve(generator.getQuestionNumbers());
             SHELL.logSolver(solver);
             reset();
@@ -171,5 +176,20 @@ public class CountdownApp {
     private void reset() {
         generator.reset();
         solver.reset();
+    }
+
+    private void warmUpGenerator() {
+        for (int i = 0; i < WARM_UPS; i++) {
+            generator.generate(i % 5);
+            generator.reset();
+        }
+    }
+
+    private void warmUpSolver() {
+        for (int i = 0; i < WARM_UPS; i++) {
+            generator.generate(i % 5);
+            solver.solve(generator.getQuestionNumbers());
+            reset();
+        }
     }
 }

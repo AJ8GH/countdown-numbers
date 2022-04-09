@@ -32,16 +32,18 @@ public class Shell {
                         
                         ============================================================================
                         GENERATOR
-                        Question:     %s
-                        Method:       %s = %s
-                        Attempts:     %s
-                        Time:         %s ms
-                        Mode:         %s
+                        Question:       %s
+                        Method:         %s = %s
+                        RPN:            %s
+                        Attempts:       %s
+                        Time:           %s ms
+                        Mode:           %s
                         ============================================================================
                         """,
                 formattedNumbers,
                 generator.getTarget(),
-                generator.getTarget().getResult(),
+                generator.getTarget().getValue(),
+                generator.getTarget().getRpn(),
                 generator.getAttempts(),
                 generator.getTime(),
                 generator.getMode()
@@ -53,14 +55,16 @@ public class Shell {
                         
                         ============================================================================
                         SOLVER
-                        Solution:     %s = %s
-                        Attempts:     %s
-                        Time:         %s ms
-                        Mode:         %s
+                        Solution:       %s = %s
+                        RPN:            %s
+                        Attempts:       %s
+                        Time:           %s ms
+                        Mode:           %s
                         ============================================================================
                         """,
                 solver.getSolution(),
-                solver.getSolution().getResult(),
+                solver.getSolution().getValue(),
+                solver.getSolution().getRpn(),
                 solver.getAttempts(),
                 solver.getTime(),
                 solver.getMode()
