@@ -1,7 +1,8 @@
 package io.github.aj8gh.countdown.util.calculator;
 
 import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
+import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import org.junit.jupiter.api.AfterEach;
@@ -41,7 +42,7 @@ class CalculatorTest {
     @Order(0)
     @Test
     void calculate_Impl() {
-        var calculator = new CalculatorImpl();
+        var calculator = new CalculatorV1();
         var target = 100;
         var input = List.of(1, 2, 3, 4, 5, 6, target);
 
@@ -55,7 +56,7 @@ class CalculatorTest {
     @Order(1)
     @Test
     void calculate_Impl_Harder() {
-        var calculator = new CalculatorImpl();
+        var calculator = new CalculatorV1();
         var target = 199;
         var input = new ArrayList<>(List.of(50, 25, 75, 2, 1, 100, 199));
 
@@ -86,6 +87,20 @@ class CalculatorTest {
         var calculator = new SequentialCalculator();
         var target = 199;
         var input = new ArrayList<>(List.of(50, 25, 75, 2, 1, 100, 199));
+
+        result = calculator.calculate(input);
+        while (result.getValue() != target) {
+            result = calculator.calculate(input);
+        }
+        assertEquals(target, result.getValue());
+    }
+
+    @Order(4)
+    @Test
+    void calculate_Intermediate() {
+        var calculator = new IntermediateCalculator();
+        var target = 100;
+        var input = new ArrayList<>(List.of(1, 2, 3, 4, 5, 6, target));
 
         result = calculator.calculate(input);
         while (result.getValue() != target) {

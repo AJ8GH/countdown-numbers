@@ -1,7 +1,11 @@
 package io.github.aj8gh.countdown.generator;
 
-import io.github.aj8gh.countdown.util.calculator.calculation.CalculationImpl;
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
+import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
+import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
+import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
@@ -10,13 +14,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
 import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
-import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1.CalculationMode;
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
@@ -24,32 +33,37 @@ public class Generator {
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
 
-    private final CalculatorImpl calculatorImpl;
     private final Timer timer;
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final AtomicInteger attempts = new AtomicInteger(1);
+    private final Map<CalculationMode, Calculator> calculators = Map.of(
+            SEQUENTIAL, new SequentialCalculator(),
+            INTERMEDIATE, new IntermediateCalculator(),
+            RECURSIVE, new RecursiveCalculator(),
+            MIXED, new CalculatorV1());
 
+    private Calculator calculator;
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = Set.of(DEFAULT_FILTER);
-    private CalculationImpl target;
+    private Calculation target;
 
-    public Generator(CalculatorImpl calculatorImpl, Timer timer, int warmUps) {
-        this.calculatorImpl = calculatorImpl;
+    public Generator(Calculator calculator, Timer timer, int warmUps) {
+        this.calculator = calculator;
         this.timer = timer;
         setUp();
         warmUp(warmUps);
     }
 
-    public CalculationImpl generate(int numberOfLarge) {
+    public Calculation generate(int numberOfLarge) {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
-        var newTarget = calculatorImpl.calculate(numbers);
+        var newTarget = calculator.calculate(numbers);
         while (!filter.test(newTarget.getValue())) {
             attempts.incrementAndGet();
             setUp();
             numbers = generateQuestionNumbers(numberOfLarge);
-            newTarget = calculatorImpl.calculate(numbers);
+            newTarget = calculator.calculate(numbers);
         }
         questionNumbers.add(newTarget.getValue());
         this.target = newTarget;
@@ -89,7 +103,7 @@ public class Generator {
         return new ArrayList<>(questionNumbers);
     }
 
-    public CalculationImpl getTarget() {
+    public Calculation getTarget() {
         return target;
     }
 
@@ -102,11 +116,11 @@ public class Generator {
     }
 
     public CalculationMode getMode() {
-        return calculatorImpl.getMode();
+        return calculator.getMode();
     }
 
     public void setMode(CalculationMode mode) {
-        calculatorImpl.setMode(mode);
+        this.calculator = calculators.get(mode);
     }
 
     public void setTimeScale(int timeScale) {

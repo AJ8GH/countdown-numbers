@@ -1,6 +1,7 @@
 package io.github.aj8gh.countdown.generator;
 
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
 import io.github.aj8gh.countdown.util.serialisation.Deserializer;
 import io.github.aj8gh.countdown.util.serialisation.Serializer;
 import io.github.aj8gh.countdown.util.timer.Timer;
@@ -14,11 +15,11 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final int WARM_UPS = 50;
-    private static final CalculatorImpl.CalculationMode DEFAULT_MODE = SEQUENTIAL;
+    private static final Calculator.CalculationMode DEFAULT_MODE = SEQUENTIAL;
 
     private static final Deserializer DESERIALIZER = new Deserializer();
     private static final Serializer SERIALIZER = new Serializer();
-    private static final Generator GENERATOR = new Generator(new CalculatorImpl(), new Timer(), WARM_UPS);
+    private static final Generator GENERATOR = new Generator(new CalculatorV1(), new Timer(), WARM_UPS);
 
     static {
         GENERATOR.setMode(DEFAULT_MODE);
@@ -33,17 +34,13 @@ public class Main {
     }
 
     private static int readFromFile(String... args) {
-        LOG.info("*** Reading gen.in ***");
         var file = args.length == 0 ? null : args[0];
         return DESERIALIZER.forGenerator(file);
     }
 
     private static void writeToFile() {
-        LOG.info("*** Creating gen.out ***");
         SERIALIZER.serializeGenerator(GENERATOR.getTarget().getRpn(),
                 GENERATOR.getTarget().getValue(), GENERATOR.getTime());
-
-        LOG.info("*** Creating sol.in");
         SERIALIZER.createSolverInput(GENERATOR.getQuestionNumbers());
     }
 

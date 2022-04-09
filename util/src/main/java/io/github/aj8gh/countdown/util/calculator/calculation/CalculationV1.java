@@ -3,7 +3,7 @@ package io.github.aj8gh.countdown.util.calculator.calculation;
 import io.github.aj8gh.countdown.util.calculator.Operator;
 import io.github.aj8gh.countdown.util.serialisation.RpnConverter;
 
-public class CalculationImpl implements Calculation {
+public class CalculationV1 implements Calculation {
     private static final String LEFT_PARENTHESIS = "(";
     private static final String RIGHT_PARENTHESIS = ")";
     private static final RpnConverter RPN_CONVERTER = new RpnConverter();
@@ -12,7 +12,7 @@ public class CalculationImpl implements Calculation {
     private int value;
     private String rpn;
 
-    public CalculationImpl(int x) {
+    public CalculationV1(int x) {
         this.value = x;
         this.solution = new StringBuilder(String.valueOf(x));
     }
@@ -27,7 +27,7 @@ public class CalculationImpl implements Calculation {
     @Override
     public Calculation calculate(Operator operator, int number) {
         this.value = operator.apply(value, number);
-        this.solution = buildSolution(operator, new CalculationImpl(number));
+        this.solution = buildSolution(operator, new CalculationV1(number));
         return this;
     }
 

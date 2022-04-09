@@ -1,13 +1,11 @@
 package io.github.aj8gh.countdown.util.calculator.impl;
 
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.calculator.Operator;
-import io.github.aj8gh.countdown.util.calculator.calculation.CalculationImpl;
-import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
+import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
+import io.github.aj8gh.countdown.util.calculator.calculation.CalculationV1;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
@@ -15,17 +13,14 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 import static io.github.aj8gh.countdown.util.calculator.Operator.DIVIDE;
 import static java.util.Collections.shuffle;
 
-public class CalculatorImpl implements Calculator {
-    private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
-    private static final List<Operator> OPERATORS = Arrays.asList(Operator.values());
+public class CalculatorV1 implements Calculator {
     private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
-
     private CalculationMode mode = DEFAULT_MODE;
 
     @Override
     public Calculation calculate(List<Integer> numbers) {
         List<? extends Calculation> calculations = numbers.stream()
-                .map(CalculationImpl::new)
+                .map(CalculationV1::new)
                 .toList();
         if (mode.equals(SEQUENTIAL)) {
             return calculateRunning(calculations, 0);
@@ -46,7 +41,7 @@ public class CalculatorImpl implements Calculator {
         numbers = new ArrayList<>(numbers);
         int target = numbers.remove(numbers.size() - 1);
         List<? extends Calculation> calculations = numbers.stream()
-                .map(CalculationImpl::new)
+                .map(CalculationV1::new)
                 .toList();
 
         return mode.equals(SEQUENTIAL) ?
@@ -60,7 +55,7 @@ public class CalculatorImpl implements Calculator {
         var x = calculations.get(0);
         for (int i = 1; i < calculations.size(); i++) {
             if (target > 0 && x.getValue() == target) return x;
-            x = calculate(x, calculations.get(i));
+            x = calculateUntilValid(x, calculations.get(i));
         }
         return x;
     }
@@ -75,14 +70,14 @@ public class CalculatorImpl implements Calculator {
             Calculation x = inputs.get(i);
             Calculation y = (takeFromInput(i, inputs)) ? inputs.get(++i) :
                     results.remove(RANDOM.nextInt(results.size()));
-            Calculation result = calculate(x, y);
+            Calculation result = calculateUntilValid(x, y);
             if (target > 0 && result.getValue() == target) return result;
             results.add(result);
         }
         return results.size() == 1 ? results.get(0) : calculateTarget(results);
     }
 
-    private Calculation calculate(Calculation x, Calculation y) {
+    private Calculation calculateUntilValid(Calculation x, Calculation y) {
         Calculation result = null;
         while (result == null) {
             result = getResult(getOperator(), x, y);
@@ -107,9 +102,5 @@ public class CalculatorImpl implements Calculator {
         if (i == 0 || (6 - i <= inputs.size() - 1)) return true;
         if (mode.equals(MIXED)) return RANDOM.nextBoolean();
         return mode.equals(SEQUENTIAL);
-    }
-
-    private Operator getOperator() {
-        return OPERATORS.get(RANDOM.nextInt(OPERATORS.size()));
     }
 }

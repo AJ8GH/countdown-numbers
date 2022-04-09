@@ -2,7 +2,7 @@ package io.github.aj8gh.countdown.solver;
 
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl;
+import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
@@ -16,7 +16,7 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
-import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorImpl.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1.CalculationMode;
 
 public class SimpleSolver implements Solver {
     private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 5_000_000;
@@ -29,8 +29,7 @@ public class SimpleSolver implements Solver {
             SEQUENTIAL, new SequentialCalculator(),
             INTERMEDIATE, new IntermediateCalculator(),
             RECURSIVE, new RecursiveCalculator(),
-            MIXED, new CalculatorImpl()
-    );
+            MIXED, new CalculatorV1());
 
     private Calculator calculator = calculators.get(DEFAULT_MODE);
     private Calculation solution;

@@ -21,16 +21,19 @@ public class Serializer {
     private static final String COLON = ":";
 
     public void serializeGenerator(String question, int target, double time) {
+        LOG.info("*** Writing to gen.out ***");
         var data = question + COLON + target + COLON + time;
         serialize(GEN_OUT_HANDLE, data);
     }
 
     public void serializeSolver(String solution, double time) {
+        LOG.info("*** Writing to sol.out ***");
         var data = solution + COLON + time;
         serialize(SOL_OUT_HANDLE, data);
     }
 
     public void createSolverInput(List<Integer> question) {
+        LOG.info("*** Writing to sol.in");
         var target = question.remove(question.size() - 1);
         var numberString = String.join(COMMA, question.stream()
                 .map(String::valueOf)
