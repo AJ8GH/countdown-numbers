@@ -3,25 +3,31 @@ package io.github.aj8gh.countdown.util.calculator;
 import java.util.function.IntBinaryOperator;
 
 public enum Operator {
-    ADD("+", Integer::sum),
-    SUBTRACT("-", (left, right) -> left - right),
-    MULTIPLY("*", (left, right) -> left * right),
-    DIVIDE("/", (left, right) -> left / right);
+    ADD("+", Integer::sum, true),
+    SUBTRACT("-", (x, y) -> x - y, false),
+    MULTIPLY("*", (x, y) -> x * y, true),
+    DIVIDE("/", (x, y) -> y != 0 && x % y == 0 ? x / y : 0, false);
 
     private final String symbol;
     private final IntBinaryOperator op;
+    private final boolean commutative;
 
-    Operator(String symbol, IntBinaryOperator op) {
+    Operator(String symbol, IntBinaryOperator op, boolean commutative) {
         this.symbol = symbol;
         this.op = op;
+        this.commutative = commutative;
     }
 
-    public int apply(int left, int right) {
-        return op.applyAsInt(left, right);
+    public int apply(int first, int second) {
+        return op.applyAsInt(first, second);
     }
 
     public String symbol() {
         return symbol;
+    }
+
+    public boolean isCommutative() {
+        return commutative;
     }
 
     @Override

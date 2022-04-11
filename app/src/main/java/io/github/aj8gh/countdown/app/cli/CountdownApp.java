@@ -23,6 +23,7 @@ import static io.github.aj8gh.countdown.app.cli.Commands.SET_SOLVE_MODE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SET_TIME_SCALE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SOLVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
+import static java.util.stream.Collectors.toList;
 
 public class CountdownApp {
     private static final Logger LOG = LoggerFactory.getLogger(CountdownApp.class);
@@ -31,6 +32,7 @@ public class CountdownApp {
     private static final String ARG_DELIMITER = " ";
     private static final int MIN_LARGE = 0;
     private static final int MAX_LARGE = 4;
+    private static final int WARM_UPS = 20;
 
     private final Generator generator;
     private final Solver solver;
@@ -91,7 +93,7 @@ public class CountdownApp {
         SHELL.print(attribute);
     }
 
-    private void printAttribute(int attribute) {
+    private void printAttribute(long attribute) {
         SHELL.print(NumberFormat.getInstance().format(attribute));
     }
 
@@ -119,6 +121,7 @@ public class CountdownApp {
         args.stream().map(Integer::parseInt)
                 .forEach(number -> {
                     validateGeneratorInput(number);
+                    generator.warmUp(WARM_UPS);
                     generator.generate(number);
                     SHELL.logGenerator(generator);
                     generator.reset();
@@ -127,7 +130,8 @@ public class CountdownApp {
 
     private void solve() {
         validateSolverInput();
-        solver.solve(args.stream().map(Integer::parseInt).toList());
+        warmUpSolver();
+        solver.solve(args.stream().map(Integer::parseInt).collect(toList()));
         SHELL.logSolver(solver);
         solver.reset();
     }
@@ -135,9 +139,10 @@ public class CountdownApp {
     private void generateToSolve() {
         args.stream().map(Integer::parseInt).forEach(number -> {
             validateGeneratorInput(number);
+            warmUpSolver();
             generator.generate(number);
-            SHELL.logGenerator(generator);
             solver.solve(generator.getQuestionNumbers());
+            SHELL.logGenerator(generator);
             SHELL.logSolver(solver);
             reset();
         });
@@ -148,7 +153,7 @@ public class CountdownApp {
     }
 
     private void handleError(Exception e) {
-        LOG.error("Invalid args {} for {}, {}", args, command, e.getMessage());
+        LOG.error(e.getMessage());
     }
 
     private void validateGeneratorInput(int number) {
@@ -171,5 +176,13 @@ public class CountdownApp {
     private void reset() {
         generator.reset();
         solver.reset();
+    }
+
+    private void warmUpSolver() {
+        for (int i = 0; i < WARM_UPS; i++) {
+            generator.generate(i % 5);
+            solver.solve(generator.getQuestionNumbers());
+            reset();
+        }
     }
 }

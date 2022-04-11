@@ -2,19 +2,16 @@ package io.github.aj8gh.countdown.benchmarking;
 
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.SimpleSolver;
-import io.github.aj8gh.countdown.solver.SolutionCache;
 import io.github.aj8gh.countdown.solver.Solver;
-import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.timer.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class Tester {
     private static final Logger LOG = LoggerFactory.getLogger(Tester.class);
@@ -24,9 +21,8 @@ public class Tester {
     private static final int WARM_UPS = 20;
     private static final int RUNS = 10;
 
-    private static final Generator GENERATOR = new Generator(new Calculator(), new Timer(), 5);
-    private static final Solver SOLVER = new SimpleSolver(
-            new Calculator(), new SolutionCache(), new Timer());
+    private static final Generator GENERATOR = new Generator();
+    private static final Solver SOLVER = new SimpleSolver();
 
     static {
         GENERATOR.setMode(GEN_MODE);

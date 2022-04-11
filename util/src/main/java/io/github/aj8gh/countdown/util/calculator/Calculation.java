@@ -2,7 +2,9 @@ package io.github.aj8gh.countdown.util.calculator;
 
 import io.github.aj8gh.countdown.util.serialisation.RpnConverter;
 
-public class Calculation implements Comparable<Calculation> {
+public class Calculation {
+    private static final String LEFT_PARENTHESIS = "(";
+    private static final String RIGHT_PARENTHESIS = ")";
     private static final RpnConverter RPN_CONVERTER = new RpnConverter();
 
     private StringBuilder solution;
@@ -15,8 +17,12 @@ public class Calculation implements Comparable<Calculation> {
     }
 
     public Calculation calculate(Operator operator, Calculation calculation) {
-        this.value = operator.apply(value, calculation.value);
-        this.solution = buildSolution(operator, calculation);
+        this.value = apply(operator, calculation);
+        return this;
+    }
+
+    public Calculation calculate(Operator operator, int number) {
+        this.value = apply(operator, new Calculation(number));
         return this;
     }
 
@@ -40,16 +46,28 @@ public class Calculation implements Comparable<Calculation> {
         return solution.toString();
     }
 
-    @Override
-    public int compareTo(Calculation other) {
-        return Integer.compare(value, other.getValue());
+    private int apply(Operator operator, Calculation calculation) {
+        int result;
+        Calculation first = this;
+        Calculation second = calculation;
+        if (operator.isCommutative() || value > calculation.getValue()) {
+            result = operator.apply(value, calculation.getValue());
+        } else {
+            result = operator.apply(calculation.getValue(), value);
+            first = calculation;
+            second = this;
+        }
+        if (result != 0) {
+            buildSolution(first, operator, second);
+        }
+        return result;
     }
 
-    private StringBuilder buildSolution(Operator op, Calculation calc) {
-        return new StringBuilder("(")
-                .append(this)
+    private void buildSolution(Calculation first, Operator op, Calculation second) {
+        this.solution = new StringBuilder(LEFT_PARENTHESIS)
+                .append(first)
                 .append(op)
-                .append(calc)
-                .append(")");
+                .append(second)
+                .append(RIGHT_PARENTHESIS);
     }
 }
