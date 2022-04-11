@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.solver;
 
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ public interface Solver {
     double getTime();
     double getTotalTime();
     int getAttempts();
-    int getModeSwitchThreshold();
+    long getModeSwitchThreshold();
     Calculator.CalculationMode getMode();
     void setMode(Calculator.CalculationMode mode);
-    void setModeSwitchThreshold(int modeSwitchThreshold);
+    void setModeSwitchThreshold(long modeSwitchThreshold);
     void setTimeScale(int timeScale);
 }

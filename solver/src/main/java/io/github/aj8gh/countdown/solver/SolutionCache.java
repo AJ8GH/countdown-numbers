@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.solver;
 
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.util.calculator.impl;
 
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 
 import java.util.List;
 
@@ -11,7 +11,12 @@ public class RecursiveCalculator implements Calculator {
     private static final CalculationMode MODE = RECURSIVE;
 
     @Override
-    public Calculation calculate(List<Integer> numbers) {
+    public Calculation calculateTarget(List<Integer> numbers) {
+        return null;
+    }
+
+    @Override
+    public Calculation calculateSolution(List<Integer> numbers, int target) {
         return null;
     }
 

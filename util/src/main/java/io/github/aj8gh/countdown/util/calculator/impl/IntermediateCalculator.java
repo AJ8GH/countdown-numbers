@@ -1,8 +1,7 @@
 package io.github.aj8gh.countdown.util.calculator.impl;
 
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
-import io.github.aj8gh.countdown.util.calculator.calculation.CalculationV2;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +12,13 @@ public class IntermediateCalculator implements Calculator {
     private static final CalculationMode MODE = INTERMEDIATE;
 
     @Override
-    public Calculation calculate(List<Integer> numbers) {
-        numbers = new ArrayList<>(numbers);
-        int target = numbers.remove(numbers.size() - 1);
-        return calculateTarget(numbers, target);
+    public Calculation calculateTarget(List<Integer> numbers) {
+        return calculate(numbers, 0);
+    }
+
+    @Override
+    public Calculation calculateSolution(List<Integer> numbers, int target) {
+        return calculate(numbers, target);
     }
 
     @Override
@@ -24,14 +26,16 @@ public class IntermediateCalculator implements Calculator {
         return MODE;
     }
 
-    private Calculation calculateTarget(List<Integer> numbers, int target) {
-        var results = new ArrayList<>(numbers.stream().map(CalculationV2::new).toList());
+    private Calculation calculate(List<Integer> numbers, int target) {
+        var results = new ArrayList<>(numbers.stream()
+                .map(Calculation::new).toList());
         while (results.size() > 1) {
-            var first = results.get(RANDOM.nextInt(results.size()));
+            var first = results.remove(RANDOM.nextInt(results.size()));
             if (first.getValue() == target) return first;
             var second = results.remove(RANDOM.nextInt(results.size()));
             if (second.getValue() == target) return second;
-            calculate(first, second);
+            var result = doCalculation(first, second);
+            results.add(result);
         }
         return results.get(0);
     }

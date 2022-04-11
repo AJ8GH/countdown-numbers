@@ -1,8 +1,7 @@
 package io.github.aj8gh.countdown.generator;
 
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
@@ -22,48 +21,44 @@ import java.util.function.IntPredicate;
 
 import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
-import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE;
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
+    private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
 
-    private final Timer timer;
+    private final Timer timer = new Timer();
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final AtomicInteger attempts = new AtomicInteger(1);
     private final Map<CalculationMode, Calculator> calculators = Map.of(
             SEQUENTIAL, new SequentialCalculator(),
             INTERMEDIATE, new IntermediateCalculator(),
-            RECURSIVE, new RecursiveCalculator(),
-            MIXED, new CalculatorV1());
+            RECURSIVE, new RecursiveCalculator());
 
-    private Calculator calculator;
+    private Calculator calculator = calculators.get(DEFAULT_MODE);
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = Set.of(DEFAULT_FILTER);
     private Calculation target;
 
-    public Generator(Calculator calculator, Timer timer, int warmUps) {
-        this.calculator = calculator;
-        this.timer = timer;
+    public Generator() {
         setUp();
-        warmUp(warmUps);
     }
 
     public Calculation generate(int numberOfLarge) {
         timer.start();
         var numbers = generateQuestionNumbers(numberOfLarge);
-        var newTarget = calculator.calculate(numbers);
+        var newTarget = calculator.calculateTarget(numbers);
         while (!filter.test(newTarget.getValue())) {
             attempts.incrementAndGet();
             setUp();
             numbers = generateQuestionNumbers(numberOfLarge);
-            newTarget = calculator.calculate(numbers);
+            newTarget = calculator.calculateTarget(numbers);
         }
         questionNumbers.add(newTarget.getValue());
         this.target = newTarget;
@@ -127,16 +122,16 @@ public class Generator {
         timer.setTimescale(timeScale);
     }
 
+    public void warmUp(int warmUps) {
+        for (int i = 0; i < warmUps; i++) {
+            generate(i % 5);
+            reset();
+        }
+    }
+
     private void setUp() {
         Collections.shuffle(LARGE_NUMBERS);
         this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
         this.questionNumbers.clear();
-    }
-
-    private void warmUp(int warmUps) {
-        for (int i = 0; i < warmUps; i++) {
-            generate(RANDOM.nextInt(5));
-            reset();
-        }
     }
 }

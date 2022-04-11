@@ -1,10 +1,8 @@
 package io.github.aj8gh.countdown.util.calculator.impl;
 
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
-import io.github.aj8gh.countdown.util.calculator.calculation.CalculationV2;
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
@@ -14,10 +12,13 @@ public class SequentialCalculator implements Calculator {
     private static final CalculationMode MODE = SEQUENTIAL;
 
     @Override
-    public Calculation calculate(List<Integer> numbers) {
-        numbers = new ArrayList<>(numbers);
-        int target = numbers.remove(numbers.size() - 1);
-        return calculateTarget(numbers, target) ;
+    public Calculation calculateTarget(List<Integer> numbers) {
+        return calculate(numbers, 0);
+    }
+
+    @Override
+    public Calculation calculateSolution(List<Integer> numbers, int target) {
+        return calculate(numbers, target);
     }
 
     @Override
@@ -25,12 +26,12 @@ public class SequentialCalculator implements Calculator {
         return MODE;
     }
 
-    private Calculation calculateTarget(List<Integer> numbers, int target) {
+    private Calculation calculate(List<Integer> numbers, int target) {
         shuffle(numbers);
-        var result = new CalculationV2(numbers.get(0));
+        var result = new Calculation(numbers.get(0));
         for (int i = 1; i < numbers.size(); i++) {
             if (result.getValue() == target) return result;
-            calculate(result, numbers.get(i));
+            doCalculation(result, numbers.get(i));
         }
         return result;
     }

@@ -1,7 +1,5 @@
 package io.github.aj8gh.countdown.util.calculator;
 
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
@@ -9,17 +7,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CalculatorTest {
     private static final Timer TIMER = new Timer();
+    private final AtomicInteger attempts = new AtomicInteger(1);
     private Calculation result;
 
     @BeforeEach
@@ -31,81 +32,58 @@ class CalculatorTest {
     void tearDown() {
         TIMER.stop();
         System.out.println("==================");
-        System.out.println(TIMER.getLastTime());
+        System.out.println(TIMER.getLastTime() + " ms");
         System.out.println(result.getSolution());
         System.out.println(result.getValue());
         System.out.println(result.getRpn());
+        System.out.println("Attempts: " + attempts);
         System.out.println("==================");
         TIMER.reset();
+        attempts.set(1);
     }
 
     @Order(0)
-    @Test
-    void calculate_Impl() {
-        var calculator = new CalculatorV1();
-        var target = 100;
-        var input = List.of(1, 2, 3, 4, 5, 6, target);
+    @ParameterizedTest
+    @MethodSource(value = "getInputs")
+    void calculateSolution_Sequential(List<Integer> numbers) {
+        var calculator = new SequentialCalculator();
+        numbers = new ArrayList<>(numbers);
+        var target = numbers.remove(numbers.size() - 1);
 
-        result = calculator.calculateSolution(input);
+        result = calculator.calculateSolution(numbers, target);
         while (result.getValue() != target) {
-            result = calculator.calculateSolution(input);
+            result = calculator.calculateSolution(numbers, target);
+            attempts.incrementAndGet();
         }
         assertEquals(target, result.getValue());
     }
 
     @Order(1)
-    @Test
-    void calculate_Impl_Harder() {
-        var calculator = new CalculatorV1();
-        var target = 199;
-        var input = new ArrayList<>(List.of(50, 25, 75, 2, 1, 100, 199));
-
-        result = calculator.calculateSolution(input);
-        while (result.getValue() != target) {
-            result = calculator.calculateSolution(input);
-        }
-        assertEquals(target, result.getValue());
-    }
-
-    @Order(2)
-    @Test
-    void calculate_Sequential() {
-        var calculator = new SequentialCalculator();
-        var target = 100;
-        var input = new ArrayList<>(List.of(1, 2, 3, 4, 5, 6, target));
-
-        result = calculator.calculate(input);
-        while (result.getValue() != target) {
-            result = calculator.calculate(input);
-        }
-        assertEquals(target, result.getValue());
-    }
-
-    @Order(3)
-    @Test
-    void calculate_Sequential_Harder() {
-        var calculator = new SequentialCalculator();
-        var target = 199;
-        var input = new ArrayList<>(List.of(50, 25, 75, 2, 1, 100, 199));
-
-        result = calculator.calculate(input);
-        while (result.getValue() != target) {
-            result = calculator.calculate(input);
-        }
-        assertEquals(target, result.getValue());
-    }
-
-    @Order(4)
-    @Test
-    void calculate_Intermediate() {
+    @ParameterizedTest
+    @MethodSource(value = { "getInputs", "getHardestInput" })
+    void calculateSolution_Intermediate(List<Integer> numbers) {
         var calculator = new IntermediateCalculator();
-        var target = 100;
-        var input = new ArrayList<>(List.of(1, 2, 3, 4, 5, 6, target));
+        numbers = new ArrayList<>(numbers);
+        var target = numbers.remove(numbers.size() - 1);
 
-        result = calculator.calculate(input);
+        result = calculator.calculateSolution(numbers, target);
         while (result.getValue() != target) {
-            result = calculator.calculate(input);
+            result = calculator.calculateSolution(numbers, target);
+            attempts.incrementAndGet();
         }
         assertEquals(target, result.getValue());
+    }
+
+    private static List<List<Integer>> getInputs() {
+        return List.of(
+                List.of(1, 2, 3, 4, 5, 6, 100),
+                List.of(50, 25, 75, 2, 1, 100, 199)
+        );
+    }
+
+    private static List<List<Integer>> getHardestInput() {
+        return List.of(
+                List.of(75, 5, 25, 6, 50, 100, 426)
+        );
     }
 }

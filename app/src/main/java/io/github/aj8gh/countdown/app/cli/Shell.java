@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Shell {
     private static final String EXIT_MESSAGE = "\n*** Countdown App Shutting Down ***";
-    private static final String PROMPT = "\n>> Ready for input...\n>> ";
+    private static final String PROMPT = ">> Ready for input...\n>> ";
 
     private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
     private static final Serializer SERIALIZER = new Serializer();
@@ -36,16 +36,18 @@ public class Shell {
                         
                         ============================================================================
                         GENERATOR
-                        Question:     %s
-                        Method:       %s = %s
-                        Attempts:     %s
-                        Time:         %s ms
-                        Mode:         %s
+                        Question:       %s
+                        Method:         %s = %s
+                        RPN:            %s
+                        Attempts:       %s
+                        Time:           %s ms
+                        Mode:           %s
                         ============================================================================
                         """,
                 formattedNumbers,
                 generator.getTarget(),
                 generator.getTarget().getValue(),
+                generator.getTarget().getRpn(),
                 generator.getAttempts(),
                 generator.getTime(),
                 generator.getMode()
@@ -58,14 +60,16 @@ public class Shell {
                         
                         ============================================================================
                         SOLVER
-                        Solution:     %s = %s
-                        Attempts:     %s
-                        Time:         %s ms
-                        Mode:         %s
+                        Solution:       %s = %s
+                        RPN:            %s
+                        Attempts:       %s
+                        Time:           %s ms
+                        Mode:           %s
                         ============================================================================
                         """,
                 solver.getSolution(),
                 solver.getSolution().getValue(),
+                solver.getSolution().getRpn(),
                 solver.getAttempts(),
                 solver.getTime(),
                 solver.getMode()

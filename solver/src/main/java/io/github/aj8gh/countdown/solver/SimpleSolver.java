@@ -1,25 +1,24 @@
 package io.github.aj8gh.countdown.solver;
 
+import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.calculation.Calculation;
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.MIXED;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
-import static io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1.CalculationMode;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class SimpleSolver implements Solver {
-    private static final int DEFAULT_MODE_SWITCH_THRESHOLD = 5_000_000;
+    private static final long DEFAULT_MODE_SWITCH_THRESHOLD = 20_000;
     private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
 
     private final SolutionCache cache = new SolutionCache();
@@ -28,18 +27,17 @@ public class SimpleSolver implements Solver {
     private final Map<CalculationMode, Calculator> calculators = Map.of(
             SEQUENTIAL, new SequentialCalculator(),
             INTERMEDIATE, new IntermediateCalculator(),
-            RECURSIVE, new RecursiveCalculator(),
-            MIXED, new CalculatorV1());
+            RECURSIVE, new RecursiveCalculator());
 
     private Calculator calculator = calculators.get(DEFAULT_MODE);
+    private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
     private Calculation solution;
-    private int modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
 
     @Override
     public void solve(List<Integer> question) {
         timer.start();
         if (isCached(question)) return;
-        this.solution = calculate(question);
+        this.solution = calculate(new ArrayList<>(question));
         cache.put(question, solution);
         timer.stop();
     }
@@ -76,12 +74,12 @@ public class SimpleSolver implements Solver {
     }
 
     @Override
-    public int getModeSwitchThreshold() {
+    public long getModeSwitchThreshold() {
         return modeSwitchThreshold;
     }
 
     @Override
-    public void setModeSwitchThreshold(int modeSwitchThreshold) {
+    public void setModeSwitchThreshold(long modeSwitchThreshold) {
         this.modeSwitchThreshold = modeSwitchThreshold;
     }
 
@@ -96,10 +94,10 @@ public class SimpleSolver implements Solver {
     }
 
     private Calculation calculate(List<Integer> question) {
-        int target = question.get(question.size() - 1);
-        Calculation calculation = calculator.calculate(question);
+        int target = question.remove(question.size() - 1);
+        Calculation calculation = calculator.calculateSolution(question, target);
         while (calculation.getValue() != target) {
-            calculation = calculator.calculate(question);
+            calculation = calculator.calculateSolution(question, target);
             if (isSwitchThresholdBreached()) switchMode();
         }
         return calculation;
@@ -121,9 +119,8 @@ public class SimpleSolver implements Solver {
 
     private void switchMode() {
         switch (calculator.getMode()) {
-            case INTERMEDIATE -> this.calculator = calculators.get(SEQUENTIAL);
-            case SEQUENTIAL -> this.calculator = calculators.get(INTERMEDIATE);
-            default -> this.calculator = calculators.get(INTERMEDIATE);
+            case SEQUENTIAL, RECURSIVE -> this.calculator = calculators.get(INTERMEDIATE);
+            case INTERMEDIATE -> this.calculator = calculators.get(RECURSIVE);
         }
     }
 }

@@ -1,10 +1,8 @@
 package io.github.aj8gh.countdown.solver;
 
 import io.github.aj8gh.countdown.generator.Generator;
-import io.github.aj8gh.countdown.util.calculator.impl.CalculatorV1;
 import io.github.aj8gh.countdown.util.serialisation.Deserializer;
 import io.github.aj8gh.countdown.util.serialisation.Serializer;
-import io.github.aj8gh.countdown.util.timer.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +15,7 @@ public class Main {
 
     private static final Deserializer DESERIALIZER = new Deserializer();
     private static final Serializer SERIALIZER = new Serializer();
-    private static final Generator GENERATOR = new Generator(new CalculatorV1(), new Timer(), WARM_UPS);
+    private static final Generator GENERATOR = new Generator();
     private static final Solver SOLVER = new SimpleSolver();
 
     public static void main(String... args) {
