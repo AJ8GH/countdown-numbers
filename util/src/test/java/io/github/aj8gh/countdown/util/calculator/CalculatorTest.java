@@ -2,6 +2,7 @@ package io.github.aj8gh.countdown.util.calculator;
 
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
+import io.github.aj8gh.countdown.util.serialisation.RpnParser;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CalculatorTest {
     private static final Timer TIMER = new Timer();
+    private static final RpnParser RPN_PARSER = new RpnParser();
     private final AtomicInteger attempts = new AtomicInteger(1);
     private Calculation result;
 
@@ -56,6 +58,7 @@ class CalculatorTest {
             attempts.incrementAndGet();
         }
         assertEquals(target, result.getValue());
+        assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }
 
     @Order(1)
@@ -72,6 +75,7 @@ class CalculatorTest {
             attempts.incrementAndGet();
         }
         assertEquals(target, result.getValue());
+        assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }
 
     private static List<List<Integer>> getInputs() {
