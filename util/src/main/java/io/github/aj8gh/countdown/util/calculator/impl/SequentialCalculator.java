@@ -31,7 +31,7 @@ public class SequentialCalculator implements Calculator {
         var result = new Calculation(numbers.get(0));
         for (int i = 1; i < numbers.size(); i++) {
             if (result.getValue() == target) return result;
-            doCalculation(result, numbers.get(i));
+            result = doCalculation(result, numbers.get(i));
         }
         return result;
     }

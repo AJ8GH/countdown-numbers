@@ -17,12 +17,12 @@ public class Calculation {
     }
 
     public Calculation calculate(Operator operator, Calculation calculation) {
-        this.value = apply(operator, calculation);
+        apply(operator, calculation);
         return this;
     }
 
     public Calculation calculate(Operator operator, int number) {
-        this.value = apply(operator, new Calculation(number));
+        apply(operator, new Calculation(number));
         return this;
     }
 
@@ -46,7 +46,7 @@ public class Calculation {
         return solution.toString();
     }
 
-    private int apply(Operator operator, Calculation calculation) {
+    private void apply(Operator operator, Calculation calculation) {
         int result;
         Calculation first = this;
         Calculation second = calculation;
@@ -57,10 +57,10 @@ public class Calculation {
             first = calculation;
             second = this;
         }
-        if (result != 0) {
+        if (isValid(result, calculation)) {
             buildSolution(first, operator, second);
+            this.value = result;
         }
-        return result;
     }
 
     private void buildSolution(Calculation first, Operator op, Calculation second) {
@@ -69,5 +69,9 @@ public class Calculation {
                 .append(op)
                 .append(second)
                 .append(RIGHT_PARENTHESIS);
+    }
+
+    private boolean isValid(int result, Calculation calculation) {
+        return result != 0 && result != value && result != calculation.getValue();
     }
 }
