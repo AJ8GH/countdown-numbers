@@ -27,16 +27,18 @@ public interface Calculator {
     CalculationMode getMode();
 
     default Calculation doCalculation(Calculation calculation, Integer number) {
+        var value = calculation.getValue();
         var result = calculation.calculate(getOperator(), number);
-        while (calculation.getValue() == 0) {
+        while (calculation.getValue() == value) {
             result = calculation.calculate(getOperator(), number);
         }
         return result;
     }
 
     default Calculation doCalculation(Calculation first, Calculation second) {
+        var value = first.getValue();
         var result = first.calculate(getOperator(), second);
-        while (first.getValue() == 0) {
+        while (first.getValue() == value) {
             result = first.calculate(getOperator(), second);
         }
         return result;
