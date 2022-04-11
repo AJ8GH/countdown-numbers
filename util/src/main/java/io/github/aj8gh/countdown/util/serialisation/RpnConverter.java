@@ -29,12 +29,13 @@ public class RpnConverter {
             convertElement(element);
         }
         addRemainingOperators();
-        return buildAndClear();
+        return buildAndReturnRpn();
     }
 
     private String[] getElements(String input) {
-        return input.replace(LEFT_PARENTHESIS, "( ")
-                .replace(RIGHT_PARENTHESIS, " )").split(SPACE);
+        return input.replace(LEFT_PARENTHESIS, LEFT_PARENTHESIS + SPACE)
+                .replace(RIGHT_PARENTHESIS, SPACE + RIGHT_PARENTHESIS)
+                .split(SPACE);
     }
 
     private void convertElement(String element) {
@@ -78,7 +79,7 @@ public class RpnConverter {
         }
     }
 
-    private String buildAndClear() {
+    private String buildAndReturnRpn() {
         var rpn = String.join(COMMA, rpnBuilder);
         dequeue.clear();
         rpnBuilder.clear();

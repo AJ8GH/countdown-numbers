@@ -10,18 +10,14 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final int WARM_UPS = 25;
     private static final Calculator.CalculationMode DEFAULT_MODE = SEQUENTIAL;
-
     private static final Deserializer DESERIALIZER = new Deserializer();
     private static final Serializer SERIALIZER = new Serializer();
     private static final Generator GENERATOR = new Generator();
-
-    static {
-        GENERATOR.setMode(DEFAULT_MODE);
-    }
+    private static final int WARM_UPS = 25;
 
     public static void main(String... args) {
+        setUp();
         var numLarge = readFile(args);
         GENERATOR.warmUp(WARM_UPS);
         GENERATOR.generate(numLarge);
@@ -38,6 +34,10 @@ public class Main {
         SERIALIZER.serializeGenerator(GENERATOR.getTarget().getRpn(),
                 GENERATOR.getTarget().getValue(), GENERATOR.getTime());
         SERIALIZER.createSolverInput(GENERATOR.getQuestionNumbers());
+    }
+
+    private static void setUp() {
+        GENERATOR.setMode(DEFAULT_MODE);
     }
 
     private static void logGenerator() {

@@ -14,12 +14,12 @@ public class Timer {
     private double startTime;
 
     public void start() {
-        this.startTime = getCurrentTime();
+        this.startTime = getCurrentMillis();
     }
 
     public void stop() {
         if (startTime != 0) {
-            times.add(getCurrentTime() - startTime);
+            times.add(getCurrentMillis() - startTime);
             startTime = 0;
         }
     }
@@ -42,7 +42,7 @@ public class Timer {
         this.timescale = timescale;
     }
 
-    private double getCurrentTime() {
+    private double getCurrentMillis() {
         return System.nanoTime() / NANOS_IN_MILLI;
     }
 

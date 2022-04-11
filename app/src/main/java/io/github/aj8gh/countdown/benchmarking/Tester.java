@@ -1,7 +1,6 @@
 package io.github.aj8gh.countdown.benchmarking;
 
 import io.github.aj8gh.countdown.generator.Generator;
-import io.github.aj8gh.countdown.solver.SimpleSolver;
 import io.github.aj8gh.countdown.solver.Solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,7 @@ public class Tester {
     private static final int RUNS = 10;
 
     private static final Generator GENERATOR = new Generator();
-    private static final Solver SOLVER = new SimpleSolver();
+    private static final Solver SOLVER = new Solver();
 
     static {
         GENERATOR.setMode(GEN_MODE);

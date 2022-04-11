@@ -3,7 +3,15 @@ package io.github.aj8gh.countdown.generator;
 import java.util.Set;
 import java.util.function.IntPredicate;
 
-public class Filter {
+public final class Filter {
+    public static final IntPredicate IN_RANGE = Filter::isInRange;
+    public static final IntPredicate ODD = Filter::isOdd;
+    public static final IntPredicate NOT_FIVE = Filter::isNotDivisibleByFive;
+    public static final IntPredicate NOT_TEN = Filter::isNotDivisibleBy10;
+    public static final IntPredicate PRIME = Filter::isPrime;
+
+    private static final int MIN_TARGET = 100;
+    private static final int MAX_TARGET = 999;
     private static final Set<Integer> VALID_PRIMES = Set.of(
             101, 103, 107, 109, 113, 127, 131, 137, 139, 149,
             151, 157, 163, 167, 173, 179, 181, 191, 193, 197,
@@ -22,13 +30,25 @@ public class Filter {
             983, 991, 997
     );
 
-    public static final IntPredicate IN_RANGE = target -> target > 100 && target < 999;
+    private static boolean isOdd(int target) {
+        return target % 2 != 0;
+    }
 
-    public static final IntPredicate ODD = target -> target % 2 != 0;
+    private static boolean isInRange(int target) {
+        return target > MIN_TARGET && target < MAX_TARGET;
+    }
 
-    public static final IntPredicate NOT_FIVE = target -> target % 5 != 0;
+    private static boolean isNotDivisibleByFive(int target) {
+        return target % 5 != 0;
+    }
 
-    public static final IntPredicate NOT_TEN = target -> target % 10 != 0;
+    private static boolean isNotDivisibleBy10(int target) {
+        return target % 10 != 0;
+    }
 
-    public static final IntPredicate PRIME = VALID_PRIMES::contains;
+    private static boolean isPrime(int target) {
+        return VALID_PRIMES.contains(target);
+    }
+
+    private Filter() {}
 }

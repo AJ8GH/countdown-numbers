@@ -23,3 +23,5 @@ public class TestInputs {
             List.of(75, 5, 25, 6, 50, 100, 426)
     );
 }
+
+// 75 5 25 6 50 100 426

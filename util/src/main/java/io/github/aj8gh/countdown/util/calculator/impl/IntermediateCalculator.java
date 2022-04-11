@@ -28,13 +28,16 @@ public class IntermediateCalculator implements Calculator {
 
     private Calculation calculate(List<Integer> numbers, int target) {
         var results = new ArrayList<>(numbers.stream()
-                .map(Calculation::new).toList());
+                .map(Calculation::new)
+                .toList());
+
         while (results.size() > 1) {
             var first = results.remove(RANDOM.nextInt(results.size()));
             if (first.getValue() == target) return first;
             var second = results.remove(RANDOM.nextInt(results.size()));
             if (second.getValue() == target) return second;
             var result = doCalculation(first, second);
+            if (result.getValue() == target) return result;
             results.add(result);
         }
         return results.get(0);

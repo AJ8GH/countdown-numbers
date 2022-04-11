@@ -130,7 +130,7 @@ public class CountdownApp {
 
     private void solve() {
         validateSolverInput();
-        warmUpSolver();
+        solver.warmUp(WARM_UPS);
         solver.solve(args.stream().map(Integer::parseInt).collect(toList()));
         SHELL.logSolver(solver);
         solver.reset();
@@ -139,7 +139,7 @@ public class CountdownApp {
     private void generateToSolve() {
         args.stream().map(Integer::parseInt).forEach(number -> {
             validateGeneratorInput(number);
-            warmUpSolver();
+            solver.warmUp(WARM_UPS);
             generator.generate(number);
             solver.solve(generator.getQuestionNumbers());
             SHELL.logGenerator(generator);
@@ -176,13 +176,5 @@ public class CountdownApp {
     private void reset() {
         generator.reset();
         solver.reset();
-    }
-
-    private void warmUpSolver() {
-        for (int i = 0; i < WARM_UPS; i++) {
-            generator.generate(i % 5);
-            solver.solve(generator.getQuestionNumbers());
-            reset();
-        }
     }
 }

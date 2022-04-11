@@ -27,10 +27,10 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
+    private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE;
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
-    private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
 
     private final Timer timer = new Timer();
     private final List<Integer> questionNumbers = new ArrayList<>();
