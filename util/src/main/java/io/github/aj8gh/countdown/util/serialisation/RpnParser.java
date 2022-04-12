@@ -2,9 +2,10 @@ package io.github.aj8gh.countdown.util.serialisation;
 
 import io.github.aj8gh.countdown.util.calculator.Operator;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Map;
-import java.util.Stack;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -14,24 +15,23 @@ public class RpnParser {
     private static final Map<String, Operator> OPERATORS = EnumSet.allOf(Operator.class)
             .stream().collect(toMap(Operator::symbol, Function.identity()));
 
-    private final Stack<String> numberStack = new Stack<>();
+    private final Deque<String> numberStack = new ArrayDeque<>();
 
     public int parse(String rpn) {
         var elements = rpn.split(COMMA);
-        for (String element : elements) {
-            if (OPERATORS.containsKey(element)) {
-                var second = numberStack.pop();
-                var first = numberStack.pop();
-                numberStack.add(String.valueOf(calculate(first, element, second)));
-            } else {
-                numberStack.add(element);
-            }
+        for (String e : elements) {
+            numberStack.push(isOperator(e) ? calculate(e) : e);
         }
         return Integer.parseInt(numberStack.pop());
     }
 
-    private int calculate(String first, String operator, String second) {
-        var op = OPERATORS.get(operator);
-        return op.apply(Integer.parseInt(first), Integer.parseInt(second));
+    private String calculate(String operator) {
+        var second = Integer.parseInt(numberStack.pop());
+        var first = Integer.parseInt(numberStack.pop());
+        return String.valueOf(OPERATORS.get(operator).apply(first, second));
+    }
+
+    private boolean isOperator(String element) {
+        return OPERATORS.containsKey(element);
     }
 }
