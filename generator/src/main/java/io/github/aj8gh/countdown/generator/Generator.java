@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
 import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
+import static io.github.aj8gh.countdown.generator.Filter.NOT_TEN;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
@@ -27,8 +28,8 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
-    private static final CalculationMode DEFAULT_MODE = SEQUENTIAL;
-    private static final IntPredicate DEFAULT_FILTER = IN_RANGE;
+    private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
+    private static final IntPredicate DEFAULT_FILTER = IN_RANGE.and(NOT_TEN);
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
 
@@ -52,29 +53,46 @@ public class Generator {
 
     public Calculation generate(int numberOfLarge) {
         timer.start();
-        var numbers = generateQuestionNumbers(numberOfLarge);
-        var newTarget = calculator.calculateTarget(numbers);
-        while (!filter.test(newTarget.getValue())) {
-            attempts.incrementAndGet();
-            setUp();
-            numbers = generateQuestionNumbers(numberOfLarge);
-            newTarget = calculator.calculateTarget(numbers);
-        }
-        questionNumbers.add(newTarget.getValue());
-        this.target = newTarget;
+        generateQuestionNumbers(numberOfLarge);
+        this.target = calculateTarget(numberOfLarge);
+        questionNumbers.add(target.getValue());
         timer.stop();
         return target;
     }
 
-    public List<Integer> generateQuestionNumbers(int numberOfLarge) {
+    private Calculation calculateTarget(int numberOfLarge) {
+        var result = calculator.calculateTarget(questionNumbers);
+        while (!filter.test(result.getValue())) {
+            attempts.incrementAndGet();
+            setUp();
+            generateQuestionNumbers(numberOfLarge);
+            result = calculator.calculateTarget(questionNumbers);
+        }
+        return result;
+    }
+
+    private void generateQuestionNumbers(int numberOfLarge) {
         int numberOfSmall = TOTAL_NUMBERS - numberOfLarge;
+        addLargeNumbers(numberOfLarge);
+        addSmallNumbers(numberOfSmall);
+    }
+
+    private void addLargeNumbers(int numberOfLarge) {
         for (int i = 0; i < numberOfLarge; i++) {
             questionNumbers.add(largeNumbers.remove());
         }
+    }
+
+    private void addSmallNumbers(int numberOfSmall) {
         for (int i = 0; i < numberOfSmall; i++) {
             questionNumbers.add(RANDOM.nextInt(10) + 1);
         }
-        return questionNumbers;
+    }
+
+    private void setUp() {
+        Collections.shuffle(LARGE_NUMBERS);
+        this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
+        this.questionNumbers.clear();
     }
 
     public Generator addFilter(IntPredicate predicate) {
@@ -127,11 +145,5 @@ public class Generator {
             generate(i % 5);
             reset();
         }
-    }
-
-    private void setUp() {
-        Collections.shuffle(LARGE_NUMBERS);
-        this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
-        this.questionNumbers.clear();
     }
 }

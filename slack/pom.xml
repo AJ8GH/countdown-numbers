@@ -9,27 +9,25 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>generator</artifactId>
     <packaging>jar</packaging>
-
-    <properties>
-        <start-class>io.github.aj8gh.countdown.generator.Main</start-class>
-    </properties>
-
-    <build>
-        <finalName>generator</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <artifactId>slack</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>util</artifactId>
+            <groupId>com.slack.api</groupId>
+            <artifactId>bolt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.slack.api</groupId>
+            <artifactId>bolt-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
         </dependency>
     </dependencies>
 </project>

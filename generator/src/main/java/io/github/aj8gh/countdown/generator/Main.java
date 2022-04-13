@@ -6,11 +6,11 @@ import io.github.aj8gh.countdown.util.serialisation.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final Calculator.CalculationMode DEFAULT_MODE = SEQUENTIAL;
+    private static final Calculator.CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final Deserializer DESERIALIZER = new Deserializer();
     private static final Serializer SERIALIZER = new Serializer();
     private static final Generator GENERATOR = new Generator();

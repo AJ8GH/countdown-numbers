@@ -14,6 +14,8 @@
         <module>generator</module>
         <module>solver</module>
         <module>util</module>
+        <module>slack</module>
+        <module>game</module>
     </modules>
 
     <properties>
@@ -23,6 +25,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <start-class>io.github.aj8gh.countdown.app.Main</start-class>
 
+        <bolt.version>1.21.1</bolt.version>
         <dsi.version>2.7.0</dsi.version>
         <jmh.version>1.34</jmh.version>
         <junit.version>5.8.2</junit.version>
@@ -121,6 +124,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>slack</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>solver</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -145,6 +153,18 @@
                 <groupId>it.unimi.dsi</groupId>
                 <artifactId>dsiutils</artifactId>
                 <version>${dsi.version}</version>
+            </dependency>
+
+            <!-- Slack -->
+            <dependency>
+                <groupId>com.slack.api</groupId>
+                <artifactId>bolt</artifactId>
+                <version>${bolt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.slack.api</groupId>
+                <artifactId>bolt-servlet</artifactId>
+                <version>${bolt.version}</version>
             </dependency>
 
             <!-- Test -->

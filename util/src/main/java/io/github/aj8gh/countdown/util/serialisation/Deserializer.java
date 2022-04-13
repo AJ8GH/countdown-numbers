@@ -23,6 +23,7 @@ public class Deserializer {
     public int forGenerator(String file) {
         file = file == null ? GEN_OUT_HANDLE : file;
         LOG.info("*** Reading {} ***", file);
+
         try (var reader = new Scanner(new FileReader(file))) {
             return reader.nextInt();
         } catch (IOException e) {
@@ -34,6 +35,7 @@ public class Deserializer {
     public List<Integer> forSolver(String file) {
         file = file == null ? SOL_OUT_HANDLE : file;
         LOG.info("*** Reading from {} ***", file);
+
         try (var reader = new Scanner(new FileReader(file))) {
             var line = reader.nextLine();
             var questionAndTarget = line.split(COLON);
