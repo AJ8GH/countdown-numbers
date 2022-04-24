@@ -39,9 +39,7 @@ public class RpnConverter {
     }
 
     private void convertElement(String element) {
-        if (isOperator(element)) {
-            dequeue.push(element);
-        } else if (isLeftParenthesis(element)) {
+        if (isOperator(element) || isLeftParenthesis(element)) {
             dequeue.push(element);
         } else if (isRightParenthesis(element)) {
             addUntilLeftParenthesis();

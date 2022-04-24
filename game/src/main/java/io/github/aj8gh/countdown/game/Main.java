@@ -1,12 +1,13 @@
 package io.github.aj8gh.countdown.game;
 
 import io.github.aj8gh.countdown.generator.Generator;
-import io.github.aj8gh.countdown.slack.SlackClient;
 import io.github.aj8gh.countdown.solver.Solver;
 import io.github.aj8gh.countdown.util.serialisation.Deserializer;
 import io.github.aj8gh.countdown.util.serialisation.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.github.aj8gh.countdown.slack.SlackClient;
 
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
@@ -15,6 +16,7 @@ public class Main {
     private static final SlackClient CLIENT = new SlackClient();
     private static final Deserializer DESERIALIZER = new Deserializer();
     private static final Serializer SERIALIZER = new Serializer();
+
     private static final String SOL_IN = "sol.in";
     private static final String GEN_IN = "gen.in";
     private static final String DIR = "./input-output/";

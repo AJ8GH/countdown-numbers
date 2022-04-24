@@ -33,9 +33,7 @@ public class IntermediateCalculator implements Calculator {
 
         while (results.size() > 1) {
             var first = results.remove(RANDOM.nextInt(results.size()));
-            if (first.getValue() == target) return first;
             var second = results.remove(RANDOM.nextInt(results.size()));
-            if (second.getValue() == target) return second;
             var result = doCalculation(first, second);
             if (result.getValue() == target) return result;
             results.add(result);

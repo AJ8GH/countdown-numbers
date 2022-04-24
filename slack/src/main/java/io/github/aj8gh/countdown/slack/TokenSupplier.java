@@ -31,7 +31,7 @@ public class TokenSupplier implements Supplier<String> {
             PROPS.load(in);
             this.token = PROPS.getProperty(SLACK_TOKEN_KEY);
         } catch (IOException e) {
-            LOG.error("Error loading Slack token", e);
+            LOG.error("Error loading Slack token\n", e);
         }
     }
 }

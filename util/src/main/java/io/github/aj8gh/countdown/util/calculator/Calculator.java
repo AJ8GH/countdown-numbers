@@ -14,6 +14,7 @@ public interface Calculator {
         SEQUENTIAL,
         INTERMEDIATE,
         RECURSIVE,
+        RPN
     }
 
     XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();

@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class Solver {
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
@@ -95,12 +95,18 @@ public class Solver {
 
     private Calculation calculate(List<Integer> question) {
         int target = question.remove(question.size() - 1);
+        if (containsTarget(question, target)) return new Calculation(target);
         Calculation calculation = calculator.calculateSolution(question, target);
         while (calculation.getValue() != target) {
             calculation = calculator.calculateSolution(question, target);
             if (isSwitchThresholdBreached()) switchMode();
         }
         return calculation;
+    }
+
+    private boolean containsTarget(List<Integer> question, int target) {
+        if (target != 100) return false;
+        return question.contains(target);
     }
 
     private boolean isCached(List<Integer> question) {

@@ -7,7 +7,8 @@ public final class Filter {
     public static final IntPredicate IN_RANGE = Filter::isInRange;
     public static final IntPredicate ODD = Filter::isOdd;
     public static final IntPredicate NOT_FIVE = Filter::isNotDivisibleByFive;
-    public static final IntPredicate NOT_TEN = Filter::isNotDivisibleBy10;
+    public static final IntPredicate NOT_TEN = Filter::isNotDivisibleByTen;
+    public static final IntPredicate NOT_ONE_HUNDRED = Filter::isNotOneHundred;
     public static final IntPredicate PRIME = Filter::isPrime;
 
     private static final int MIN_TARGET = 100;
@@ -42,12 +43,16 @@ public final class Filter {
         return target % 5 != 0;
     }
 
-    private static boolean isNotDivisibleBy10(int target) {
+    private static boolean isNotDivisibleByTen(int target) {
         return target % 10 != 0;
     }
 
     private static boolean isPrime(int target) {
         return VALID_PRIMES.contains(target);
+    }
+
+    private static boolean isNotOneHundred(int target) {
+        return target != 100;
     }
 
     private Filter() {}
