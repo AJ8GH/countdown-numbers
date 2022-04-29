@@ -16,6 +16,7 @@
         <module>util</module>
         <module>slack</module>
         <module>game</module>
+        <module>config</module>
     </modules>
 
     <properties>
@@ -40,6 +41,8 @@
     </properties>
 
     <build>
+        <finalName>${project.name}</finalName>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -115,6 +118,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>config</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

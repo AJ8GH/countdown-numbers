@@ -3,6 +3,7 @@ package io.github.aj8gh.countdown.util.serialisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,30 +14,32 @@ import java.util.Scanner;
 
 public class Deserializer {
     private static final Logger LOG = LoggerFactory.getLogger(Deserializer.class);
-    private static final String IO_DIRECTORY = "./input-output/";
-    private static final String SOL_OUT_HANDLE = IO_DIRECTORY + "sol.in";
-    private static final String GEN_OUT_HANDLE = IO_DIRECTORY + "gen.in";
-
     private static final String COMMA = ",";
     private static final String COLON = ":";
 
-    public int forGenerator(String file) {
-        file = file == null ? GEN_OUT_HANDLE : file;
-        LOG.info("*** Reading {} ***", file);
+    private final String ioDir;
+    private final String solInFile;
+    private final String genInFile;
 
-        try (var reader = new Scanner(new FileReader(file))) {
+    public Deserializer(String ioDir, String solInFile, String genInFile) {
+        this.ioDir = ioDir;
+        this.solInFile = solInFile;
+        this.genInFile = genInFile;
+    }
+
+    public int forGenerator(String file) {
+        var filePath = buildFilePath(file, genInFile);
+        try (var reader = new Scanner(new FileReader(filePath))) {
             return reader.nextInt();
         } catch (IOException e) {
-            LOG.error("Error reading generator input file {}, {}", file, e.getMessage());
+            LOG.error("Error reading generator input file {}, {}", filePath, e.getMessage());
             return -1;
         }
     }
 
     public List<Integer> forSolver(String file) {
-        file = file == null ? SOL_OUT_HANDLE : file;
-        LOG.info("*** Reading from {} ***", file);
-
-        try (var reader = new Scanner(new FileReader(file))) {
+        var filePath = buildFilePath(file, solInFile);
+        try (var reader = new Scanner(new FileReader(filePath))) {
             var line = reader.nextLine();
             var questionAndTarget = line.split(COLON);
             var question = new ArrayList<>(Arrays
@@ -46,8 +49,14 @@ public class Deserializer {
             question.add(Integer.valueOf(questionAndTarget[1]));
             return question;
         } catch (IOException e) {
-            LOG.error("Error reading solver input file {}, {}", file, e.getMessage());
+            LOG.error("Error reading solver input file {}, {}", filePath, e.getMessage());
             return Collections.emptyList();
         }
+    }
+
+    private String buildFilePath(String file, String defaultFile) {
+        var filePath = ioDir + (new File(ioDir + file).exists() ? defaultFile : file);
+        LOG.info("*** Reading from {} ***", file);
+        return filePath;
     }
 }

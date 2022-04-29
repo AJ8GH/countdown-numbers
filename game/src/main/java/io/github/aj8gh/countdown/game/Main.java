@@ -1,58 +1,54 @@
 package io.github.aj8gh.countdown.game;
 
+import io.github.aj8gh.countdown.config.AppConfig;
 import io.github.aj8gh.countdown.generator.Generator;
+import io.github.aj8gh.countdown.slack.SlackClient;
 import io.github.aj8gh.countdown.solver.Solver;
 import io.github.aj8gh.countdown.util.serialisation.Deserializer;
 import io.github.aj8gh.countdown.util.serialisation.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.aj8gh.countdown.slack.SlackClient;
-
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final Solver SOLVER = new Solver();
-    private static final Generator GENERATOR = new Generator();
-    private static final SlackClient CLIENT = new SlackClient();
-    private static final Deserializer DESERIALIZER = new Deserializer();
-    private static final Serializer SERIALIZER = new Serializer();
-
-    private static final String SOL_IN = "sol.in";
-    private static final String GEN_IN = "gen.in";
-    private static final String DIR = "./input-output/";
-    private static final String CHANNEL = "#bot-test";
-    private static final int WARM_UPS = 40;
+    private static final Solver SOLVER = AppConfig.solver();
+    private static final Generator GENERATOR = AppConfig.generator();
+    private static final SlackClient CLIENT = AppConfig.slackClient();
+    private static final Deserializer DESERIALIZER = AppConfig.deserializer();
+    private static final Serializer SERIALIZER = AppConfig.serializer();
+    private static final String SOL = "sol";
+    private static final String GEN = "gen";
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            LOG.warn("Program needs sol.in or gen.in as a file arg");
+            LOG.warn("Program needs sol, gen or a file arg");
             return;
         }
         handleInput(args[0]);
     }
 
-    private static void handleInput(String fileHandle) {
-        if (fileHandle.contains(SOL_IN)) {
-            solve(fileHandle);
-        } else if (fileHandle.contains(GEN_IN)) {
-            generate(fileHandle);
+    private static void handleInput(String input) {
+        if (input.contains(SOL)) {
+            solve(input);
+        } else if (input.contains(GEN)) {
+            generate(input);
         }
     }
 
     private static void solve(String file) {
-        var input = DESERIALIZER.forSolver(DIR + file);
-        SOLVER.warmUp(WARM_UPS);
+        var input = DESERIALIZER.forSolver(file);
+        SOLVER.warmUp();
         SOLVER.solve(input);
         serializeSolver();
-        CLIENT.postMessage(CHANNEL, getSolverMessage());
+        CLIENT.postMessage(getSolverMessage());
     }
 
     private static void generate(String file) {
-        var input = DESERIALIZER.forGenerator(DIR + file);
-        GENERATOR.warmUp(WARM_UPS);
+        var input = DESERIALIZER.forGenerator(file);
+        GENERATOR.warmUp();
         GENERATOR.generate(input);
         serializeGenerator();
-        CLIENT.postMessage(CHANNEL, getGeneratorMessage());
+        CLIENT.postMessage(getGeneratorMessage());
     }
 
     private static String getSolverMessage() {

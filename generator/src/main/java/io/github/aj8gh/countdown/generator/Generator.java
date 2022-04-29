@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.generator;
 
-import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.calculator.Calculation;
+import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
@@ -11,6 +11,7 @@ import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,17 +20,16 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
-import static io.github.aj8gh.countdown.generator.Filter.IN_RANGE;
-import static io.github.aj8gh.countdown.generator.Filter.NOT_TEN;
+import static io.github.aj8gh.countdown.generator.FilterFactory.Filter.IN_RANGE;
+import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
-    private static final IntPredicate DEFAULT_FILTER = IN_RANGE.and(NOT_TEN);
+    private static final IntPredicate DEFAULT_FILTER = IN_RANGE.getPredicate();
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
 
@@ -44,8 +44,9 @@ public class Generator {
     private Calculator calculator = calculators.get(DEFAULT_MODE);
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
-    private Set<IntPredicate> filters = Set.of(DEFAULT_FILTER);
+    private Set<IntPredicate> filters = new HashSet<>(Set.of(filter));
     private Calculation target;
+    private int warmUps = 20;
 
     public Generator() {
         setUp();
@@ -98,6 +99,7 @@ public class Generator {
     public Generator addFilter(IntPredicate predicate) {
         if (!filters.contains(predicate)) {
             this.filter = filter.and(predicate);
+            filters.add(predicate);
         }
         return this;
     }
@@ -140,7 +142,11 @@ public class Generator {
         timer.setTimescale(timeScale);
     }
 
-    public void warmUp(int warmUps) {
+    public void setWarmUps(int warmUps) {
+        this.warmUps = warmUps;
+    }
+
+    public void warmUp() {
         for (int i = 0; i < warmUps; i++) {
             generate(i % 5);
             reset();

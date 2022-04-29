@@ -34,6 +34,7 @@ public class Solver {
     private Calculator calculator = calculators.get(DEFAULT_MODE);
     private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
     private Calculation solution;
+    private int warmUps = 20;
 
     public void solve(List<Integer> question) {
         timer.start();
@@ -84,7 +85,11 @@ public class Solver {
         timer.setTimescale(timeScale);
     }
 
-    public void warmUp(int warmUps) {
+    public void setWarmUps(int warmUps) {
+        this.warmUps = warmUps;
+    }
+
+    public void warmUp() {
         for (int i = 0; i < warmUps; i++) {
             generator.generate(i % 5);
             solve(generator.getQuestionNumbers());

@@ -34,6 +34,9 @@ class IntegrationTest {
         generator = new Generator();
         rpnParser = new RpnParser();
         rpnConverter = new RpnConverter();
+
+        solver.setWarmUps(WARM_UPS);
+        generator.setWarmUps(WARM_UPS);
     }
 
     @ParameterizedTest
@@ -44,7 +47,7 @@ class IntegrationTest {
 
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
             // Test Generator
-            generator.warmUp(WARM_UPS);
+            generator.warmUp();
             generator.generate(i % 5);
             var target = generator.getTarget().getValue();
             assertTrue(target >= MIN_TARGET && target <= MAX_TARGET);
@@ -52,7 +55,7 @@ class IntegrationTest {
             assertEquals(target, rpnParser.parse(generator.getTarget().getRpn()));
 
             // Test solver
-            solver.warmUp(WARM_UPS);
+            solver.warmUp();
             solver.solve(generator.getQuestionNumbers());
             var result = solver.getSolution().getValue();
             assertEquals(target, result);
@@ -69,7 +72,7 @@ class IntegrationTest {
     void switchingModes() {
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
             // Test Generator
-            generator.warmUp(WARM_UPS);
+            generator.warmUp();
             generator.generate(i % 5);
             var target = generator.getTarget().getValue();
             assertTrue(target >= MIN_TARGET && target <= MAX_TARGET);
@@ -77,7 +80,7 @@ class IntegrationTest {
             assertEquals(target, rpnParser.parse(generator.getTarget().getRpn()));
 
             // Test solvers
-            solver.warmUp(WARM_UPS);
+            solver.warmUp();
             solver.solve(generator.getQuestionNumbers());
             var result = solver.getSolution().getValue();
             assertEquals(target, result);

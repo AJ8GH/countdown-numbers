@@ -12,20 +12,6 @@
     <artifactId>generator</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <start-class>io.github.aj8gh.countdown.generator.Main</start-class>
-    </properties>
-
-    <build>
-        <finalName>generator</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

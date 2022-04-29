@@ -11,35 +11,41 @@ import java.util.List;
 
 public class Serializer {
     private static final Logger LOG = LoggerFactory.getLogger(Serializer.class);
-
-    private static final String IO_DIR = "./input-output/";
-    private static final String GEN_OUT_HANDLE = IO_DIR + "gen.out";
-    private static final String SOL_OUT_HANDLE = IO_DIR + "sol.out";
-    private static final String SOL_IN_HANDLE = IO_DIR + "sol.in";
-
     private static final String COMMA = ",";
     private static final String COLON = ":";
 
+    private final String ioDir;
+    private final String genOutFile;
+    private final String solOutFile;
+    private final String solInFile;
+
+    public Serializer(String ioDir, String genOutFile, String solOutFile, String solInFile) {
+        this.ioDir = ioDir;
+        this.genOutFile = genOutFile;
+        this.solOutFile = solOutFile;
+        this.solInFile = solInFile;
+    }
+
     public void serializeGenerator(String question, int target, double time) {
-        LOG.info("*** Writing to gen.out ***");
+        var filePath = buildFilePath(genOutFile);
         var data = question + COLON + target + COLON + time;
-        serialize(GEN_OUT_HANDLE, data);
+        serialize(filePath, data);
     }
 
     public void serializeSolver(String solution, double time) {
-        LOG.info("*** Writing to sol.out ***");
+        var filePath = buildFilePath(solOutFile);
         var data = solution + COLON + time;
-        serialize(SOL_OUT_HANDLE, data);
+        serialize(filePath, data);
     }
 
     public void createSolverInput(List<Integer> question) {
-        LOG.info("*** Writing to sol.in");
+        var filePath = buildFilePath(solInFile);
         var target = question.remove(question.size() - 1);
         var numberString = String.join(COMMA, question.stream()
                 .map(String::valueOf)
                 .toList());
         var data = numberString + COLON + target;
-        serialize(SOL_IN_HANDLE, data);
+        serialize(filePath, data);
     }
 
     private void serialize(String file, String data) {
@@ -51,5 +57,11 @@ public class Serializer {
             LOG.error("Error writing {} to file {}, {}",
                     data, file, e.getMessage());
         }
+    }
+
+    private String buildFilePath(String file) {
+        var filePath = ioDir + file;
+        LOG.info("*** Writing to {} ***", file);
+        return filePath;
     }
 }

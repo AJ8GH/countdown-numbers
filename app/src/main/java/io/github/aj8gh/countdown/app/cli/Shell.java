@@ -12,11 +12,15 @@ import java.util.Scanner;
 public class Shell {
     private static final String EXIT_MESSAGE = "\n*** Countdown App Shutting Down ***";
     private static final String PROMPT = ">> Ready for input...\n>> ";
-
     private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
-    private static final Serializer SERIALIZER = new Serializer();
     private static final Scanner SCANNER = new Scanner(System.in);
     private static final PrintStream OUT = System.out;
+
+    private final Serializer serializer;
+
+    public Shell(Serializer serializer) {
+        this.serializer = serializer;
+    }
 
     public String getInput() {
         OUT.print(PROMPT);
@@ -28,7 +32,7 @@ public class Shell {
     }
 
     void logGenerator(Generator generator) {
-        SERIALIZER.serializeGenerator(generator.getTarget().getSolution(),
+        serializer.serializeGenerator(generator.getTarget().getSolution(),
                 generator.getTarget().getValue(), generator.getTime());
         var formattedNumbers = generator.getQuestionNumbers()
                 .toString().replaceAll("[^\\d\s]", "");
@@ -55,7 +59,7 @@ public class Shell {
     }
 
     void logSolver(Solver solver) {
-        SERIALIZER.serializeSolver(solver.getSolution().getSolution(), solver.getTime());
+        serializer.serializeSolver(solver.getSolution().getSolution(), solver.getTime());
         OUT.printf("""
                         
                         ============================================================================

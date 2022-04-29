@@ -11,10 +11,10 @@ import java.util.function.Supplier;
 
 public class SlackClient {
     private static final Logger LOG = LoggerFactory.getLogger(SlackClient.class);
-    private final Supplier<String> tokenSupplier = new TokenSupplier();
     private final MethodsClient methods;
+    private String channel;
 
-    public SlackClient() {
+    public SlackClient(Supplier<String> tokenSupplier) {
         Slack slack = Slack.getInstance();
         this.methods = slack.methods(tokenSupplier.get());
     }
@@ -31,6 +31,14 @@ public class SlackClient {
             LOG.error("Error writing Slack message to channel {}: {} \n{}",
                     channel, message, e);
         }
+    }
+
+    public void postMessage(String message) {
+        postMessage(channel, message);
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
     private void logResponse(String channel, String message,

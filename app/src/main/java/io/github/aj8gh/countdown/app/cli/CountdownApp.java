@@ -27,13 +27,12 @@ import static java.util.stream.Collectors.toList;
 
 public class CountdownApp {
     private static final Logger LOG = LoggerFactory.getLogger(CountdownApp.class);
-    private static final FilterSelector FILTER_SELECTOR = new FilterSelector();
-    private static final Shell SHELL = new Shell();
     private static final String ARG_DELIMITER = " ";
-    private static final int MIN_LARGE = 0;
     private static final int MAX_LARGE = 4;
-    private static final int WARM_UPS = 20;
+    private static final int MIN_LARGE = 0;
+    private static final FilterSelector FILTER_SELECTOR = new FilterSelector();
 
+    private final Shell shell;
     private final Generator generator;
     private final Solver solver;
 
@@ -41,14 +40,15 @@ public class CountdownApp {
     private String command;
     private List<String> args;
 
-    public CountdownApp(Generator generator, Solver solver) {
+    public CountdownApp(Shell shell, Generator generator, Solver solver) {
+        this.shell = shell;
         this.generator = generator;
         this.solver = solver;
     }
 
     public void run() {
         while (input == null || !input.equalsIgnoreCase(EXIT)) {
-            this.input = SHELL.getInput();
+            this.input = shell.getInput();
             processInput();
         }
     }
@@ -90,11 +90,11 @@ public class CountdownApp {
     }
 
     private void printAttribute(String attribute) {
-        SHELL.print(attribute);
+        shell.print(attribute);
     }
 
     private void printAttribute(long attribute) {
-        SHELL.print(NumberFormat.getInstance().format(attribute));
+        shell.print(NumberFormat.getInstance().format(attribute));
     }
 
     private void setModeSwitchThreshold() {
@@ -121,29 +121,29 @@ public class CountdownApp {
         args.stream().map(Integer::parseInt)
                 .forEach(number -> {
                     validateGeneratorInput(number);
-                    generator.warmUp(WARM_UPS);
+                    generator.warmUp();
                     generator.generate(number);
-                    SHELL.logGenerator(generator);
+                    shell.logGenerator(generator);
                     generator.reset();
                 });
     }
 
     private void solve() {
         validateSolverInput();
-        solver.warmUp(WARM_UPS);
+        solver.warmUp();
         solver.solve(args.stream().map(Integer::parseInt).collect(toList()));
-        SHELL.logSolver(solver);
+        shell.logSolver(solver);
         solver.reset();
     }
 
     private void generateToSolve() {
         args.stream().map(Integer::parseInt).forEach(number -> {
             validateGeneratorInput(number);
-            solver.warmUp(WARM_UPS);
+            solver.warmUp();
             generator.generate(number);
             solver.solve(generator.getQuestionNumbers());
-            SHELL.logGenerator(generator);
-            SHELL.logSolver(solver);
+            shell.logGenerator(generator);
+            shell.logSolver(solver);
             reset();
         });
     }
@@ -169,7 +169,7 @@ public class CountdownApp {
     }
 
     private void exit() {
-        SHELL.logExitMessage();
+        shell.logExitMessage();
         System.exit(0);
     }
 

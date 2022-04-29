@@ -10,13 +10,16 @@ import java.util.function.Supplier;
 
 public class TokenSupplier implements Supplier<String> {
     private static final Logger LOG = LoggerFactory.getLogger(TokenSupplier.class);
-    private static final Properties PROPS = new Properties();
-    private static final String FILE_PATH = "slack/src/main/resources/slack.properties";
-    private static final String SLACK_TOKEN_KEY = "slack.oauth.token";
+
+    private final String propsFilePath;
+    private final String tokenKey;
+    private final Properties props = new Properties();
 
     private String token;
 
-    public TokenSupplier() {
+    public TokenSupplier(String propsFilePath, String tokenKey) {
+        this.propsFilePath = propsFilePath;
+        this.tokenKey = tokenKey;
         loadToken();
     }
 
@@ -27,9 +30,9 @@ public class TokenSupplier implements Supplier<String> {
     }
 
     private void loadToken() {
-        try (FileInputStream in = new FileInputStream(FILE_PATH)) {
-            PROPS.load(in);
-            this.token = PROPS.getProperty(SLACK_TOKEN_KEY);
+        try (FileInputStream in = new FileInputStream(propsFilePath)) {
+            props.load(in);
+            this.token = props.getProperty(tokenKey);
         } catch (IOException e) {
             LOG.error("Error loading Slack token\n", e);
         }

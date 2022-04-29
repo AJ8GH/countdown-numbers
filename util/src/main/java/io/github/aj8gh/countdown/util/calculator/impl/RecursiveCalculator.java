@@ -20,8 +20,7 @@ public class RecursiveCalculator implements Calculator {
     @Override
     public Calculation calculateSolution(List<Integer> numbers, int target) {
         var calculations = new ArrayList<>(numbers.stream().map(Calculation::new).toList());
-        calculateRecursively(calculations, calculations.size(), target);
-        return null;
+        return calculateRecursively(calculations, calculations.size(), target);
     }
 
     @Override

@@ -3,13 +3,25 @@ package io.github.aj8gh.countdown.generator;
 import java.util.Set;
 import java.util.function.IntPredicate;
 
-public final class Filter {
-    public static final IntPredicate IN_RANGE = Filter::isInRange;
-    public static final IntPredicate ODD = Filter::isOdd;
-    public static final IntPredicate NOT_FIVE = Filter::isNotDivisibleByFive;
-    public static final IntPredicate NOT_TEN = Filter::isNotDivisibleByTen;
-    public static final IntPredicate NOT_ONE_HUNDRED = Filter::isNotOneHundred;
-    public static final IntPredicate PRIME = Filter::isPrime;
+public final class FilterFactory {
+    public enum Filter {
+        IN_RANGE(FilterFactory::isInRange),
+        ODD(FilterFactory::isOdd),
+        NOT_FIVE(FilterFactory::isNotDivisibleByFive),
+        NOT_TEN(FilterFactory::isNotDivisibleByTen),
+        NOT_ONE_HUNDRED(FilterFactory::isNotOneHundred),
+        PRIME(FilterFactory::isPrime);
+
+        private final IntPredicate predicate;
+
+        Filter(IntPredicate predicate) {
+            this.predicate = predicate;
+        }
+
+        public IntPredicate getPredicate() {
+            return predicate;
+        }
+    }
 
     private static final int MIN_TARGET = 100;
     private static final int MAX_TARGET = 999;
@@ -55,5 +67,5 @@ public final class Filter {
         return target != 100;
     }
 
-    private Filter() {}
+    private FilterFactory() {}
 }

@@ -13,8 +13,6 @@
     <artifactId>game</artifactId>
 
     <build>
-        <finalName>game</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -27,12 +25,15 @@
         </plugins>
     </build>
 
-
     <properties>
         <start-class>io.github.aj8gh.countdown.game.Main</start-class>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>config</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>generator</artifactId>
