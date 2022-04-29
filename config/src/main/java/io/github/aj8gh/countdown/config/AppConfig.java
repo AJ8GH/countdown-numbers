@@ -28,12 +28,16 @@ public class AppConfig {
     private static Serializer serializer;
 
     static {
-        loadProperties();
-        buildGenerator();
-        buildSolver();
-        buildSlackClient();
-        buildDeserializer();
-        buildSerializer();
+        try {
+            loadProperties();
+            buildGenerator();
+            buildSolver();
+            buildSlackClient();
+            buildDeserializer();
+            buildSerializer();
+        } catch (Exception e) {
+            throw new IllegalStateException("Illegal Application Context\n", e);
+        }
     }
 
     public static Generator generator() {
@@ -88,11 +92,11 @@ public class AppConfig {
 
     private static void buildSlackClient() {
         var slackPropsPath = PROPS.getProperty("slack.propsFilePath");
-        var slackTokenKey = PROPS.getProperty("slack.tokenKey");
-        var slackChannel = PROPS.getProperty("slack.channel");
-        var tokenSupplier = new TokenSupplier(slackPropsPath, slackTokenKey);
-        slackClient = new SlackClient(tokenSupplier);
-        slackClient.setChannel(slackChannel);
+        var slackTokenProperty = PROPS.getProperty("slack.tokenProperty");
+        var tokenSupplier = new TokenSupplier(slackPropsPath, slackTokenProperty);
+        var slackToken = tokenSupplier.get();
+        slackClient = new SlackClient(slackToken);
+        slackClient.setChannel(PROPS.getProperty("slack.channel"));
     }
 
     private static void buildDeserializer() {

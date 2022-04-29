@@ -12,14 +12,14 @@ public class TokenSupplier implements Supplier<String> {
     private static final Logger LOG = LoggerFactory.getLogger(TokenSupplier.class);
 
     private final String propsFilePath;
-    private final String tokenKey;
+    private final String tokenProperty;
     private final Properties props = new Properties();
 
     private String token;
 
-    public TokenSupplier(String propsFilePath, String tokenKey) {
+    public TokenSupplier(String propsFilePath, String tokenProperty) {
         this.propsFilePath = propsFilePath;
-        this.tokenKey = tokenKey;
+        this.tokenProperty = tokenProperty;
         loadToken();
     }
 
@@ -32,7 +32,7 @@ public class TokenSupplier implements Supplier<String> {
     private void loadToken() {
         try (FileInputStream in = new FileInputStream(propsFilePath)) {
             props.load(in);
-            this.token = props.getProperty(tokenKey);
+            this.token = props.getProperty(tokenProperty);
         } catch (IOException e) {
             LOG.error("Error loading Slack token\n", e);
         }

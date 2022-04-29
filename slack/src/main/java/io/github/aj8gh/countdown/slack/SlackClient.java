@@ -7,16 +7,14 @@ import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Supplier;
-
 public class SlackClient {
     private static final Logger LOG = LoggerFactory.getLogger(SlackClient.class);
     private final MethodsClient methods;
     private String channel;
 
-    public SlackClient(Supplier<String> tokenSupplier) {
+    public SlackClient(String token) {
         Slack slack = Slack.getInstance();
-        this.methods = slack.methods(tokenSupplier.get());
+        this.methods = slack.methods(token);
     }
 
     public void postMessage(String channel, String message) {
@@ -25,7 +23,6 @@ public class SlackClient {
                     .channel(channel)
                     .text(message)
                     .build();
-
             logResponse(channel, message, methods.chatPostMessage(request));
         } catch (Exception e) {
             LOG.error("Error writing Slack message to channel {}: {} \n{}",
