@@ -25,8 +25,9 @@ public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE.getPredicate();
-    private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
+    private static final int DEFAULT_WARMUPS = 20;
     private static final int TOTAL_NUMBERS = 6;
+    private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
 
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final AtomicInteger attempts = new AtomicInteger(1);
@@ -38,7 +39,7 @@ public class Generator {
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = new HashSet<>(Set.of(filter));
     private Calculation target;
-    private int warmUps = 20;
+    private int warmUps = DEFAULT_WARMUPS;
 
     public Generator(Map<CalculationMode, Calculator> calculators) {
         this.calculators = calculators;

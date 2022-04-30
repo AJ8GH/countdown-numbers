@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +24,6 @@ import static io.github.aj8gh.countdown.app.cli.Commands.SET_SOLVE_MODE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SET_TIME_SCALE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SOLVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
-import static java.util.stream.Collectors.toList;
 
 public class CountdownApp {
     private static final Logger LOG = LoggerFactory.getLogger(CountdownApp.class);
@@ -137,7 +137,7 @@ public class CountdownApp {
     private void solve() {
         validateSolverInput();
         solver.warmUp();
-        solver.solve(args.stream().map(Integer::parseInt).collect(toList()));
+        solver.solve(new ArrayList<>(args.stream().map(Integer::parseInt).toList()));
         shell.logSolver(solver);
         solver.reset();
     }

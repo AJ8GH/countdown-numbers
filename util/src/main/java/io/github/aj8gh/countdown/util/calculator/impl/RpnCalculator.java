@@ -9,7 +9,6 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 
 public class RpnCalculator implements Calculator {
     private static final CalculationMode MODE = RPN;
-    private String solution;
 
     @Override
     public Calculation calculateTarget(List<Integer> numbers) {

@@ -17,17 +17,18 @@ import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMo
 public class Solver {
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final long DEFAULT_MODE_SWITCH_THRESHOLD = 20_000;
+    private static final int DEFAULT_WARM_UPS = 20;
 
     private final AtomicInteger attempts = new AtomicInteger(1);
-    private final Timer timer = new Timer();
     private final SolutionCache cache = new SolutionCache();
-    private final Generator generator;
     private final Map<CalculationMode, Calculator> calculators;
+    private final Generator generator;
+    private final Timer timer = new Timer();
 
-    private Calculator calculator;
     private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
+    private int warmUps = DEFAULT_WARM_UPS;
+    private Calculator calculator;
     private Calculation solution;
-    private int warmUps = 20;
 
     public Solver(Generator generator, Map<CalculationMode, Calculator> calculators) {
         this.generator = generator;
@@ -41,6 +42,40 @@ public class Solver {
         this.solution = calculate(new ArrayList<>(question));
         cache.put(question, solution);
         timer.stop();
+    }
+
+    private boolean isCached(List<Integer> question) {
+        var cachedSolution = cache.get(question);
+        if (cachedSolution != null) {
+            this.solution = cachedSolution;
+            timer.stop();
+            return true;
+        }
+        return false;
+    }
+
+    private Calculation calculate(List<Integer> question) {
+        int target = question.remove(question.size() - 1);
+        if (containsTarget(question, target)) return new Calculation(target);
+        Calculation calculation = calculator.calculateSolution(question, target);
+        while (calculation.getValue() != target) {
+            calculation = calculator.calculateSolution(question, target);
+            if (isSwitchThresholdBreached()) switchMode();
+        }
+        return calculation;
+    }
+
+    private boolean containsTarget(List<Integer> question, int target) {
+        return target == 100 && question.contains(target);
+    }
+
+    public void warmUp() {
+        for (int i = 0; i < warmUps; i++) {
+            generator.generate(i % 5);
+            solve(generator.getQuestionNumbers());
+            generator.reset();
+            reset();
+        }
     }
 
     public void reset() {
@@ -86,41 +121,6 @@ public class Solver {
 
     public void setWarmUps(int warmUps) {
         this.warmUps = warmUps;
-    }
-
-    public void warmUp() {
-        for (int i = 0; i < warmUps; i++) {
-            generator.generate(i % 5);
-            solve(generator.getQuestionNumbers());
-            generator.reset();
-            reset();
-        }
-    }
-
-    private Calculation calculate(List<Integer> question) {
-        int target = question.remove(question.size() - 1);
-        if (containsTarget(question, target)) return new Calculation(target);
-        Calculation calculation = calculator.calculateSolution(question, target);
-        while (calculation.getValue() != target) {
-            calculation = calculator.calculateSolution(question, target);
-            if (isSwitchThresholdBreached()) switchMode();
-        }
-        return calculation;
-    }
-
-    private boolean containsTarget(List<Integer> question, int target) {
-        if (target != 100) return false;
-        return question.contains(target);
-    }
-
-    private boolean isCached(List<Integer> question) {
-        var cachedSolution = cache.get(question);
-        if (cachedSolution != null) {
-            this.solution = cachedSolution;
-            timer.stop();
-            return true;
-        }
-        return false;
     }
 
     private boolean isSwitchThresholdBreached() {
