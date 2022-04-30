@@ -55,8 +55,8 @@ public class Deserializer {
     }
 
     private String buildFilePath(String file, String defaultFile) {
-        var filePath = ioDir + (new File(ioDir + file).exists() ? defaultFile : file);
-        LOG.info("*** Reading from {} ***", file);
+        var filePath = ioDir + (new File(ioDir + file).exists() ? file : defaultFile);
+        LOG.info("*** Reading from {} ***", filePath);
         return filePath;
     }
 }
