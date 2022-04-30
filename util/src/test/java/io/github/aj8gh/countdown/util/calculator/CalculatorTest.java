@@ -75,7 +75,7 @@ class CalculatorTest {
         assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }
 
-    @Disabled("Not Implemented")
+    @Disabled("Not implemented")
     @ParameterizedTest
     @MethodSource(value = { "getInputs", "getHardestInput" })
     void calculateSolution_Recursive(List<Integer> numbers) {

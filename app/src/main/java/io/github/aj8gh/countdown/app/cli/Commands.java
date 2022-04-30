@@ -6,6 +6,7 @@ public final class Commands {
     public static final String EXIT = "e";
     public static final String GENERATE = "g";
     public static final String GENERATE_TO_SOLVE = "gts";
+    public static final String GET_FILTERS = "gf";
     public static final String GET_GENERATOR_MODE = "ggm";
     public static final String GET_SOLVE_MODE = "gsm";
     public static final String SET_MODE_SWITCH_THRESHOLD = "sst";

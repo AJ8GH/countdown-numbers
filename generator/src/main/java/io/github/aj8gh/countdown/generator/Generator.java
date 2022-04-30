@@ -2,9 +2,6 @@ package io.github.aj8gh.countdown.generator;
 
 import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
-import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
-import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
@@ -23,8 +20,6 @@ import java.util.function.IntPredicate;
 import static io.github.aj8gh.countdown.generator.FilterFactory.Filter.IN_RANGE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
 
 public class Generator {
     private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
@@ -33,22 +28,21 @@ public class Generator {
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final int TOTAL_NUMBERS = 6;
 
-    private final Timer timer = new Timer();
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final AtomicInteger attempts = new AtomicInteger(1);
-    private final Map<CalculationMode, Calculator> calculators = Map.of(
-            SEQUENTIAL, new SequentialCalculator(),
-            INTERMEDIATE, new IntermediateCalculator(),
-            RECURSIVE, new RecursiveCalculator());
+    private final Map<CalculationMode, Calculator> calculators;
+    private final Timer timer = new Timer();
 
-    private Calculator calculator = calculators.get(DEFAULT_MODE);
+    private Calculator calculator;
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = new HashSet<>(Set.of(filter));
     private Calculation target;
     private int warmUps = 20;
 
-    public Generator() {
+    public Generator(Map<CalculationMode, Calculator> calculators) {
+        this.calculators = calculators;
+        this.calculator = calculators.get(DEFAULT_MODE);
         setUp();
     }
 

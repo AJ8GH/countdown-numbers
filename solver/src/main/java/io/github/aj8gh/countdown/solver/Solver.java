@@ -3,9 +3,6 @@ package io.github.aj8gh.countdown.solver;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
-import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
-import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.util.timer.Timer;
 
 import java.util.ArrayList;
@@ -15,26 +12,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
 
 public class Solver {
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final long DEFAULT_MODE_SWITCH_THRESHOLD = 20_000;
 
+    private final AtomicInteger attempts = new AtomicInteger(1);
     private final Timer timer = new Timer();
     private final SolutionCache cache = new SolutionCache();
-    private final Generator generator = new Generator();
-    private final AtomicInteger attempts = new AtomicInteger(1);
-    private final Map<CalculationMode, Calculator> calculators = Map.of(
-            SEQUENTIAL, new SequentialCalculator(),
-            INTERMEDIATE, new IntermediateCalculator(),
-            RECURSIVE, new RecursiveCalculator());
+    private final Generator generator;
+    private final Map<CalculationMode, Calculator> calculators;
 
-    private Calculator calculator = calculators.get(DEFAULT_MODE);
+    private Calculator calculator;
     private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
     private Calculation solution;
     private int warmUps = 20;
+
+    public Solver(Generator generator, Map<CalculationMode, Calculator> calculators) {
+        this.generator = generator;
+        this.calculators = calculators;
+        this.calculator = calculators.get(DEFAULT_MODE);
+    }
 
     public void solve(List<Integer> question) {
         timer.start();

@@ -3,114 +3,121 @@ package io.github.aj8gh.countdown.config;
 import io.github.aj8gh.countdown.generator.FilterFactory;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.slack.SlackClient;
-import io.github.aj8gh.countdown.slack.TokenSupplier;
 import io.github.aj8gh.countdown.solver.Solver;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.serialisation.Deserializer;
 import io.github.aj8gh.countdown.util.serialisation.Serializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 public class AppConfig {
-    private static final Logger LOG = LoggerFactory.getLogger(AppConfig.class);
-    private static final String PROPS_FILE_PATH = "config/src/main/resources/application.properties";
-    private static final Properties PROPS = new Properties();
-
-    private static Generator generator;
-    private static Solver solver;
-    private static SlackClient slackClient;
-    private static Deserializer deserializer;
-    private static Serializer serializer;
+    private static final Generator GENERATOR;
+    private static final Solver SOLVER;
+    private static final SlackClient SLACK_CLIENT;
+    private static final Deserializer DESERIALIZER;
+    private static final Serializer SERIALIZER;
+    private static final Properties PROPS;
 
     static {
         try {
-            loadProperties();
-            buildGenerator();
-            buildSolver();
-            buildSlackClient();
-            buildDeserializer();
-            buildSerializer();
+            PROPS = new PropsConfig().getProps();
+            GENERATOR = buildGenerator();
+            SOLVER = buildSolver();
+            SLACK_CLIENT = buildSlackClient();
+            DESERIALIZER = buildDeserializer();
+            SERIALIZER = buildSerializer();
         } catch (Exception e) {
-            throw new IllegalStateException("Illegal Application Context\n", e);
+            throw new IllegalStateException("Illegal Application Context", e);
         }
     }
 
     public static Generator generator() {
-        return generator;
+        return GENERATOR;
     }
 
     public static Solver solver() {
-        return solver;
+        return SOLVER;
     }
 
     public static SlackClient slackClient() {
-        return slackClient;
+        return SLACK_CLIENT;
     }
 
     public static Deserializer deserializer() {
-        return deserializer;
+        return DESERIALIZER;
     }
 
     public static Serializer serializer() {
-        return serializer;
+        return SERIALIZER;
     }
 
-    private static void loadProperties() {
-        try (FileInputStream in = new FileInputStream(PROPS_FILE_PATH)) {
-            PROPS.load(in);
-        } catch (IOException e) {
-            LOG.error("Error loading app properties\n", e);
-        }
-    }
-
-    private static void buildGenerator() {
-        generator = new Generator();
+    private static Generator buildGenerator() {
+        var calculators = getCalculators();
         var mode = Calculator.CalculationMode.valueOf(PROPS.getProperty("generator.mode"));
         var warmUps = Integer.parseInt(PROPS.getProperty("generator.warmups"));
         var filters = PROPS.getProperty("generator.filters").split(",");
+        var timeScale = Integer.parseInt(PROPS.getProperty("generator.timer.scale"));
+        var generator = new Generator(calculators);
         generator.setMode(mode);
         generator.setWarmUps(warmUps);
+        generator.setTimeScale(timeScale);
         Arrays.stream(filters)
                 .map(FilterFactory.Filter::valueOf)
                 .forEach(f -> generator.addFilter(f.getPredicate()));
+
+        return generator;
     }
 
-    private static void buildSolver() {
-        solver = new Solver();
+    private static Solver buildSolver() {
+        var calculators = getCalculators();
+        var generator = buildGenerator();
         var mode = Calculator.CalculationMode.valueOf(PROPS.getProperty("solver.mode"));
         var warmUps = Integer.parseInt(PROPS.getProperty("solver.warmups"));
         var switchThreshold = Integer.parseInt(PROPS.getProperty("solver.switch.threshold"));
+        var timeScale = Integer.parseInt(PROPS.getProperty("solver.timer.scale"));
+        var solver = new Solver(generator, calculators);
         solver.setMode(mode);
+        solver.setTimeScale(timeScale);
         solver.setWarmUps(warmUps);
         solver.setModeSwitchThreshold(switchThreshold);
+        return solver;
     }
 
-    private static void buildSlackClient() {
-        var slackPropsPath = PROPS.getProperty("slack.propsFilePath");
-        var slackTokenProperty = PROPS.getProperty("slack.tokenProperty");
-        var tokenSupplier = new TokenSupplier(slackPropsPath, slackTokenProperty);
-        var slackToken = tokenSupplier.get();
-        slackClient = new SlackClient(slackToken);
+    private static SlackClient buildSlackClient() {
+        var slackToken = PROPS.getProperty("slack.oauth.token");
+        var slackClient = new SlackClient(slackToken);
         slackClient.setChannel(PROPS.getProperty("slack.channel"));
+        return slackClient;
     }
 
-    private static void buildDeserializer() {
+    private static Deserializer buildDeserializer() {
         var ioDir = PROPS.getProperty("inputOutput.dir");
         var solInFile = PROPS.getProperty("solver.input.file");
         var genInFile = PROPS.getProperty("generator.input.file");
-        deserializer = new Deserializer(ioDir, solInFile, genInFile);
+        return new Deserializer(ioDir, solInFile, genInFile);
     }
 
-    private static void buildSerializer() {
+    private static Serializer buildSerializer() {
         var ioDir = PROPS.getProperty("inputOutput.dir");
         var genOutFile = PROPS.getProperty("generator.output.file");
         var solOutFile = PROPS.getProperty("solver.output.file");
         var solInFile = PROPS.getProperty("solver.input.file");
-        serializer = new Serializer(ioDir, genOutFile, solOutFile, solInFile);
+        return new Serializer(ioDir, genOutFile, solOutFile, solInFile);
+    }
+
+    private static Map<Calculator.CalculationMode, Calculator> getCalculators() {
+        return Arrays.stream(Calculator.CalculationMode.values()).collect(toMap(Function.identity(), mode -> {
+            try {
+                var type = Class.forName(mode.type().getName());
+                return (Calculator) type.getConstructor().newInstance();
+            } catch (Exception e) {
+                throw new IllegalStateException("Error building Calculator map", e);
+            }
+        }));
     }
 }

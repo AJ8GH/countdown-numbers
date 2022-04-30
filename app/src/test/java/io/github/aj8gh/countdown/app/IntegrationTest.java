@@ -1,5 +1,6 @@
 package io.github.aj8gh.countdown.app;
 
+import io.github.aj8gh.countdown.config.AppConfig;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.Solver;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
@@ -31,8 +32,8 @@ class IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        solver = new Solver();
-        generator = new Generator();
+        solver = AppConfig.solver();
+        generator = AppConfig.generator();
         rpnParser = new RpnParser();
         rpnConverter = new RpnConverter();
 

@@ -110,11 +110,17 @@ public class CountdownApp {
     }
 
     private void setGenMode() {
-        generator.setMode(CalculationMode.valueOf(args.get(0).toUpperCase()));
+        generator.setMode(CalculationMode.fromString(args.get(0).toUpperCase()));
     }
 
     private void setSolveMode() {
-        solver.setMode(CalculationMode.valueOf(args.get(0).toUpperCase()));
+        var mode = CalculationMode.fromString(args.get(0).toUpperCase());
+        if (mode == null) {
+            LOG.warn("Invalid mode {}", args.get(0));
+        } else {
+            solver.setMode(mode);
+            LOG.info("Solve mode: {}", mode);
+        }
     }
 
     private void generate() {
