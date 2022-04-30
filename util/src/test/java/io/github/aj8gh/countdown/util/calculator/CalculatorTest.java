@@ -3,7 +3,7 @@ package io.github.aj8gh.countdown.util.calculator;
 import io.github.aj8gh.countdown.util.calculator.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.util.calculator.impl.SequentialCalculator;
-import io.github.aj8gh.countdown.util.serialisation.RpnParser;
+import io.github.aj8gh.countdown.util.rpn.RpnParser;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

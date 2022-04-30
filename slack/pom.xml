@@ -15,11 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.slack.api</groupId>
-            <artifactId>bolt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.slack.api</groupId>
-            <artifactId>bolt-servlet</artifactId>
+            <artifactId>slack-api-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

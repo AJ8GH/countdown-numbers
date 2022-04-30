@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.util.calculator;
 
-import io.github.aj8gh.countdown.util.serialisation.RpnConverter;
+import io.github.aj8gh.countdown.util.rpn.RpnConverter;
 
 public class Calculation {
     private static final String LEFT_PARENTHESIS = "(";

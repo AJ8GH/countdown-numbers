@@ -3,8 +3,8 @@ package io.github.aj8gh.countdown.app;
 import io.github.aj8gh.countdown.generator.Generator;
 import io.github.aj8gh.countdown.solver.Solver;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.serialisation.RpnConverter;
-import io.github.aj8gh.countdown.util.serialisation.RpnParser;
+import io.github.aj8gh.countdown.util.rpn.RpnConverter;
+import io.github.aj8gh.countdown.util.rpn.RpnParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,9 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IntegrationTest {
     private static final int NUMBER_OF_RUNS = 100;
-    private static final int WARM_UPS = 5;
+    private static final int WARM_UPS = 20;
     private static final int MIN_TARGET = 100;
     private static final int MAX_TARGET = 999;
+
     private Solver solver;
     private Generator generator;
     private RpnParser rpnParser;
@@ -41,59 +42,48 @@ class IntegrationTest {
 
     @ParameterizedTest
     @MethodSource(value = "getModes")
-    void sequentialSolver_sequentialGenerator(List<CalculationMode> modes) {
+    void solverAndGenerator_FixedMode(List<CalculationMode> modes) {
         generator.setMode(modes.get(0));
         solver.setMode(modes.get(1));
 
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
-            // Test Generator
-            generator.warmUp();
-            generator.generate(i % 5);
-            var target = generator.getTarget().getValue();
-            assertTrue(target >= MIN_TARGET && target <= MAX_TARGET);
-            assertEquals(rpnConverter.convert(generator.getTarget().getSolution()), generator.getTarget().getRpn());
-            assertEquals(target, rpnParser.parse(generator.getTarget().getRpn()));
-
-            // Test solver
-            solver.warmUp();
-            solver.solve(generator.getQuestionNumbers());
-            var result = solver.getSolution().getValue();
-            assertEquals(target, result);
-            assertEquals(rpnConverter.convert(solver.getSolution().getSolution()), solver.getSolution().getRpn());
-            assertEquals(result, rpnParser.parse(solver.getSolution().getRpn()));
-
-            // Tear down
-            generator.reset();
-            solver.reset();
+            testGenerator(i);
+            testSolver(generator.getTarget().getValue());
+            tearDown();
         }
     }
 
     @Test
-    void switchingModes() {
-        for (int i = 0; i < NUMBER_OF_RUNS; i++) {
-            // Test Generator
-            generator.warmUp();
-            generator.generate(i % 5);
-            var target = generator.getTarget().getValue();
-            assertTrue(target >= MIN_TARGET && target <= MAX_TARGET);
-            assertEquals(rpnConverter.convert(generator.getTarget().getSolution()), generator.getTarget().getRpn());
-            assertEquals(target, rpnParser.parse(generator.getTarget().getRpn()));
+    void solverAndGenerator_SwitchingModes() {
+        for (int i = 0; i < NUMBER_OF_RUNS * 2; i++) {
+            testGenerator(i);
+            testSolver(generator.getTarget().getValue());
+            tearDown();
+            switchModes(i);
+        }
+    }
 
-            // Test solvers
+    private void testGenerator(int i) {
+        generator.warmUp();
+        generator.generate(i % 5);
+        var target = generator.getTarget().getValue();
+        assertTrue(target >= MIN_TARGET && target <= MAX_TARGET);
+        assertEquals(rpnConverter.convert(generator.getTarget().getSolution()), generator.getTarget().getRpn());
+        assertEquals(target, rpnParser.parse(generator.getTarget().getRpn()));
+    }
+
+    private void testSolver(int target) {
             solver.warmUp();
             solver.solve(generator.getQuestionNumbers());
             var result = solver.getSolution().getValue();
             assertEquals(target, result);
             assertEquals(rpnConverter.convert(solver.getSolution().getSolution()), solver.getSolution().getRpn());
             assertEquals(result, rpnParser.parse(solver.getSolution().getRpn()));
+    }
 
-            // Tear down
-            generator.reset();
-            solver.reset();
-
-            // Do the switch
-            switchModes(i);
-        }
+    private void tearDown() {
+        generator.reset();
+        solver.reset();
     }
 
     private void switchModes(int index) {

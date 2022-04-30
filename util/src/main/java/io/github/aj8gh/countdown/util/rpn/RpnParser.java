@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.util.serialisation;
+package io.github.aj8gh.countdown.util.rpn;
 
 import io.github.aj8gh.countdown.util.calculator.Operator;
 
