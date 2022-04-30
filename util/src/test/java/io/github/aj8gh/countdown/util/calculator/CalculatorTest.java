@@ -7,6 +7,7 @@ import io.github.aj8gh.countdown.util.rpn.RpnParser;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -74,6 +75,7 @@ class CalculatorTest {
         assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }
 
+    @Disabled("Not Implemented")
     @ParameterizedTest
     @MethodSource(value = { "getInputs", "getHardestInput" })
     void calculateSolution_Recursive(List<Integer> numbers) {
