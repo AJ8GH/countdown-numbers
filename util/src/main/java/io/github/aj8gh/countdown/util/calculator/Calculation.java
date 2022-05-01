@@ -16,6 +16,11 @@ public class Calculation {
         this.solution = new StringBuilder(String.valueOf(x));
     }
 
+    public Calculation(Calculation calculation) {
+        this.value = calculation.getValue();
+        this.solution = calculation.solution;
+    }
+
     public Calculation calculate(Operator operator, Calculation calculation) {
         apply(operator, calculation);
         return this;

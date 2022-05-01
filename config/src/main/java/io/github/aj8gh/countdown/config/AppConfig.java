@@ -78,12 +78,14 @@ public class AppConfig {
         var generator = buildGenerator();
         var mode = Calculator.CalculationMode.valueOf(PROPS.getProperty("solver.mode"));
         var warmUps = Integer.parseInt(PROPS.getProperty("solver.warmups"));
+        var switchModes = Boolean.parseBoolean(PROPS.getProperty("solver.switch.modes"));
         var switchThreshold = Integer.parseInt(PROPS.getProperty("solver.switch.threshold"));
         var timeScale = Integer.parseInt(PROPS.getProperty("solver.timer.scale"));
         var solver = new Solver(generator, calculators);
         solver.setMode(mode);
         solver.setTimeScale(timeScale);
         solver.setWarmUps(warmUps);
+        solver.setSwitchModes(switchModes);
         solver.setModeSwitchThreshold(switchThreshold);
         return solver;
     }

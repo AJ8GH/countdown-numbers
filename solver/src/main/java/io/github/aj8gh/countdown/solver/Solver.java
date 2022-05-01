@@ -18,6 +18,7 @@ public class Solver {
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final long DEFAULT_MODE_SWITCH_THRESHOLD = 20_000;
     private static final int DEFAULT_WARM_UPS = 20;
+    private static final boolean DEFAULT_SWITCH_MODES = true;
 
     private final AtomicInteger attempts = new AtomicInteger(1);
     private final SolutionCache cache = new SolutionCache();
@@ -25,6 +26,7 @@ public class Solver {
     private final Generator generator;
     private final Timer timer = new Timer();
 
+    private boolean switchModes = DEFAULT_SWITCH_MODES;
     private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
     private int warmUps = DEFAULT_WARM_UPS;
     private Calculator calculator;
@@ -69,6 +71,10 @@ public class Solver {
         return target == 100 && question.contains(target);
     }
 
+    private boolean isSwitchThresholdBreached() {
+        return switchModes && attempts.incrementAndGet() % modeSwitchThreshold == 0;
+    }
+
     public void warmUp() {
         for (int i = 0; i < warmUps; i++) {
             generator.generate(i % 5);
@@ -103,6 +109,10 @@ public class Solver {
         return solution;
     }
 
+    public void setSwitchModes(boolean switchModes) {
+        this.switchModes = switchModes;
+    }
+
     public long getModeSwitchThreshold() {
         return modeSwitchThreshold;
     }
@@ -121,10 +131,6 @@ public class Solver {
 
     public void setWarmUps(int warmUps) {
         this.warmUps = warmUps;
-    }
-
-    private boolean isSwitchThresholdBreached() {
-        return attempts.incrementAndGet() % modeSwitchThreshold == 0;
     }
 
     private void switchMode() {

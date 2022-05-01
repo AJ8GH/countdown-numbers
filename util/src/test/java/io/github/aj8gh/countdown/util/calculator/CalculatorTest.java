@@ -7,7 +7,6 @@ import io.github.aj8gh.countdown.util.rpn.RpnParser;
 import io.github.aj8gh.countdown.util.timer.Timer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -60,7 +59,7 @@ class CalculatorTest {
     }
 
     @ParameterizedTest
-    @MethodSource(value = { "getInputs", "getHardestInput" })
+    @MethodSource(value = { "getInputs", "getDifficultInputs"})
     void calculateSolution_Intermediate(List<Integer> numbers) {
         var calculator = new IntermediateCalculator();
         numbers = new ArrayList<>(numbers);
@@ -75,9 +74,8 @@ class CalculatorTest {
         assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }
 
-    @Disabled("Not ready")
     @ParameterizedTest
-    @MethodSource(value = { "getInputs", "getHardestInput" })
+    @MethodSource(value = { "getInputs" })
     void calculateSolution_Recursive(List<Integer> numbers) {
         var calculator = new RecursiveCalculator();
         numbers = new ArrayList<>(numbers);
@@ -95,7 +93,6 @@ class CalculatorTest {
                 List.of(1, 2, 3, 4, 5, 6, 100),
                 List.of(50, 25, 75, 2, 1, 100, 199),
                 List.of(6, 100, 4, 6, 8, 2, 752),
-                List.of(25, 50, 75, 100, 3, 6, 952),
                 List.of(75, 25, 10, 1, 10, 2, 101),
                 List.of(100, 50, 10, 3, 6, 3, 319),
                 List.of(50, 100, 3, 10, 1, 4, 166),
@@ -109,9 +106,10 @@ class CalculatorTest {
         );
     }
 
-    private static List<List<Integer>> getHardestInput() {
+    private static List<List<Integer>> getDifficultInputs() {
         return List.of(
-                List.of(75, 5, 25, 6, 50, 100, 426)
+                List.of(75, 5, 25, 6, 50, 100, 426),
+                List.of(25, 50, 75, 100, 3, 6, 952)
         );
     }
 }

@@ -3,14 +3,18 @@ package io.github.aj8gh.countdown.util.calculator.impl;
 import io.github.aj8gh.countdown.util.calculator.Calculation;
 import io.github.aj8gh.countdown.util.calculator.Calculator;
 import io.github.aj8gh.countdown.util.calculator.Operator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.RECURSIVE;
 
 public class RecursiveCalculator implements Calculator {
     private static final CalculationMode MODE = RECURSIVE;
+    private static final Logger LOG = LoggerFactory.getLogger(RecursiveCalculator.class);
+    private int recursions;
+    private Calculation result;
 
     @Override
     public Calculation calculateTarget(List<Integer> numbers) {
@@ -19,8 +23,15 @@ public class RecursiveCalculator implements Calculator {
 
     @Override
     public Calculation calculateSolution(List<Integer> numbers, int target) {
-        var calculations = new ArrayList<>(numbers.stream().map(Calculation::new).toList());
-        return calculateRecursively(calculations, calculations.size(), target);
+        var calcs = new Calculation[numbers.size()];
+        for (int i = 0; i < numbers.size(); i++) calcs[i] = new Calculation(numbers.get(i));
+        if (calculateRecursively(calcs, calcs.length, target)) {
+            LOG.info("Success:\n{}\nrecursions: {}", result, recursions);
+            return resetAndGetResult();
+        } else {
+            LOG.warn("FAIL :(");
+        }
+        return null;
     }
 
     @Override
@@ -28,33 +39,43 @@ public class RecursiveCalculator implements Calculator {
         return MODE;
     }
 
-    private Calculation calculateRecursively(List<Calculation> calculations,
-                                             int inputSize, int target) {
+    private boolean calculateRecursively(Calculation[] numbers, int inputSize, int target) {
+        recursions++;
         for (int i = 0; i < inputSize; i++) {
-            var check = calculations.get(i);
-            if (check.getValue() == target) return check;
+            if (result != null) return true;
+            if (numbers[i].getValue() == target) {
+                this.result = numbers[i];
+                return true;
+            }
 
             for (int j = i + 1; j < inputSize; j++) {
-                for (Operator operator : OPERATORS.values()) {
-                    var first = calculations.get(i);
-                    var second = calculations.get(j);
-                    var result = first.calculate(operator, second);
+                for (Operator operation : OPERATORS.values()) {
+                    var res = new Calculation(operation.apply(numbers[i].getValue(), numbers[j].getValue()));
 
-                    if (result.getValue() != first.getValue() && result.getValue() != second.getValue()) {
-                        var saveI = calculations.get(i);
-                        var saveJ = calculations.get(j);
-                        calculations.set(i, result);
-                        calculations.set(j, calculations.get(inputSize - 1));
+                    if (res.getValue() != 0) {
+                        var saveI = numbers[i];
+                        var saveJ = numbers[j];
+                        res = new Calculation(saveI).calculate(operation, new Calculation(saveJ));
+                        numbers[i] = res;
+                        numbers[j] = numbers[inputSize - 1];
 
-                        if (calculateRecursively(calculations, inputSize - 1, target) != null) {
-                            return result;
+                        if (calculateRecursively(numbers, inputSize - 1, target)) {
+                            if (result == null) result = res;
+                            return true;
                         }
-                        calculations.set(i, saveI);
-                        calculations.set(j, saveJ);
+                        numbers[i] = saveI;
+                        numbers[j] = saveJ;
                     }
                 }
             }
         }
-        return null;
+        return false;
+    }
+
+    private Calculation resetAndGetResult() {
+        final var finalResult = result;
+        this.result = null;
+        this.recursions = 0;
+        return finalResult;
     }
 }
