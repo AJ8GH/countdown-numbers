@@ -27,11 +27,11 @@ public class Shell {
         return SCANNER.nextLine();
     }
 
-    void logExitMessage() {
+    public void logExitMessage() {
         LOG.info(EXIT_MESSAGE);
     }
 
-    void logGenerator(Generator generator) {
+    public void logGenerator(Generator generator) {
         serializer.serializeGenerator(generator.getTarget().getSolution(),
                 generator.getTarget().getValue(), generator.getTime());
         var formattedNumbers = generator.getQuestionNumbers()
@@ -58,7 +58,7 @@ public class Shell {
         );
     }
 
-    void logSolver(Solver solver) {
+    public void logSolver(Solver solver) {
         serializer.serializeSolver(solver.getSolution().getSolution(), solver.getTime());
         OUT.printf("""
                         
@@ -80,7 +80,7 @@ public class Shell {
         );
     }
 
-    void print(String message) {
+    public void print(String message) {
         OUT.println(message);
     }
 }

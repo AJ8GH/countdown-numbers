@@ -22,7 +22,7 @@
             <artifactId>util</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.aj8gh</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>generator</artifactId>
         </dependency>
     </dependencies>

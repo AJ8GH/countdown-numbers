@@ -5,21 +5,27 @@ import java.util.function.IntPredicate;
 
 public final class FilterFactory {
     public enum Filter {
-        IN_RANGE(FilterFactory::isInRange),
-        ODD(FilterFactory::isOdd),
-        NOT_FIVE(FilterFactory::isNotDivisibleByFive),
-        NOT_TEN(FilterFactory::isNotDivisibleByTen),
-        NOT_ONE_HUNDRED(FilterFactory::isNotOneHundred),
-        PRIME(FilterFactory::isPrime);
+        IN_RANGE(FilterFactory::isInRange, "I"),
+        ODD(FilterFactory::isOdd, "O"),
+        NOT_FIVE(FilterFactory::isNotDivisibleByFive, "5"),
+        NOT_TEN(FilterFactory::isNotDivisibleByTen, "10"),
+        NOT_ONE_HUNDRED(FilterFactory::isNotOneHundred, "100"),
+        PRIME(FilterFactory::isPrime, "P");
 
         private final IntPredicate predicate;
+        private final String key;
 
-        Filter(IntPredicate predicate) {
+        Filter(IntPredicate predicate, String key) {
             this.predicate = predicate;
+            this.key = key;
         }
 
         public IntPredicate getPredicate() {
             return predicate;
+        }
+
+        public String key() {
+            return key;
         }
     }
 
