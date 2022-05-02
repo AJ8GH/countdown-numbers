@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static io.github.aj8gh.countdown.app.cli.Commands.ADD_FILTER;
 import static io.github.aj8gh.countdown.app.cli.Commands.EXIT;
@@ -25,14 +27,16 @@ import static io.github.aj8gh.countdown.app.cli.Commands.SET_TIME_SCALE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SOLVE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
-public class CountdownApp {
+public class CountdownApp implements Consumer<String[]> {
     private static final Logger LOG = LoggerFactory.getLogger(CountdownApp.class);
     private static final String ARG_DELIMITER = " ";
     private static final int MAX_LARGE = 4;
     private static final int MIN_LARGE = 0;
     private static final FilterSelector FILTER_SELECTOR = new FilterSelector();
 
+    private final Printer printer = new Printer();
     private final OutputHandler outputHandler;
+    private final Supplier<String> inputSupplier;
     private final Generator generator;
     private final Solver solver;
 
@@ -41,16 +45,19 @@ public class CountdownApp {
     private List<String> args;
 
     public CountdownApp(OutputHandler outputHandler,
+                        Supplier<String> inputSupplier,
                         Generator generator,
                         Solver solver) {
         this.outputHandler = outputHandler;
+        this.inputSupplier = inputSupplier;
         this.generator = generator;
         this.solver = solver;
     }
 
-    public void run() {
+    @Override
+    public void accept(String... args) {
         while (input == null || !input.equalsIgnoreCase(EXIT)) {
-//            this.input = console.getInput();
+            this.input = inputSupplier.get();
             processInput();
         }
     }
@@ -74,9 +81,9 @@ public class CountdownApp {
             case SOLVE -> solve();
             case GENERATE -> generate();
             case GENERATE_TO_SOLVE -> generateToSolve();
-            case GET_GENERATOR_MODE -> printAttribute(generator.getMode().toString());
-            case GET_MODE_SWITCH_THRESHOLD -> printAttribute(solver.getModeSwitchThreshold());
-            case GET_SOLVE_MODE -> printAttribute(solver.getMode().toString());
+            case GET_GENERATOR_MODE -> print(generator.getMode());
+            case GET_MODE_SWITCH_THRESHOLD -> print(solver.getModeSwitchThreshold());
+            case GET_SOLVE_MODE -> print(solver.getMode());
             case SET_SOLVE_MODE -> setSolveMode();
             case SET_GEN_MODE -> setGenMode();
             case SET_MODE_SWITCH_THRESHOLD -> setModeSwitchThreshold();
@@ -91,12 +98,8 @@ public class CountdownApp {
         generator.setTimeScale(timeScale);
     }
 
-    private void printAttribute(String attribute) {
-//        outputHandler.print(attribute);
-    }
-
-    private void printAttribute(long attribute) {
-//        outputHandler.print(NumberFormat.getInstance().format(attribute));
+    private void print(Object attribute) {
+        printer.info(attribute);
     }
 
     private void setModeSwitchThreshold() {
@@ -177,7 +180,7 @@ public class CountdownApp {
     }
 
     private void exit() {
-//        outputHandler.logExitMessage();
+        printer.logExitMessage();
         System.exit(0);
     }
 

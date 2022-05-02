@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.conf;
+package io.github.aj8gh.countdown.app.conf;
 
 import java.io.IOException;
 import java.util.Properties;

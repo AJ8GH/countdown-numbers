@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.app;
 
-import io.github.aj8gh.countdown.conf.AppConfig;
+import io.github.aj8gh.countdown.app.conf.AppConfig;
 import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.calc.Calculator;

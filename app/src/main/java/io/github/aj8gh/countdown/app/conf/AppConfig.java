@@ -1,21 +1,27 @@
-package io.github.aj8gh.countdown.conf;
+package io.github.aj8gh.countdown.app.conf;
 
+import io.github.aj8gh.countdown.app.cli.CountdownApp;
+import io.github.aj8gh.countdown.app.game.Game;
 import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.gen.FilterFactory;
 import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.in.InputProvider;
+import io.github.aj8gh.countdown.in.InputSupplier;
 import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.out.OutputRouter;
-import io.github.aj8gh.countdown.out.serial.Deserializer;
-import io.github.aj8gh.countdown.out.serial.Serializer;
+import io.github.aj8gh.countdown.out.file.Deserializer;
+import io.github.aj8gh.countdown.out.file.FileHandler;
+import io.github.aj8gh.countdown.out.file.Serializer;
 import io.github.aj8gh.countdown.out.slack.SlackClient;
 import io.github.aj8gh.countdown.out.slack.SlackHandler;
 import io.github.aj8gh.countdown.sol.Solver;
-import io.github.aj8gh.countdown.util.test.InputProvider;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static io.github.aj8gh.countdown.out.OutputHandler.OutputType.FILE;
 import static io.github.aj8gh.countdown.out.OutputHandler.OutputType.SLACK;
@@ -25,11 +31,10 @@ import static java.util.stream.Collectors.toSet;
 public class AppConfig {
     private static final Generator GENERATOR;
     private static final Solver SOLVER;
-    private static final SlackHandler SLACK_HANDLER;
     private static final Deserializer DESERIALIZER;
-    private static final Serializer SERIALIZER;
     private static final Properties PROPS;
     private static final InputProvider INPUT_PROVIDER;
+    private static final Supplier<String> INPUT_SUPPLIER;
     private static final OutputHandler OUTPUT_HANDLER;
 
     static {
@@ -37,10 +42,9 @@ public class AppConfig {
             PROPS = new PropsConfig().getProps();
             GENERATOR = buildGenerator();
             SOLVER = buildSolver();
-            SLACK_HANDLER = buildSlackHandler();
             DESERIALIZER = buildDeserializer();
-            SERIALIZER = buildSerializer();
             INPUT_PROVIDER = buildInputProvider();
+            INPUT_SUPPLIER = buildInputSupplier();
             OUTPUT_HANDLER = buildOutputHandler();
         } catch (Exception e) {
             throw new IllegalStateException("Illegal Application Context", e);
@@ -67,12 +71,15 @@ public class AppConfig {
         return OUTPUT_HANDLER;
     }
 
-    private static SlackHandler slackHandler() {
-        return SLACK_HANDLER;
+    public static Supplier<String> inputSupplier() {
+        return INPUT_SUPPLIER;
     }
 
-    private static Serializer serializer() {
-        return SERIALIZER;
+    public static Consumer<String[]> app() {
+        var runner = PROPS.getProperty("app.runner");
+        return runner.equals("cli") ?
+                new CountdownApp(outputHandler(), inputSupplier(), generator(), solver()) :
+                new Game(outputHandler(), deserializer(), generator(), solver());
     }
 
     private static Generator buildGenerator() {
@@ -124,15 +131,16 @@ public class AppConfig {
         return new Deserializer(ioDir, solInFile, genInFile);
     }
 
-    private static Serializer buildSerializer() {
-        var ioDir = PROPS.getProperty("inputOutput.dir");
-        var genOutFile = PROPS.getProperty("output.generator.file");
-        var solOutFile = PROPS.getProperty("output.solver.file");
-        var solInFile = PROPS.getProperty("input.solver.file");
+    private static FileHandler buildFileHandler() {
         var createSolverInput = Boolean.parseBoolean(PROPS.getProperty("output.create.solver.input"));
-        var serializer = new Serializer(ioDir, genOutFile, solOutFile, solInFile);
-        serializer.setCreateSolverInput(createSolverInput);
-        return serializer;
+        var serializer = new Serializer();
+        var fileHandler = new FileHandler(serializer);
+        fileHandler.setIoDir(PROPS.getProperty("inputOutput.dir"));
+        fileHandler.setGenOutFile(PROPS.getProperty("output.generator.file"));
+        fileHandler.setSolOutFile(PROPS.getProperty("output.solver.file"));
+        fileHandler.setSolInFile(PROPS.getProperty("input.solver.file"));
+        fileHandler.setCreateSolverInput(createSolverInput);
+        return fileHandler;
     }
 
     private static InputProvider buildInputProvider() {
@@ -140,6 +148,10 @@ public class AppConfig {
                 .map(n -> Integer.valueOf(n.trim()))
                 .toList();
         return new InputProvider(input);
+    }
+
+    private static Supplier<String> buildInputSupplier() {
+        return new InputSupplier();
     }
 
     private static OutputHandler buildOutputHandler() {
@@ -166,8 +178,8 @@ public class AppConfig {
         return Arrays.stream(OutputHandler.OutputType.values())
                 .collect(toMap(Function.identity(), type -> {
                     try {
-                        if (type.equals(FILE)) return serializer();
-                        if (type.equals(SLACK)) return slackHandler();
+                        if (type.equals(FILE)) return buildFileHandler();
+                        if (type.equals(SLACK)) return buildSlackHandler();
                         var handlerType = Class.forName(type.handlerType().getName());
                         return (OutputHandler) handlerType.getConstructor().newInstance();
                     } catch (Exception e) {

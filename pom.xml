@@ -12,8 +12,6 @@
     <modules>
         <module>app</module>
         <module>calculator</module>
-        <module>config</module>
-        <module>game</module>
         <module>generator</module>
         <module>output</module>
         <module>solver</module>

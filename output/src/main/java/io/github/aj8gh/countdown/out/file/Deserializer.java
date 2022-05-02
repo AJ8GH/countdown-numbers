@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.out.serial;
+package io.github.aj8gh.countdown.out.file;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

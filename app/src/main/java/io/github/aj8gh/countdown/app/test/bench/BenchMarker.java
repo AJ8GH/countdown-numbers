@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.app.bench;
+package io.github.aj8gh.countdown.app.test.bench;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

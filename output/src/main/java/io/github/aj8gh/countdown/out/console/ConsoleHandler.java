@@ -6,42 +6,25 @@ import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintStream;
-import java.util.Scanner;
-
 import static io.github.aj8gh.countdown.out.OutputHandler.OutputType.CONSOLE;
 
-public class Console implements OutputHandler {
+public class ConsoleHandler implements OutputHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(ConsoleHandler.class);
     private static final OutputType TYPE = CONSOLE;
-    private static final String EXIT_MESSAGE = "\n*** Countdown App Shutting Down ***";
-    private static final String PROMPT = ">> Ready for input...\n>> ";
-    private static final Logger LOG = LoggerFactory.getLogger(Console.class);
-    private static final Scanner SCANNER = new Scanner(System.in);
-    private static final PrintStream OUT = System.out;
-
-    public String getInput() {
-        OUT.print(PROMPT);
-        return SCANNER.nextLine();
-    }
-
-    public void logExitMessage() {
-        LOG.info(EXIT_MESSAGE);
-    }
 
     @Override
     public void handleGenerator(Generator generator) {
         var formattedNumbers = generator.getQuestionNumbers()
                 .toString().replaceAll("[^\\d\s]", "");
-        OUT.printf("""
+        LOG.info("""
                         
-                        ============================================================================
                         GENERATOR
-                        Question:       %s
-                        Method:         %s = %s
-                        RPN:            %s
-                        Attempts:       %s
-                        Time:           %s ms
-                        Mode:           %s
+                        Question:       {}
+                        Method:         {} = {}
+                        RPN:            {}
+                        Attempts:       {}
+                        Time:           {} ms
+                        Mode:           {}
                         ============================================================================
                         """,
                 formattedNumbers,
@@ -56,15 +39,15 @@ public class Console implements OutputHandler {
 
     @Override
     public void handleSolver(Solver solver) {
-        OUT.printf("""
+        LOG.info("""
                         
                         ============================================================================
                         SOLVER
-                        Solution:       %s = %s
-                        RPN:            %s
-                        Attempts:       %s
-                        Time:           %s ms
-                        Mode:           %s
+                        Solution:       {} = {}
+                        RPN:            {}
+                        Attempts:       {}
+                        Time:           {} ms
+                        Mode:           {}
                         ============================================================================
                         """,
                 solver.getSolution(),
@@ -74,10 +57,6 @@ public class Console implements OutputHandler {
                 solver.getTime(),
                 solver.getMode()
         );
-    }
-
-    public void print(String message) {
-        OUT.println(message);
     }
 
     public OutputType getType() {

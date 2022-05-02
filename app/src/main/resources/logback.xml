@@ -1,6 +1,6 @@
 <configuration>
     <property resource="application.properties" />
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="consoleHandler" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
@@ -9,6 +9,6 @@
     </appender>
 
     <root level="${log.level}">
-        <appender-ref ref="console" />
+        <appender-ref ref="consoleHandler" />
     </root>
 </configuration>

@@ -28,5 +28,11 @@ public class OutputRouter implements OutputHandler {
                 .handleGenerator(generator));
     }
 
+    public void enableHandler(OutputType type) {
+        activeHandlers.add(type);
+    }
 
+    public void disableHandler(OutputType type) {
+        activeHandlers.remove(type);
+    }
 }
