@@ -12,11 +12,11 @@
     <packaging>jar</packaging>
     <artifactId>solver</artifactId>
 
-    <properties>
-        <start-class>io.github.aj8gh.countdown.solver.Main</start-class>
-    </properties>
-
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>calculator</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>util</artifactId>

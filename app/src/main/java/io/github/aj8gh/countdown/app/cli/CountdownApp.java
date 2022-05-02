@@ -1,11 +1,11 @@
 package io.github.aj8gh.countdown.app.cli;
 
-import io.github.aj8gh.countdown.generator.Generator;
-import io.github.aj8gh.countdown.solver.Solver;
+import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.out.OutputHandler;
+import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,7 @@ import static io.github.aj8gh.countdown.app.cli.Commands.SET_MODE_SWITCH_THRESHO
 import static io.github.aj8gh.countdown.app.cli.Commands.SET_SOLVE_MODE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SET_TIME_SCALE;
 import static io.github.aj8gh.countdown.app.cli.Commands.SOLVE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
 public class CountdownApp {
     private static final Logger LOG = LoggerFactory.getLogger(CountdownApp.class);
@@ -32,7 +32,7 @@ public class CountdownApp {
     private static final int MIN_LARGE = 0;
     private static final FilterSelector FILTER_SELECTOR = new FilterSelector();
 
-    private final Shell shell;
+    private final OutputHandler outputHandler;
     private final Generator generator;
     private final Solver solver;
 
@@ -40,15 +40,17 @@ public class CountdownApp {
     private String command;
     private List<String> args;
 
-    public CountdownApp(Shell shell, Generator generator, Solver solver) {
-        this.shell = shell;
+    public CountdownApp(OutputHandler outputHandler,
+                        Generator generator,
+                        Solver solver) {
+        this.outputHandler = outputHandler;
         this.generator = generator;
         this.solver = solver;
     }
 
     public void run() {
         while (input == null || !input.equalsIgnoreCase(EXIT)) {
-            this.input = shell.getInput();
+//            this.input = console.getInput();
             processInput();
         }
     }
@@ -90,11 +92,11 @@ public class CountdownApp {
     }
 
     private void printAttribute(String attribute) {
-        shell.print(attribute);
+//        outputHandler.print(attribute);
     }
 
     private void printAttribute(long attribute) {
-        shell.print(NumberFormat.getInstance().format(attribute));
+//        outputHandler.print(NumberFormat.getInstance().format(attribute));
     }
 
     private void setModeSwitchThreshold() {
@@ -129,7 +131,7 @@ public class CountdownApp {
                     validateGeneratorInput(number);
                     generator.warmUp();
                     generator.generate(number);
-                    shell.logGenerator(generator);
+                    outputHandler.handleGenerator(generator);
                     generator.reset();
                 });
     }
@@ -138,7 +140,7 @@ public class CountdownApp {
         validateSolverInput();
         solver.warmUp();
         solver.solve(new ArrayList<>(args.stream().map(Integer::parseInt).toList()));
-        shell.logSolver(solver);
+        outputHandler.handleSolver(solver);
         solver.reset();
     }
 
@@ -148,8 +150,8 @@ public class CountdownApp {
             solver.warmUp();
             generator.generate(number);
             solver.solve(generator.getQuestionNumbers());
-            shell.logGenerator(generator);
-            shell.logSolver(solver);
+            outputHandler.handleGenerator(generator);
+            outputHandler.handleSolver(solver);
             reset();
         });
     }
@@ -175,7 +177,7 @@ public class CountdownApp {
     }
 
     private void exit() {
-        shell.logExitMessage();
+//        outputHandler.logExitMessage();
         System.exit(0);
     }
 

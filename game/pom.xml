@@ -49,11 +49,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>generator</artifactId>
+            <artifactId>output</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>slack</artifactId>
+            <artifactId>generator</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.app.cli;
 
-import io.github.aj8gh.countdown.generator.FilterFactory.Filter;
-import io.github.aj8gh.countdown.generator.Generator;
+import io.github.aj8gh.countdown.gen.FilterFactory.Filter;
+import io.github.aj8gh.countdown.gen.Generator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

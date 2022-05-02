@@ -11,12 +11,13 @@
 
     <modules>
         <module>app</module>
+        <module>calculator</module>
+        <module>config</module>
+        <module>game</module>
         <module>generator</module>
+        <module>output</module>
         <module>solver</module>
         <module>util</module>
-        <module>slack</module>
-        <module>game</module>
-        <module>config</module>
     </modules>
 
     <properties>
@@ -151,7 +152,17 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>calculator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>config</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>game</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -161,7 +172,7 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>slack</artifactId>
+                <artifactId>output</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -192,14 +203,12 @@
                 <version>${logback.version}</version>
             </dependency>
 
-            <!-- Slack -->
+            <!-- util -->
             <dependency>
                 <groupId>com.slack.api</groupId>
                 <artifactId>slack-api-client</artifactId>
                 <version>${slack.version}</version>
             </dependency>
-
-            <!-- util -->
             <dependency>
                 <groupId>org.openjdk.jmh</groupId>
                 <artifactId>jmh-core</artifactId>

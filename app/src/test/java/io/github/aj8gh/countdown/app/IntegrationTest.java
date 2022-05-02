@@ -1,11 +1,11 @@
 package io.github.aj8gh.countdown.app;
 
-import io.github.aj8gh.countdown.config.AppConfig;
-import io.github.aj8gh.countdown.generator.Generator;
-import io.github.aj8gh.countdown.solver.Solver;
-import io.github.aj8gh.countdown.util.calculator.Calculator;
-import io.github.aj8gh.countdown.util.rpn.RpnConverter;
-import io.github.aj8gh.countdown.util.rpn.RpnParser;
+import io.github.aj8gh.countdown.conf.AppConfig;
+import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.calc.Calculator;
+import io.github.aj8gh.countdown.calc.rpn.RpnConverter;
+import io.github.aj8gh.countdown.calc.rpn.RpnParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,15 +13,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.util.calculator.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.RECURSIVE;
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTIAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IntegrationTest {
-    private static final int NUMBER_OF_RUNS = 100;
-    private static final int WARM_UPS = 20;
+    private static final int NUMBER_OF_RUNS = 20;
+    private static final int WARM_UPS = 10;
     private static final int MIN_TARGET = 100;
     private static final int MAX_TARGET = 999;
 
@@ -33,6 +34,7 @@ class IntegrationTest {
     @BeforeEach
     void setUp() {
         solver = AppConfig.solver();
+        solver.setSwitchModes(true);
         generator = AppConfig.generator();
         rpnParser = new RpnParser();
         rpnConverter = new RpnConverter();
@@ -44,10 +46,9 @@ class IntegrationTest {
     @ParameterizedTest
     @MethodSource(value = "getModes")
     void solverAndGenerator_FixedMode(List<CalculationMode> modes) {
-        generator.setMode(modes.get(0));
-        solver.setMode(modes.get(1));
-
         for (int i = 0; i < NUMBER_OF_RUNS; i++) {
+            generator.setMode(modes.get(0));
+            solver.setMode(modes.get(1));
             testGenerator(i);
             testSolver(generator.getTarget().getValue());
             tearDown();
@@ -88,11 +89,12 @@ class IntegrationTest {
     }
 
     private void switchModes(int index) {
-        if (index % 5 == 0) {
-            generator.setMode(generator.getMode().equals(SEQUENTIAL) ? INTERMEDIATE : SEQUENTIAL);
-        }
-        if (index % 7 == 0) {
-            solver.setMode(solver.getMode().equals(SEQUENTIAL) ? INTERMEDIATE : SEQUENTIAL);
+        if (index % 2 == 0) {
+            generator.setMode(SEQUENTIAL);
+        } else if (index % 3 == 0) {
+            generator.setMode(INTERMEDIATE);
+        } else if (index % 5 == 0) {
+            solver.setMode(RECURSIVE);
         }
     }
 
@@ -101,7 +103,9 @@ class IntegrationTest {
                 List.of(SEQUENTIAL, SEQUENTIAL),
                 List.of(INTERMEDIATE, INTERMEDIATE),
                 List.of(SEQUENTIAL, INTERMEDIATE),
-                List.of(INTERMEDIATE, SEQUENTIAL)
+                List.of(INTERMEDIATE, SEQUENTIAL),
+                List.of(SEQUENTIAL, RECURSIVE),
+                List.of(INTERMEDIATE, RECURSIVE)
         );
     }
 }
