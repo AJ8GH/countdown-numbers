@@ -10,12 +10,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>app</module>
-        <module>calculator</module>
-        <module>generator</module>
-        <module>output</module>
-        <module>solver</module>
-        <module>util</module>
+        <module>application</module>
+        <module>launcher</module>
+        <module>input-output</module>
     </modules>
 
     <properties>
@@ -24,7 +21,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>${project.groupId}.${project.parent.artifactId}.${project.name}.Main</mainClass>
+        <mainClass>${project.groupId}.${project.parent.artifactId}.Main</mainClass>
 
         <dsi.version>2.7.0</dsi.version>
         <jmh.version>1.34</jmh.version>
@@ -145,42 +142,17 @@
             <!-- project -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>app</artifactId>
+                <artifactId>application</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>calculator</artifactId>
+                <artifactId>input-output</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>config</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>game</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>generator</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>output</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>solver</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>util</artifactId>
+                <artifactId>launcher</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

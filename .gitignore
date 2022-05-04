@@ -26,5 +26,5 @@ notes.md
 *.pyc
 *.pyo
 target
-**/input-output
+**/io-files
 **/slack.properties
