@@ -22,6 +22,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>${project.groupId}.${project.parent.artifactId}.Main</mainClass>
+        <imageConfig>classes/imageConfig.json</imageConfig>
 
         <dsi.version>2.7.0</dsi.version>
         <jmh.version>1.34</jmh.version>
@@ -82,6 +83,7 @@
                         <mainClass>${mainClass}</mainClass>
                         <buildArgs>
                             --allow-incomplete-classpath
+                            -H:ResourceConfigurationFiles=${imageConfig}
                         </buildArgs>
                     </configuration>
                     <executions>

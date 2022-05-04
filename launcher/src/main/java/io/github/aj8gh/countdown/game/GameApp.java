@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
-public class Game implements Consumer<String[]> {
-    private static final Logger LOG = LoggerFactory.getLogger(Game.class);
+public class GameApp implements Consumer<String[]> {
+    private static final Logger LOG = LoggerFactory.getLogger(GameApp.class);
     private static final String SOL = "sol";
     private static final String GEN = "gen";
 
@@ -19,10 +19,10 @@ public class Game implements Consumer<String[]> {
     private final Generator generator;
     private final Solver solver;
 
-    public Game(OutputHandler outputHandler,
-                InputSupplier inputSupplier,
-                Generator generator,
-                Solver solver) {
+    public GameApp(OutputHandler outputHandler,
+                   InputSupplier inputSupplier,
+                   Generator generator,
+                   Solver solver) {
         this.outputHandler = outputHandler;
         this.inputSupplier = inputSupplier;
         this.generator = generator;

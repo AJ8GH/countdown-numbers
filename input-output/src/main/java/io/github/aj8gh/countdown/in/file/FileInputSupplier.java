@@ -1,6 +1,6 @@
-package io.github.aj8gh.countdown.in;
+package io.github.aj8gh.countdown.in.file;
 
-import io.github.aj8gh.countdown.out.file.Deserializer;
+import io.github.aj8gh.countdown.in.InputSupplier;
 
 import java.util.List;
 

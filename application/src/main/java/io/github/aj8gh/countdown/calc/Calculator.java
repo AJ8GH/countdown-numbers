@@ -1,10 +1,10 @@
 package io.github.aj8gh.countdown.calc;
 
-import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
-import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
+import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
+import io.github.aj8gh.countdown.util.Random;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +45,7 @@ public interface Calculator {
         }
     }
 
-    XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
+    Random RANDOM = new Random();
     Map<Integer, Operator> OPERATORS = Arrays.stream(Operator.values())
             .collect(toUnmodifiableMap(Enum::ordinal, Function.identity()));
 

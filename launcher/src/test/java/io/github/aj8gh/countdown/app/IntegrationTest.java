@@ -1,11 +1,11 @@
 package io.github.aj8gh.countdown.app;
 
-import io.github.aj8gh.countdown.conf.AppConfig;
-import io.github.aj8gh.countdown.gen.Generator;
-import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.calc.rpn.RpnConverter;
 import io.github.aj8gh.countdown.calc.rpn.RpnParser;
+import io.github.aj8gh.countdown.conf.AppConfig;
+import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.sol.Solver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,9 +33,10 @@ class IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        solver = AppConfig.solver();
+        var config = new AppConfig();
+        solver = config.solver();
         solver.setSwitchModes(true);
-        generator = AppConfig.generator();
+        generator = config.generator();
         rpnParser = new RpnParser();
         rpnConverter = new RpnConverter();
 

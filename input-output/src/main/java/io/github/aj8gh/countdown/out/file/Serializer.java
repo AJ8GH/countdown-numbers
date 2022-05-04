@@ -44,8 +44,7 @@ public class Serializer {
             writer.write(data);
             writer.flush();
         } catch (IOException e) {
-            LOG.error("Error writing {} to file {}, {}",
-                    data, file, e.getMessage());
+            LOG.error("Error writing {} to file {}, {}", data, file, e.getMessage());
         }
     }
 }

@@ -1,4 +1,6 @@
-package io.github.aj8gh.countdown.in;
+package io.github.aj8gh.countdown.in.props;
+
+import io.github.aj8gh.countdown.in.InputSupplier;
 
 import java.util.List;
 

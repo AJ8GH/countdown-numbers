@@ -1,8 +1,7 @@
 package io.github.aj8gh.countdown.test;
 
 import io.github.aj8gh.countdown.conf.AppConfig;
-import io.github.aj8gh.countdown.gen.FilterFactory;
-import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.in.InputSupplier;
 import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,22 +9,33 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTIAL;
 
-public class Tester {
-    private static final Logger LOG = LoggerFactory.getLogger(Tester.class);
-    private static final Generator GENERATOR = AppConfig.generator();
-    private static final Solver SOLVER = AppConfig.solver();
+public class TestApp implements Consumer<String[]> {
+    private static final Logger LOG = LoggerFactory.getLogger(TestApp.class);
+    private static final AppConfig CONFIG = new AppConfig();
+    private static final Solver SOLVER = CONFIG.solver();
     private static final List<Result> RESULTS = new ArrayList<>();
 
-    public Tester() {
-        GENERATOR.addFilter(FilterFactory.Filter.NOT_FIVE.getPredicate())
-                        .addFilter(FilterFactory.Filter.ODD.getPredicate());
+    private final InputSupplier inputSupplier;
+
+    public TestApp(InputSupplier inputSupplier) {
+        this.inputSupplier = inputSupplier;
         SOLVER.setCaching(false);
+    }
+
+    public void accept(String[] args) {
+        testMultipleInputs(Inputs.TRICKY);
+        test(inputSupplier.getSolverInput());
+    }
+
+    private void testMultipleInputs(List<List<Integer>> inputs) {
+        inputs.forEach(this::test);
     }
 
     private void test(List<Integer> input) {
@@ -37,7 +47,7 @@ public class Tester {
     }
 
     private void runWithMode(CalculationMode mode,
-                                    List<Integer> input) {
+                             List<Integer> input) {
         SOLVER.warmUp();
         SOLVER.setMode(mode);
         SOLVER.solve(input);

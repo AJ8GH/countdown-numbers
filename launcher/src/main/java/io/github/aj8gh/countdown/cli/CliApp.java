@@ -27,8 +27,8 @@ import static io.github.aj8gh.countdown.cli.Commands.SET_TIME_SCALE;
 import static io.github.aj8gh.countdown.cli.Commands.SOLVE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
-public class CountdownApp implements Consumer<String[]> {
-    private static final Logger LOG = LoggerFactory.getLogger(CountdownApp.class);
+public class CliApp implements Consumer<String[]> {
+    private static final Logger LOG = LoggerFactory.getLogger(CliApp.class);
     private static final String ARG_DELIMITER = " ";
     private static final int MAX_LARGE = 4;
     private static final int MIN_LARGE = 0;
@@ -44,10 +44,10 @@ public class CountdownApp implements Consumer<String[]> {
     private String command;
     private List<String> args;
 
-    public CountdownApp(OutputHandler outputHandler,
-                        Supplier<String> inputSupplier,
-                        Generator generator,
-                        Solver solver) {
+    public CliApp(OutputHandler outputHandler,
+                  Supplier<String> inputSupplier,
+                  Generator generator,
+                  Solver solver) {
         this.outputHandler = outputHandler;
         this.inputSupplier = inputSupplier;
         this.generator = generator;

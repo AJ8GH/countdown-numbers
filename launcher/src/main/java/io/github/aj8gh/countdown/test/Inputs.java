@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.in;
+package io.github.aj8gh.countdown.test;
 
 import java.util.List;
 
@@ -20,6 +20,12 @@ public final class Inputs {
             List.of(50, 25, 75, 2, 1, 100, 199),
             List.of(6, 100, 4, 6, 8, 2, 752),
             List.of(25, 50, 75, 100, 3, 6, 952),
+            List.of(10, 7, 4, 10, 6, 8, 950),
+            List.of(100, 6, 10, 7, 3, 5, 804),
+            List.of(8, 75, 7, 2, 7, 5, 556),
+            List.of(6, 6, 75, 4, 2, 25, 917),
+            List.of(5, 4, 9, 5, 25, 9, 721),
+            List.of(6, 4, 75, 8, 7, 5, 794),
             List.of(75, 5, 25, 6, 50, 100, 426)
     );
 

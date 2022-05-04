@@ -2,8 +2,8 @@ package io.github.aj8gh.countdown.gen;
 
 import io.github.aj8gh.countdown.calc.Calculation;
 import io.github.aj8gh.countdown.calc.Calculator;
+import io.github.aj8gh.countdown.util.Random;
 import io.github.aj8gh.countdown.util.Timer;
-import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,17 +17,19 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
-import static io.github.aj8gh.countdown.gen.FilterFactory.Filter.IN_RANGE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.gen.FilterFactory.Filter.IN_RANGE;
 
 public class Generator {
-    private static final XoRoShiRo128PlusRandom RANDOM = new XoRoShiRo128PlusRandom();
-    private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
+    private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE.getPredicate();
+    private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
+    private static final int MAX_SMALL_NUMBER = 10;
     private static final int DEFAULT_WARMUPS = 20;
     private static final int TOTAL_NUMBERS = 6;
-    private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
+    private static final int MAX_NUM_LARGE = 4;
+    private static final Random RANDOM = new Random();
 
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final AtomicInteger attempts = new AtomicInteger(1);
@@ -81,7 +83,7 @@ public class Generator {
 
     private void addSmallNumbers(int numberOfSmall) {
         for (int i = 0; i < numberOfSmall; i++) {
-            questionNumbers.add(RANDOM.nextInt(10) + 1);
+            questionNumbers.add(RANDOM.nextInt(MAX_SMALL_NUMBER) + 1);
         }
     }
 
@@ -143,7 +145,7 @@ public class Generator {
 
     public void warmUp() {
         for (int i = 0; i < warmUps; i++) {
-            generate(i % 5);
+            generate(i % MAX_NUM_LARGE);
             reset();
         }
     }

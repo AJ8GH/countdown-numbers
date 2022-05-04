@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.out.file;
+package io.github.aj8gh.countdown.in.file;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,23 +23,23 @@ public class Deserializer {
 
     public Deserializer(String ioDir, String solInFile, String genInFile) {
         this.ioDir = ioDir;
-        this.solInFile = solInFile;
-        this.genInFile = genInFile;
+        this.solInFile = buildFilePath(solInFile);
+        this.genInFile = buildFilePath(genInFile);
     }
 
     public int forGenerator() {
-        var filePath = buildFilePath(genInFile);
-        try (var reader = new Scanner(new FileReader(filePath))) {
+        LOG.info("*** Reading from {} ***", genInFile);
+        try (var reader = new Scanner(new FileReader(genInFile))) {
             return reader.nextInt();
         } catch (IOException e) {
-            LOG.error("Error reading generator input file {}, {}", filePath, e.getMessage());
+            LOG.error("Error reading generator input file {}, {}", genInFile, e.getMessage());
             return -1;
         }
     }
 
     public List<Integer> forSolver() {
-        var filePath = buildFilePath(solInFile);
-        try (var reader = new Scanner(new FileReader(filePath))) {
+        LOG.info("*** Reading from {} ***", solInFile);
+        try (var reader = new Scanner(new FileReader(solInFile))) {
             var line = reader.nextLine();
             var questionAndTarget = line.split(COLON);
             var question = new ArrayList<>(Arrays
@@ -49,7 +49,7 @@ public class Deserializer {
             question.add(Integer.valueOf(questionAndTarget[1]));
             return question;
         } catch (IOException e) {
-            LOG.error("Error reading solver input file {}, {}", filePath, e.getMessage());
+            LOG.error("Error reading solver input file {}, {}", solInFile, e.getMessage());
             return Collections.emptyList();
         }
     }
@@ -59,7 +59,6 @@ public class Deserializer {
         if (!new File(filePath).exists()) {
             throw new IllegalArgumentException("File does not exist " + filePath);
         }
-        LOG.info("*** Reading from {} ***", filePath);
         return filePath;
     }
 }
