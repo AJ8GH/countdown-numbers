@@ -1,6 +1,5 @@
 package io.github.aj8gh.countdown.calc.impl;
 
-import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.calc.Calculation;
 
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTIAL;
 import static java.util.Collections.shuffle;
 
-public class SequentialCalculator implements Calculator {
+public class SequentialCalculator extends AbstractCalculator {
     private static final CalculationMode MODE = SEQUENTIAL;
 
     @Override

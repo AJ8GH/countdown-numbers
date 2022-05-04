@@ -1,17 +1,12 @@
 package io.github.aj8gh.countdown.calc.impl;
 
 import io.github.aj8gh.countdown.calc.Calculation;
-import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.calc.Operator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class RecursiveCalculator implements Calculator {
+public class RecursiveCalculator extends AbstractCalculator {
     private static final CalculationMode MODE = CalculationMode.RECURSIVE;
-    private static final Logger LOG = LoggerFactory.getLogger(RecursiveCalculator.class);
-    private int recursions;
     private int target;
     private Calculation result;
 
@@ -26,10 +21,7 @@ public class RecursiveCalculator implements Calculator {
         var calcs = new Calculation[numbers.size()];
         for (int i = 0; i < numbers.size(); i++) calcs[i] = new Calculation(numbers.get(i));
         if (calculateRecursively(calcs, calcs.length)) {
-//            LOG.info("Success:\n{}\nrecursions: {}", result, recursions);
             return resetAndGetResult();
-//        } else {
-//            LOG.warn("FAIL :(");
         }
         return null;
     }
@@ -40,7 +32,6 @@ public class RecursiveCalculator implements Calculator {
     }
 
     private boolean calculateRecursively(Calculation[] numbers, int inputSize) {
-        recursions++;
         for (int i = 0; i < inputSize; i++) {
             if (isSolved(numbers[i], target)) return true;
             for (int j = i + 1; j < inputSize; j++) {
@@ -62,7 +53,6 @@ public class RecursiveCalculator implements Calculator {
     private Calculation resetAndGetResult() {
         final var finalResult = result;
         this.result = null;
-        this.recursions = 0;
         return finalResult;
     }
 

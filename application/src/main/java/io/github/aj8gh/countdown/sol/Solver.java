@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTIAL;
 
 public class Solver {
@@ -140,9 +141,7 @@ public class Solver {
     }
 
     private void switchMode() {
-        switch (calculator.getMode()) {
-            case SEQUENTIAL, RECURSIVE -> this.calculator = calculators.get(INTERMEDIATE);
-            case INTERMEDIATE -> this.calculator = calculators.get(SEQUENTIAL);
-        }
+        this.calculator = calculator.getMode().equals(INTERMEDIATE) ?
+                calculators.get(SEQUENTIAL) : calculators.get(RECURSIVE);
     }
 }

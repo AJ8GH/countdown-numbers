@@ -1,11 +1,10 @@
 package io.github.aj8gh.countdown.calc.impl;
 
 import io.github.aj8gh.countdown.calc.Calculation;
-import io.github.aj8gh.countdown.calc.Calculator;
 
 import java.util.List;
 
-public class RpnCalculator implements Calculator {
+public class RpnCalculator extends AbstractCalculator {
     private static final CalculationMode MODE = CalculationMode.RPN;
 
     @Override

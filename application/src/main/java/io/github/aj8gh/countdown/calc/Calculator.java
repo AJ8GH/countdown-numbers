@@ -4,7 +4,6 @@ import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
-import io.github.aj8gh.countdown.util.Random;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public interface Calculator {
     enum CalculationMode {
@@ -45,35 +43,9 @@ public interface Calculator {
         }
     }
 
-    Random RANDOM = new Random();
-    Map<Integer, Operator> OPERATORS = Arrays.stream(Operator.values())
-            .collect(toUnmodifiableMap(Enum::ordinal, Function.identity()));
-
     Calculation calculateTarget(List<Integer> numbers);
 
     Calculation calculateSolution(List<Integer> numbers, int target);
 
     CalculationMode getMode();
-
-    default Calculation doCalculation(Calculation calculation, Integer number) {
-        var value = calculation.getValue();
-        var result = calculation.calculate(getOperator(), number);
-        while (calculation.getValue() == value) {
-            result = calculation.calculate(getOperator(), number);
-        }
-        return result;
-    }
-
-    default Calculation doCalculation(Calculation first, Calculation second) {
-        var value = first.getValue();
-        var result = first.calculate(getOperator(), second);
-        while (first.getValue() == value) {
-            result = first.calculate(getOperator(), second);
-        }
-        return result;
-    }
-
-    default Operator getOperator() {
-        return OPERATORS.get(RANDOM.nextInt(OPERATORS.size()));
-    }
 }

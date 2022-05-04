@@ -1,12 +1,11 @@
 package io.github.aj8gh.countdown.calc.impl;
 
 import io.github.aj8gh.countdown.calc.Calculation;
-import io.github.aj8gh.countdown.calc.Calculator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntermediateCalculator implements Calculator {
+public class IntermediateCalculator extends AbstractCalculator {
     private static final CalculationMode MODE = CalculationMode.INTERMEDIATE;
 
     @Override
