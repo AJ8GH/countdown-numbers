@@ -26,10 +26,10 @@ public class RecursiveCalculator implements Calculator {
         var calcs = new Calculation[numbers.size()];
         for (int i = 0; i < numbers.size(); i++) calcs[i] = new Calculation(numbers.get(i));
         if (calculateRecursively(calcs, calcs.length)) {
-            LOG.info("Success:\n{}\nrecursions: {}", result, recursions);
+//            LOG.info("Success:\n{}\nrecursions: {}", result, recursions);
             return resetAndGetResult();
-        } else {
-            LOG.warn("FAIL :(");
+//        } else {
+//            LOG.warn("FAIL :(");
         }
         return null;
     }

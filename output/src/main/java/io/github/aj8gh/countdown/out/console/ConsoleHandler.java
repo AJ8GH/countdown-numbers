@@ -18,6 +18,7 @@ public class ConsoleHandler implements OutputHandler {
                 .toString().replaceAll("[^\\d\s]", "");
         LOG.info("""
                         
+                        ============================================================================
                         GENERATOR
                         Question:       {}
                         Method:         {} = {}

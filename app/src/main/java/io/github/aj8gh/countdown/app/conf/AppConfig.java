@@ -1,12 +1,14 @@
 package io.github.aj8gh.countdown.app.conf;
 
+import io.github.aj8gh.countdown.app.cli.CliInputSupplier;
 import io.github.aj8gh.countdown.app.cli.CountdownApp;
 import io.github.aj8gh.countdown.app.game.Game;
 import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.gen.FilterFactory;
 import io.github.aj8gh.countdown.gen.Generator;
-import io.github.aj8gh.countdown.in.InputProvider;
+import io.github.aj8gh.countdown.in.FileInputSupplier;
 import io.github.aj8gh.countdown.in.InputSupplier;
+import io.github.aj8gh.countdown.in.PropsInputSupplier;
 import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.out.OutputRouter;
 import io.github.aj8gh.countdown.out.file.Deserializer;
@@ -21,8 +23,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.out.OutputHandler.OutputType.FILE;
 import static io.github.aj8gh.countdown.out.OutputHandler.OutputType.SLACK;
 import static java.util.stream.Collectors.toMap;
@@ -33,8 +35,6 @@ public class AppConfig {
     private static final Solver SOLVER;
     private static final Deserializer DESERIALIZER;
     private static final Properties PROPS;
-    private static final InputProvider INPUT_PROVIDER;
-    private static final Supplier<String> INPUT_SUPPLIER;
     private static final OutputHandler OUTPUT_HANDLER;
 
     static {
@@ -43,8 +43,6 @@ public class AppConfig {
             GENERATOR = buildGenerator();
             SOLVER = buildSolver();
             DESERIALIZER = buildDeserializer();
-            INPUT_PROVIDER = buildInputProvider();
-            INPUT_SUPPLIER = buildInputSupplier();
             OUTPUT_HANDLER = buildOutputHandler();
         } catch (Exception e) {
             throw new IllegalStateException("Illegal Application Context", e);
@@ -63,23 +61,15 @@ public class AppConfig {
         return DESERIALIZER;
     }
 
-    public static InputProvider inputProvider() {
-        return INPUT_PROVIDER;
-    }
-
     public static OutputHandler outputHandler() {
         return OUTPUT_HANDLER;
-    }
-
-    public static Supplier<String> inputSupplier() {
-        return INPUT_SUPPLIER;
     }
 
     public static Consumer<String[]> app() {
         var runner = PROPS.getProperty("app.runner");
         return runner.equals("cli") ?
-                new CountdownApp(outputHandler(), inputSupplier(), generator(), solver()) :
-                new Game(outputHandler(), deserializer(), generator(), solver());
+                new CountdownApp(outputHandler(), new CliInputSupplier(), generator(), solver()) :
+                new Game(outputHandler(), buildInputSupplier(), generator(), solver());
     }
 
     private static Generator buildGenerator() {
@@ -102,17 +92,13 @@ public class AppConfig {
     private static Solver buildSolver() {
         var calculators = getCalculators();
         var generator = buildGenerator();
-        var mode = Calculator.CalculationMode.valueOf(PROPS.getProperty("solver.mode"));
-        var warmUps = Integer.parseInt(PROPS.getProperty("solver.warmups"));
-        var switchModes = Boolean.parseBoolean(PROPS.getProperty("solver.switch.modes"));
-        var switchThreshold = Integer.parseInt(PROPS.getProperty("solver.switch.threshold"));
-        var timeScale = Integer.parseInt(PROPS.getProperty("solver.timer.scale"));
         var solver = new Solver(generator, calculators);
-        solver.setMode(mode);
-        solver.setTimeScale(timeScale);
-        solver.setWarmUps(warmUps);
-        solver.setSwitchModes(switchModes);
-        solver.setModeSwitchThreshold(switchThreshold);
+        solver.setMode(CalculationMode.valueOf(PROPS.getProperty("solver.mode")));
+        solver.setTimeScale(Integer.parseInt(PROPS.getProperty("solver.timer.scale")));
+        solver.setCaching(Boolean.parseBoolean(PROPS.getProperty("solver.caching")));
+        solver.setWarmUps(Integer.parseInt(PROPS.getProperty("solver.warmups")));
+        solver.setSwitchModes(Boolean.parseBoolean(PROPS.getProperty("solver.switch.modes")));
+        solver.setModeSwitchThreshold(Integer.parseInt(PROPS.getProperty("solver.switch.threshold")));
         return solver;
     }
 
@@ -143,15 +129,13 @@ public class AppConfig {
         return fileHandler;
     }
 
-    private static InputProvider buildInputProvider() {
-        var input = Arrays.stream(PROPS.getProperty("test.input").split(","))
-                .map(n -> Integer.valueOf(n.trim()))
-                .toList();
-        return new InputProvider(input);
-    }
-
-    private static Supplier<String> buildInputSupplier() {
-        return new InputSupplier();
+    private static InputSupplier buildInputSupplier() {
+        return PROPS.getProperty("input.type").equalsIgnoreCase("FILE") ?
+                new FileInputSupplier(buildDeserializer()) :
+                new PropsInputSupplier(Arrays.stream(PROPS.getProperty("input.solver").split(","))
+                        .map(n -> Integer.valueOf(n.trim()))
+                        .toList(),
+                        Integer.parseInt(PROPS.getProperty("input.generator")));
     }
 
     private static OutputHandler buildOutputHandler() {

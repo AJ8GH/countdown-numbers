@@ -29,6 +29,7 @@ public class Solver {
     private boolean switchModes = DEFAULT_SWITCH_MODES;
     private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
     private int warmUps = DEFAULT_WARM_UPS;
+    private boolean caching = true;
     private Calculator calculator;
     private Calculation solution;
 
@@ -47,6 +48,7 @@ public class Solver {
     }
 
     private boolean isCached(List<Integer> question) {
+        if (!caching) return false;
         var cachedSolution = cache.get(question);
         if (cachedSolution != null) {
             this.solution = cachedSolution;
@@ -131,6 +133,10 @@ public class Solver {
 
     public void setWarmUps(int warmUps) {
         this.warmUps = warmUps;
+    }
+
+    public void setCaching(boolean caching) {
+        this.caching = caching;
     }
 
     private void switchMode() {

@@ -27,8 +27,8 @@ public class Deserializer {
         this.genInFile = genInFile;
     }
 
-    public int forGenerator(String file) {
-        var filePath = buildFilePath(file, genInFile);
+    public int forGenerator() {
+        var filePath = buildFilePath(genInFile);
         try (var reader = new Scanner(new FileReader(filePath))) {
             return reader.nextInt();
         } catch (IOException e) {
@@ -37,8 +37,8 @@ public class Deserializer {
         }
     }
 
-    public List<Integer> forSolver(String file) {
-        var filePath = buildFilePath(file, solInFile);
+    public List<Integer> forSolver() {
+        var filePath = buildFilePath(solInFile);
         try (var reader = new Scanner(new FileReader(filePath))) {
             var line = reader.nextLine();
             var questionAndTarget = line.split(COLON);
@@ -54,8 +54,11 @@ public class Deserializer {
         }
     }
 
-    private String buildFilePath(String file, String defaultFile) {
-        var filePath = ioDir + (new File(ioDir + file).exists() ? file : defaultFile);
+    private String buildFilePath(String file) {
+        var filePath = ioDir + file;
+        if (!new File(filePath).exists()) {
+            throw new IllegalArgumentException("File does not exist " + filePath);
+        }
         LOG.info("*** Reading from {} ***", filePath);
         return filePath;
     }

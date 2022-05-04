@@ -1,8 +1,8 @@
 package io.github.aj8gh.countdown.app.game;
 
 import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.in.InputSupplier;
 import io.github.aj8gh.countdown.out.OutputHandler;
-import io.github.aj8gh.countdown.out.file.Deserializer;
 import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +15,16 @@ public class Game implements Consumer<String[]> {
     private static final String GEN = "gen";
 
     private final OutputHandler outputHandler;
-    private final Deserializer deserializer;
+    private final InputSupplier inputSupplier;
     private final Generator generator;
     private final Solver solver;
 
     public Game(OutputHandler outputHandler,
-                Deserializer deserializer,
+                InputSupplier inputSupplier,
                 Generator generator,
                 Solver solver) {
         this.outputHandler = outputHandler;
-        this.deserializer = deserializer;
+        this.inputSupplier = inputSupplier;
         this.generator = generator;
         this.solver = solver;
     }
@@ -40,21 +40,21 @@ public class Game implements Consumer<String[]> {
 
     private void handleInput(String input) {
         if (input.contains(SOL)) {
-            solve(input);
+            solve();
         } else if (input.contains(GEN)) {
-            generate(input);
+            generate();
         }
     }
 
-    private void solve(String file) {
-        var input = deserializer.forSolver(file);
+    private void solve() {
+        var input = inputSupplier.getSolverInput();
         solver.warmUp();
         solver.solve(input);
         outputHandler.handleSolver(solver);
     }
 
-    private void generate(String file) {
-        var input = deserializer.forGenerator(file);
+    private void generate() {
+        var input = inputSupplier.getGeneratorInput();
         generator.warmUp();
         generator.generate(input);
         outputHandler.handleGenerator(generator);
