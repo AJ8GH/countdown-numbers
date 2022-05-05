@@ -1,5 +1,6 @@
 package io.github.aj8gh.countdown.conf;
 
+import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.cli.CliInputSupplier;
 import io.github.aj8gh.countdown.cli.CliApp;
 import io.github.aj8gh.countdown.game.GameApp;
@@ -56,17 +57,13 @@ public class AppConfig {
     }
 
     public Solver solver() {
-        var calculators = getCalculators();
-        var generator = generator();
-        var solver = new Solver(generator, calculators);
+        var solver = new Solver(generator(), calculatorManager());
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));
         solver.setTimeScale(PROPS.getInt("solver.timer.scale"));
         solver.setCaching(PROPS.getBoolean("solver.caching"));
         solver.setWarmUps(PROPS.getInt("solver.warmups"));
-        solver.setSwitchModes(PROPS.getBoolean("solver.switch.modes"));
         solver.setMaxNumbers(PROPS.getInt("solver.maxNumbers"));
         solver.setMaxNumberThreshold(PROPS.getInt("solver.maxNumber.threshold"));
-        solver.setModeSwitchThreshold(PROPS.getLong("solver.switch.threshold"));
         return solver;
     }
 
@@ -111,6 +108,15 @@ public class AppConfig {
         fileHandler.setSolInFile(PROPS.getString("input.solver.file"));
         fileHandler.setCreateSolverInput(PROPS.getBoolean("output.create.solver.input"));
         return fileHandler;
+    }
+
+    private CalculatorManager calculatorManager() {
+        var calculatorManager = new CalculatorManager(getCalculators());
+        calculatorManager.setSwitchModes(PROPS.getBoolean("solver.switch.modes"));
+        calculatorManager.setIntermediateThreshold(PROPS.getLong("solver.intermediate.threshold"));
+        calculatorManager.setSequentialThreshold(PROPS.getLong("solver.sequential.threshold"));
+        calculatorManager.setRecursiveThreshold(PROPS.getLong("solver.recursive.threshold"));
+        return calculatorManager;
     }
 
     private Map<Calculator.CalculationMode, Calculator> getCalculators() {

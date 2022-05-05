@@ -14,8 +14,8 @@ import static java.util.stream.Collectors.toMap;
 
 public interface Calculator {
     enum CalculationMode {
-        SEQUENTIAL("S", SequentialCalculator.class),
         INTERMEDIATE("I", IntermediateCalculator.class),
+        SEQUENTIAL("S", SequentialCalculator.class),
         RECURSIVE("R", RecursiveCalculator.class),
         RPN("P", RpnCalculator.class);
 

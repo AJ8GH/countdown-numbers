@@ -1,46 +1,37 @@
 package io.github.aj8gh.countdown.sol;
 
+import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.calc.Calculation;
-import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.util.Timer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.RECURSIVE;
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTIAL;
 
 public class Solver {
-    private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final long DEFAULT_MODE_SWITCH_THRESHOLD = 20_000;
-    private static final int DEFAULT_WARM_UPS = 20;
+    private static final long DEFAULT_MAX_NUMBER_THRESHOLD = 20_000;
     private static final int DEFAULT_MAX_NUMBERS = 6;
-    private static final int DEFAULT_MAX_NUMBER_THRESHOLD = 20_000;
-    private static final boolean DEFAULT_SWITCH_MODES = true;
+    private static final int DEFAULT_WARM_UPS = 20;
 
     private final SolutionCache cache = new SolutionCache();
-    private final Map<CalculationMode, Calculator> calculators;
+    private final CalculatorManager calculator;
     private final Generator generator;
     private final Timer timer = new Timer();
 
-    private boolean switchModes = DEFAULT_SWITCH_MODES;
-    private int maxNumbers = DEFAULT_MAX_NUMBERS;
-    private int maxNumberThreshold = DEFAULT_MAX_NUMBER_THRESHOLD;
+    private long maxNumberThreshold = DEFAULT_MAX_NUMBER_THRESHOLD;
     private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
+    private int maxNumbers = DEFAULT_MAX_NUMBERS;
     private int warmUps = DEFAULT_WARM_UPS;
     private boolean caching = true;
-    private int attempts = 1;
+    private long attempts = 1;
     private Calculation solution;
-    private Calculator calculator;
 
-    public Solver(Generator generator, Map<CalculationMode, Calculator> calculators) {
+    public Solver(Generator generator, CalculatorManager calculator) {
         this.generator = generator;
-        this.calculators = calculators;
-        this.calculator = calculators.get(DEFAULT_MODE);
+        this.calculator = calculator;
     }
 
     public void solve(List<Integer> question) {
@@ -68,13 +59,13 @@ public class Solver {
         Calculation calculation = calculator.calculateSolution(question, target);
         while (isUnsolved(calculation, target)) {
             calculation = calculator.calculateSolution(question, target);
-            if (isSwitchThresholdBreached(++attempts)) switchMode();
+            calculator.switchMode(++attempts);
         }
         return calculation;
     }
 
     private boolean isUnsolved(Calculation calculation, int target) {
-        if (attempts < maxNumberThreshold && calculation.getNumbers() >= maxNumbers) {
+        if (attempts < maxNumberThreshold && calculation.getNumbers() > maxNumbers) {
             return true;
         }
         return calculation.getValue() != target;
@@ -82,10 +73,6 @@ public class Solver {
 
     private boolean containsTarget(List<Integer> question, int target) {
         return target == 100 && question.contains(target);
-    }
-
-    private boolean isSwitchThresholdBreached(int attempts) {
-        return switchModes && attempts % modeSwitchThreshold == 0;
     }
 
     public void warmUp() {
@@ -108,7 +95,7 @@ public class Solver {
         return timer.getLastTime();
     }
 
-    public int getAttempts() {
+    public long getAttempts() {
         return attempts;
     }
 
@@ -117,7 +104,7 @@ public class Solver {
     }
 
     public void setMode(CalculationMode mode) {
-        this.calculator = calculators.get(mode);
+        calculator.setMode(mode);
     }
 
     public Calculation getSolution() {
@@ -125,7 +112,7 @@ public class Solver {
     }
 
     public void setSwitchModes(boolean switchModes) {
-        this.switchModes = switchModes;
+        calculator.setSwitchModes(switchModes);
     }
 
     public long getModeSwitchThreshold() {
@@ -154,9 +141,5 @@ public class Solver {
 
     public void setCaching(boolean caching) {
         this.caching = caching;
-    }
-
-    private void switchMode() {
-        setMode(getMode().equals(INTERMEDIATE) ? SEQUENTIAL : RECURSIVE);
     }
 }

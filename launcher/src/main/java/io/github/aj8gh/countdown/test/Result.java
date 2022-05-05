@@ -4,7 +4,7 @@ import io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
 public record Result(CalculationMode mode,
                      double time,
-                     int attempts,
+                     long attempts,
                      String solution,
                      int result,
                      String rpn) { }
