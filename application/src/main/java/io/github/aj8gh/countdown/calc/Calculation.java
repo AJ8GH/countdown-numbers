@@ -10,6 +10,7 @@ public class Calculation {
     private StringBuilder solution;
     private int value;
     private String rpn;
+    private int numbers = 1;
 
     public Calculation(int x) {
         this.value = x;
@@ -19,6 +20,7 @@ public class Calculation {
     public Calculation(Calculation calculation) {
         this.value = calculation.getValue();
         this.solution = calculation.solution;
+        this.numbers = calculation.numbers;
     }
 
     public Calculation calculate(Operator operator, Calculation calculation) {
@@ -45,6 +47,7 @@ public class Calculation {
         if (isValid(result, calculation)) {
             buildSolution(first, operator, second);
             this.value = result;
+            this.numbers += calculation.numbers;
         }
     }
 
@@ -80,4 +83,7 @@ public class Calculation {
         return solution.toString();
     }
 
+    public int getNumbers() {
+        return numbers;
+    }
 }

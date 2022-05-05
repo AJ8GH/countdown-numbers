@@ -1,5 +1,6 @@
 package io.github.aj8gh.countdown.calc;
 
+import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
@@ -78,6 +79,19 @@ class CalculatorTest {
     @MethodSource(value = { "getInputs", "getDifficultInputs" })
     void calculateSolution_Recursive(List<Integer> numbers) {
         var calculator = new RecursiveCalculator();
+        numbers = new ArrayList<>(numbers);
+        var target = numbers.remove(numbers.size() - 1);
+
+        result = calculator.calculateSolution(numbers, target);
+        assertNotNull(result, "Expected result to not be null");
+        assertEquals(target, result.getValue());
+        assertEquals(target, RPN_PARSER.parse(result.getRpn()));
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = { "getInputs", "getDifficultInputs" })
+    void calculateSolution_Rpn(List<Integer> numbers) {
+        var calculator = new RpnCalculator();
         numbers = new ArrayList<>(numbers);
         var target = numbers.remove(numbers.size() - 1);
 

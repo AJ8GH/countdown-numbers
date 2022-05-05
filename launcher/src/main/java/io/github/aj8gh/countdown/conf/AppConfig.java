@@ -64,6 +64,8 @@ public class AppConfig {
         solver.setCaching(PROPS.getBoolean("solver.caching"));
         solver.setWarmUps(PROPS.getInt("solver.warmups"));
         solver.setSwitchModes(PROPS.getBoolean("solver.switch.modes"));
+        solver.setMaxNumbers(PROPS.getInt("solver.maxNumbers"));
+        solver.setMaxNumberThreshold(PROPS.getInt("solver.maxNumber.threshold"));
         solver.setModeSwitchThreshold(PROPS.getLong("solver.switch.threshold"));
         return solver;
     }

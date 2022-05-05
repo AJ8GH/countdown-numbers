@@ -8,7 +8,6 @@ import io.github.aj8gh.countdown.util.Timer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
@@ -19,20 +18,24 @@ public class Solver {
     private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final long DEFAULT_MODE_SWITCH_THRESHOLD = 20_000;
     private static final int DEFAULT_WARM_UPS = 20;
+    private static final int DEFAULT_MAX_NUMBERS = 6;
+    private static final int DEFAULT_MAX_NUMBER_THRESHOLD = 20_000;
     private static final boolean DEFAULT_SWITCH_MODES = true;
 
-    private final AtomicInteger attempts = new AtomicInteger(1);
     private final SolutionCache cache = new SolutionCache();
     private final Map<CalculationMode, Calculator> calculators;
     private final Generator generator;
     private final Timer timer = new Timer();
 
     private boolean switchModes = DEFAULT_SWITCH_MODES;
+    private int maxNumbers = DEFAULT_MAX_NUMBERS;
+    private int maxNumberThreshold = DEFAULT_MAX_NUMBER_THRESHOLD;
     private long modeSwitchThreshold = DEFAULT_MODE_SWITCH_THRESHOLD;
     private int warmUps = DEFAULT_WARM_UPS;
     private boolean caching = true;
-    private Calculator calculator;
+    private int attempts = 1;
     private Calculation solution;
+    private Calculator calculator;
 
     public Solver(Generator generator, Map<CalculationMode, Calculator> calculators) {
         this.generator = generator;
@@ -63,11 +66,18 @@ public class Solver {
         int target = question.remove(question.size() - 1);
         if (containsTarget(question, target)) return new Calculation(target);
         Calculation calculation = calculator.calculateSolution(question, target);
-        while (calculation.getValue() != target) {
+        while (isUnsolved(calculation, target)) {
             calculation = calculator.calculateSolution(question, target);
-            if (isSwitchThresholdBreached(attempts.incrementAndGet())) switchMode();
+            if (isSwitchThresholdBreached(++attempts)) switchMode();
         }
         return calculation;
+    }
+
+    private boolean isUnsolved(Calculation calculation, int target) {
+        if (attempts < maxNumberThreshold && calculation.getNumbers() >= maxNumbers) {
+            return true;
+        }
+        return calculation.getValue() != target;
     }
 
     private boolean containsTarget(List<Integer> question, int target) {
@@ -79,16 +89,18 @@ public class Solver {
     }
 
     public void warmUp() {
+        var mode = getMode();
         for (int i = 0; i < warmUps; i++) {
             generator.generate(i % 5);
             solve(generator.getQuestionNumbers());
             generator.reset();
             reset();
         }
+        setMode(mode);
     }
 
     public void reset() {
-        this.attempts.set(1);
+        this.attempts = 1;
         timer.reset();
     }
 
@@ -97,7 +109,7 @@ public class Solver {
     }
 
     public int getAttempts() {
-        return attempts.get();
+        return attempts;
     }
 
     public CalculationMode getMode() {
@@ -124,8 +136,12 @@ public class Solver {
         this.modeSwitchThreshold = modeSwitchThreshold;
     }
 
-    public double getTotalTime() {
-        return timer.getTotalTime();
+    public void setMaxNumbers(int maxNumbers) {
+        this.maxNumbers = maxNumbers;
+    }
+
+    public void setMaxNumberThreshold(int maxNumberThreshold) {
+        this.maxNumberThreshold = maxNumberThreshold;
     }
 
     public void setTimeScale(int timeScale) {
@@ -141,7 +157,6 @@ public class Solver {
     }
 
     private void switchMode() {
-        this.calculator = calculator.getMode().equals(INTERMEDIATE) ?
-                calculators.get(SEQUENTIAL) : calculators.get(RECURSIVE);
+        setMode(getMode().equals(INTERMEDIATE) ? SEQUENTIAL : RECURSIVE);
     }
 }
