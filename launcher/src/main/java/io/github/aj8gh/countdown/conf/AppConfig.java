@@ -45,8 +45,13 @@ public class AppConfig {
     }
 
     public Generator generator() {
-        var calculators = getCalculators();
-        var generator = new Generator(calculators);
+        var calculatorManager = calculatorManager();
+        calculatorManager.setSwitchModes(PROPS.getBoolean("generator.switch.modes"));
+        calculatorManager.setIntermediateThreshold(PROPS.getLong("generator.intermediate.threshold"));
+        calculatorManager.setSequentialThreshold(PROPS.getLong("generator.sequential.threshold"));
+        calculatorManager.setRecursiveThreshold(PROPS.getLong("generator.recursive.threshold"));
+
+        var generator = new Generator(calculatorManager);
         generator.setMode(Calculator.CalculationMode.valueOf(PROPS.getString("generator.mode")));
         generator.setWarmUps(PROPS.getInt("generator.warmups"));
         generator.setTimeScale(PROPS.getInt("generator.timer.scale"));
@@ -57,7 +62,13 @@ public class AppConfig {
     }
 
     public Solver solver() {
-        var solver = new Solver(generator(), calculatorManager());
+        var calculatorManager = calculatorManager();
+        calculatorManager.setSwitchModes(PROPS.getBoolean("solver.switch.modes"));
+        calculatorManager.setIntermediateThreshold(PROPS.getLong("solver.intermediate.threshold"));
+        calculatorManager.setSequentialThreshold(PROPS.getLong("solver.sequential.threshold"));
+        calculatorManager.setRecursiveThreshold(PROPS.getLong("solver.recursive.threshold"));
+
+        var solver = new Solver(generator(), calculatorManager);
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));
         solver.setTimeScale(PROPS.getInt("solver.timer.scale"));
         solver.setCaching(PROPS.getBoolean("solver.caching"));
@@ -111,12 +122,7 @@ public class AppConfig {
     }
 
     private CalculatorManager calculatorManager() {
-        var calculatorManager = new CalculatorManager(getCalculators());
-        calculatorManager.setSwitchModes(PROPS.getBoolean("solver.switch.modes"));
-        calculatorManager.setIntermediateThreshold(PROPS.getLong("solver.intermediate.threshold"));
-        calculatorManager.setSequentialThreshold(PROPS.getLong("solver.sequential.threshold"));
-        calculatorManager.setRecursiveThreshold(PROPS.getLong("solver.recursive.threshold"));
-        return calculatorManager;
+        return new CalculatorManager(getCalculators());
     }
 
     private Map<Calculator.CalculationMode, Calculator> getCalculators() {

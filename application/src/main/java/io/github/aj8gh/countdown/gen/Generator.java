@@ -1,30 +1,20 @@
 package io.github.aj8gh.countdown.gen;
 
 import io.github.aj8gh.countdown.calc.Calculation;
-import io.github.aj8gh.countdown.calc.Calculator;
+import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.util.Random;
 import io.github.aj8gh.countdown.util.Timer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.gen.FilterFactory.Filter.IN_RANGE;
 
 public class Generator {
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
     private static final IntPredicate DEFAULT_FILTER = IN_RANGE.getPredicate();
-    private static final CalculationMode DEFAULT_MODE = INTERMEDIATE;
     private static final int MAX_SMALL_NUMBER = 10;
     private static final int DEFAULT_WARMUPS = 20;
     private static final int TOTAL_NUMBERS = 6;
@@ -33,19 +23,17 @@ public class Generator {
 
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final AtomicInteger attempts = new AtomicInteger(1);
-    private final Map<CalculationMode, Calculator> calculators;
+    private final CalculatorManager calculator;
     private final Timer timer = new Timer();
 
-    private Calculator calculator;
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = new HashSet<>(Set.of(filter));
     private Calculation target;
     private int warmUps = DEFAULT_WARMUPS;
 
-    public Generator(Map<CalculationMode, Calculator> calculators) {
-        this.calculators = calculators;
-        this.calculator = calculators.get(DEFAULT_MODE);
+    public Generator(CalculatorManager calculator) {
+        this.calculator = calculator;
         setUp();
     }
 
@@ -132,7 +120,7 @@ public class Generator {
     }
 
     public void setMode(CalculationMode mode) {
-        this.calculator = calculators.get(mode);
+        calculator.setMode(mode);
     }
 
     public void setTimeScale(int timeScale) {
