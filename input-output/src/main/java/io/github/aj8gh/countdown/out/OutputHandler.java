@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.out;
 
-import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.gen.GenResult;
 import io.github.aj8gh.countdown.out.console.ConsoleHandler;
 import io.github.aj8gh.countdown.out.file.FileHandler;
 import io.github.aj8gh.countdown.out.slack.SlackHandler;
@@ -24,5 +24,5 @@ public interface OutputHandler {
     }
 
     void handleSolver(Solver solver);
-    void handleGenerator(Generator generator);
+    void handleGenerator(GenResult generator);
 }

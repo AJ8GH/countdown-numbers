@@ -83,7 +83,7 @@ class CalculatorTest {
         var target = numbers.remove(numbers.size() - 1);
 
         result = calculator.calculateSolution(numbers, target);
-        assertNotNull(result, "Expected result to not be null");
+        assertNotNull(result, "Expected GenResult to not be null");
         assertEquals(target, result.getValue());
         assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }
@@ -96,7 +96,7 @@ class CalculatorTest {
         var target = numbers.remove(numbers.size() - 1);
 
         result = calculator.calculateSolution(numbers, target);
-        assertNotNull(result, "Expected result to not be null");
+        assertNotNull(result, "Expected GenResult to not be null");
         assertEquals(target, result.getValue());
         assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }

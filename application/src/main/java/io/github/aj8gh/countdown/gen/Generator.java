@@ -3,7 +3,6 @@ package io.github.aj8gh.countdown.gen;
 import io.github.aj8gh.countdown.calc.Calculation;
 import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.util.Random;
-import io.github.aj8gh.countdown.util.Timer;
 
 import java.util.*;
 import java.util.function.IntPredicate;
@@ -22,7 +21,6 @@ public class Generator {
 
     private final List<Integer> questionNumbers = new ArrayList<>();
     private final CalculatorManager calculator;
-    private final Timer timer = new Timer();
 
     private long attempts = 1;
     private Queue<Integer> largeNumbers;
@@ -37,11 +35,9 @@ public class Generator {
     }
 
     public Calculation generate(int numberOfLarge) {
-        timer.start();
         generateQuestionNumbers(numberOfLarge);
         this.target = calculateTarget(numberOfLarge);
         questionNumbers.add(target.getValue());
-        timer.stop();
         return target;
     }
 
@@ -106,10 +102,6 @@ public class Generator {
         return target;
     }
 
-    public double getTime() {
-        return timer.getTime();
-    }
-
     public long getAttempts() {
         return attempts;
     }
@@ -120,10 +112,6 @@ public class Generator {
 
     public void setMode(CalculationMode mode) {
         calculator.setMode(mode);
-    }
-
-    public void setTimeScale(int timeScale) {
-        timer.setTimescale(timeScale);
     }
 
     public void setWarmUps(int warmUps) {

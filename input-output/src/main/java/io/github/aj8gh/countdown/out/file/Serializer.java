@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.out.file;
 
-import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.gen.GenResult;
 import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +16,10 @@ public class Serializer {
     private static final String COMMA = ",";
     private static final String COLON = ":";
 
-    public void serializeGenerator(Generator generator, String file) {
-        var data = generator.getQuestionNumbers().toString() +
-                COLON + generator.getTarget() +
-                COLON + generator.getTime();
+    public void serializeGenerator(GenResult genResult, String file) {
+        var data = genResult.questionNumbers().toString() +
+                COLON + genResult.target() +
+                COLON + genResult.time();
         serialize(file, data);
 
     }

@@ -55,7 +55,6 @@ public class GameApp implements Consumer<String[]> {
 
     private void generate() {
         var input = inputSupplier.getGeneratorInput();
-        generator.generate(input);
-        outputHandler.handleGenerator(generator.getGenerator());
+        outputHandler.handleGenerator(generator.generate(input));
     }
 }

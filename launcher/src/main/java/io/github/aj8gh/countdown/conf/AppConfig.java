@@ -23,6 +23,7 @@ import io.github.aj8gh.countdown.out.slack.SlackClient;
 import io.github.aj8gh.countdown.out.slack.SlackHandler;
 import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.test.TestApp;
+import io.github.aj8gh.countdown.util.Timer;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -58,7 +59,6 @@ public class AppConfig {
         var generator = new Generator(calculatorManager);
         generator.setMode(Calculator.CalculationMode.valueOf(PROPS.getString("generator.mode")));
         generator.setWarmUps(PROPS.getInt("generator.warmups"));
-        generator.setTimeScale(PROPS.getInt("generator.timer.scale"));
         PROPS.getStrings("generator.filters").stream()
                 .map(Filter.FilterType::valueOf)
                 .forEach(f -> generator.addFilter(f.getPredicate()));
@@ -105,7 +105,9 @@ public class AppConfig {
         var difficultyAnalyser = new DifficultyAnalyser(solver());
         difficultyAnalyser.setRuns(PROPS.getInt("generator.difficulty.runs"));
         difficultyAnalyser.setMinDifficulty(PROPS.getDouble("generator.difficulty.min"));
-        var genAdaptor = new GenAdaptor(generator(), difficultyAnalyser);
+        var timer = new Timer();
+        timer.setTimescale(PROPS.getInt("generator.timer.scale"));
+        var genAdaptor = new GenAdaptor(generator(), difficultyAnalyser, timer);
         genAdaptor.setCheckDifficulty(PROPS.getBoolean("generator.difficulty.check"));
         return genAdaptor;
     }

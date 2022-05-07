@@ -1,6 +1,6 @@
 package io.github.aj8gh.countdown.out.slack;
 
-import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.gen.GenResult;
 import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.sol.Solver;
 
@@ -21,8 +21,8 @@ public class SlackHandler implements OutputHandler {
     }
 
     @Override
-    public void handleGenerator(Generator generator) {
-        slackClient.postMessage(channel, getGeneratorMessage(generator));
+    public void handleGenerator(GenResult genResult) {
+        slackClient.postMessage(channel, getGeneratorMessage(genResult));
     }
 
     private String getSolverMessage(Solver solver) {
@@ -31,10 +31,10 @@ public class SlackHandler implements OutputHandler {
                 solver.getTime(), solver.getAttempts());
     }
 
-    private String getGeneratorMessage(Generator generator) {
+    private String getGeneratorMessage(GenResult result) {
         return String.format("Question: %s%nMethod: %s = %s%nrpn: %s%ntime: %s%nattempts: %s",
-                generator.getQuestionNumbers(), generator.getTarget(), generator.getTarget().getValue(),
-                generator.getTarget().getRpn(), generator.getTime(), generator.getAttempts());
+                result.questionNumbers(), result.target(), result.target(),
+                result.rpn(), result.time(), result.attempts());
     }
 
     public void setChannel(String channel) {

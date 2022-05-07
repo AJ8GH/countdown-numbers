@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.cli;
 
 import io.github.aj8gh.countdown.BaseApp;
-import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.gen.GenAdaptor;
 import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
@@ -13,20 +13,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static io.github.aj8gh.countdown.cli.Commands.ADD_FILTER;
-import static io.github.aj8gh.countdown.cli.Commands.EXIT;
-import static io.github.aj8gh.countdown.cli.Commands.GENERATE;
-import static io.github.aj8gh.countdown.cli.Commands.GENERATE_TO_SOLVE;
-import static io.github.aj8gh.countdown.cli.Commands.GET_GENERATOR_MODE;
-import static io.github.aj8gh.countdown.cli.Commands.GET_MODE_SWITCH_THRESHOLD;
-import static io.github.aj8gh.countdown.cli.Commands.GET_SOLVE_MODE;
-import static io.github.aj8gh.countdown.cli.Commands.RESET_FILTERS;
-import static io.github.aj8gh.countdown.cli.Commands.SET_GEN_MODE;
-import static io.github.aj8gh.countdown.cli.Commands.SET_MODE_SWITCH_THRESHOLD;
-import static io.github.aj8gh.countdown.cli.Commands.SET_SOLVE_MODE;
-import static io.github.aj8gh.countdown.cli.Commands.SET_TIME_SCALE;
-import static io.github.aj8gh.countdown.cli.Commands.SOLVE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
+import static io.github.aj8gh.countdown.cli.Commands.*;
 
 public class CliApp implements Consumer<String[]> {
     private static final Logger LOG = LoggerFactory.getLogger(CliApp.class);
@@ -38,7 +26,7 @@ public class CliApp implements Consumer<String[]> {
     private final Printer printer = new Printer();
     private final OutputHandler outputHandler;
     private final Supplier<String> inputSupplier;
-    private final Generator generator;
+    private final GenAdaptor generator;
     private final Solver solver;
 
     private String input;
@@ -48,7 +36,7 @@ public class CliApp implements Consumer<String[]> {
     public CliApp(BaseApp baseApp, Supplier<String> inputSupplier) {
         this.outputHandler = baseApp.outputHandler();
         this.inputSupplier = inputSupplier;
-        this.generator = baseApp.genAdaptor().getGenerator();
+        this.generator = baseApp.genAdaptor();
         this.solver = baseApp.solver();
     }
 
@@ -79,21 +67,14 @@ public class CliApp implements Consumer<String[]> {
             case SOLVE -> solve();
             case GENERATE -> generate();
             case GENERATE_TO_SOLVE -> generateToSolve();
-            case GET_GENERATOR_MODE -> print(generator.getMode());
+            case GET_GENERATOR_MODE -> print(generator.getGenerator().getMode());
             case GET_MODE_SWITCH_THRESHOLD -> print(solver.getModeSwitchThreshold());
             case GET_SOLVE_MODE -> print(solver.getMode());
             case SET_SOLVE_MODE -> setSolveMode();
             case SET_GEN_MODE -> setGenMode();
             case SET_MODE_SWITCH_THRESHOLD -> setModeSwitchThreshold();
-            case SET_TIME_SCALE -> setTimeScale();
             default -> handleUnknown();
         }
-    }
-
-    private void setTimeScale() {
-        var timeScale = Integer.parseInt(args.get(0));
-        solver.setTimeScale(timeScale);
-        generator.setTimeScale(timeScale);
     }
 
     private void print(Object attribute) {
@@ -105,15 +86,15 @@ public class CliApp implements Consumer<String[]> {
     }
 
     private void addFilter() {
-        FILTER_SELECTOR.addFilter(args.get(0), generator);
+        FILTER_SELECTOR.addFilter(args.get(0), generator.getGenerator());
     }
 
     private void resetFilters() {
-        generator.resetFilters();
+        generator.getGenerator().resetFilters();
     }
 
     private void setGenMode() {
-        generator.setMode(CalculationMode.fromString(args.get(0).toUpperCase()));
+        generator.getGenerator().setMode(CalculationMode.fromString(args.get(0).toUpperCase()));
     }
 
     private void setSolveMode() {
@@ -130,10 +111,8 @@ public class CliApp implements Consumer<String[]> {
         args.stream().map(Integer::parseInt)
                 .forEach(number -> {
                     validateGeneratorInput(number);
-                    generator.warmUp();
                     generator.generate(number);
-                    outputHandler.handleGenerator(generator);
-                    generator.reset();
+                    outputHandler.handleGenerator(generator.getResult());
                 });
     }
 
@@ -150,10 +129,10 @@ public class CliApp implements Consumer<String[]> {
             validateGeneratorInput(number);
             solver.warmUp();
             generator.generate(number);
-            solver.solve(generator.getQuestionNumbers());
-            outputHandler.handleGenerator(generator);
+            solver.solve(generator.getResult().questionNumbers());
+            outputHandler.handleGenerator(generator.getResult());
             outputHandler.handleSolver(solver);
-            reset();
+            solver.reset();
         });
     }
 
@@ -180,10 +159,5 @@ public class CliApp implements Consumer<String[]> {
     private void exit() {
         printer.logExitMessage();
         System.exit(0);
-    }
-
-    private void reset() {
-        generator.reset();
-        solver.reset();
     }
 }

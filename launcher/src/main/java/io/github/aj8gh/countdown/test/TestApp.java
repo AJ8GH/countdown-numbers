@@ -1,9 +1,7 @@
 package io.github.aj8gh.countdown.test;
 
 import io.github.aj8gh.countdown.BaseApp;
-import io.github.aj8gh.countdown.conf.AppConfig;
-import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
-import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.gen.GenAdaptor;
 import io.github.aj8gh.countdown.in.InputSupplier;
 import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
@@ -15,23 +13,21 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.RECURSIVE;
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTIAL;
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.*;
 
 public class TestApp implements Consumer<String[]> {
     private static final Logger LOG = LoggerFactory.getLogger(TestApp.class);
     private final List<Result> results = new ArrayList<>();
 
     private final Solver solver;
-    private final Generator generator;
+    private final GenAdaptor generator;
     private final InputSupplier inputSupplier;
 
 
     public TestApp(BaseApp baseApp, InputSupplier inputSupplier) {
         this.inputSupplier = inputSupplier;
         this.solver = baseApp.solver();
-        this.generator = baseApp.genAdaptor().getGenerator();
+        this.generator = baseApp.genAdaptor();
         solver.setCaching(false);
     }
 

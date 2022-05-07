@@ -1,5 +1,6 @@
 package io.github.aj8gh.countdown.out.console;
 
+import io.github.aj8gh.countdown.gen.GenResult;
 import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.sol.Solver;
@@ -13,28 +14,28 @@ public class ConsoleHandler implements OutputHandler {
     private static final OutputType TYPE = CONSOLE;
 
     @Override
-    public void handleGenerator(Generator generator) {
-        var formattedNumbers = generator.getQuestionNumbers()
+    public void handleGenerator(GenResult result) {
+        var formattedNumbers = result.questionNumbers()
                 .toString().replaceAll("[^\\d\s]", "");
         LOG.info("""
                         
-                        ============================================================================
-                        GENERATOR
-                        Question:       {}
-                        Method:         {} = {}
-                        RPN:            {}
-                        Attempts:       {}
-                        Time:           {} ms
-                        Mode:           {}
-                        ============================================================================
-                        """,
+                ============================================================================
+                GENERATOR
+                Question:       {}
+                Method:         {} = {}
+                RPN:            {}
+                Attempts:       {}
+                Time:           {} ms
+                Mode:           {}
+                ============================================================================
+                """,
                 formattedNumbers,
-                generator.getTarget(),
-                generator.getTarget().getValue(),
-                generator.getTarget().getRpn(),
-                generator.getAttempts(),
-                generator.getTime(),
-                generator.getMode()
+                result.solution(),
+                result.target(),
+                result.rpn(),
+                result.attempts(),
+                result.time(),
+                result.mode()
         );
     }
 
