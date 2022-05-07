@@ -1,5 +1,8 @@
 package io.github.aj8gh.countdown.game;
 
+import io.github.aj8gh.countdown.BaseApp;
+import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
+import io.github.aj8gh.countdown.gen.GenAdaptor;
 import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.in.InputSupplier;
 import io.github.aj8gh.countdown.out.OutputHandler;
@@ -16,17 +19,14 @@ public class GameApp implements Consumer<String[]> {
 
     private final OutputHandler outputHandler;
     private final InputSupplier inputSupplier;
-    private final Generator generator;
+    private final GenAdaptor generator;
     private final Solver solver;
 
-    public GameApp(OutputHandler outputHandler,
-                   InputSupplier inputSupplier,
-                   Generator generator,
-                   Solver solver) {
-        this.outputHandler = outputHandler;
+    public GameApp(BaseApp baseApp, InputSupplier inputSupplier) {
+        this.outputHandler = baseApp.outputHandler();
+        this.generator = baseApp.genAdaptor();
+        this.solver = baseApp.solver();
         this.inputSupplier = inputSupplier;
-        this.generator = generator;
-        this.solver = solver;
     }
 
     @Override
@@ -55,8 +55,7 @@ public class GameApp implements Consumer<String[]> {
 
     private void generate() {
         var input = inputSupplier.getGeneratorInput();
-        generator.warmUp();
         generator.generate(input);
-        outputHandler.handleGenerator(generator);
+        outputHandler.handleGenerator(generator.getGenerator());
     }
 }

@@ -33,6 +33,10 @@ public class PropsConfig {
         return Long.parseLong(props.getProperty(key));
     }
 
+    public double getDouble(String key) {
+        return Double.parseDouble(props.getProperty(key));
+    }
+
     public List<String> getStrings(String key) {
         return Arrays.stream(props.getProperty(key).split(COMMA))
                 .map(String::trim)

@@ -1,5 +1,6 @@
 package io.github.aj8gh.countdown.cli;
 
+import io.github.aj8gh.countdown.BaseApp;
 import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.sol.Solver;
@@ -44,14 +45,11 @@ public class CliApp implements Consumer<String[]> {
     private String command;
     private List<String> args;
 
-    public CliApp(OutputHandler outputHandler,
-                  Supplier<String> inputSupplier,
-                  Generator generator,
-                  Solver solver) {
-        this.outputHandler = outputHandler;
+    public CliApp(BaseApp baseApp, Supplier<String> inputSupplier) {
+        this.outputHandler = baseApp.outputHandler();
         this.inputSupplier = inputSupplier;
-        this.generator = generator;
-        this.solver = solver;
+        this.generator = baseApp.genAdaptor().getGenerator();
+        this.solver = baseApp.solver();
     }
 
     @Override

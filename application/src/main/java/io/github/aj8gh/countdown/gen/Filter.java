@@ -3,19 +3,19 @@ package io.github.aj8gh.countdown.gen;
 import java.util.Set;
 import java.util.function.IntPredicate;
 
-public final class FilterFactory {
-    public enum Filter {
-        IN_RANGE(FilterFactory::isInRange, "I"),
-        ODD(FilterFactory::isOdd, "O"),
-        NOT_FIVE(FilterFactory::isNotDivisibleByFive, "5"),
-        NOT_TEN(FilterFactory::isNotDivisibleByTen, "10"),
-        NOT_ONE_HUNDRED(FilterFactory::isNotOneHundred, "100"),
-        PRIME(FilterFactory::isPrime, "P");
+public final class Filter {
+    public enum FilterType {
+        IN_RANGE(Filter::isInRange, "I"),
+        ODD(Filter::isOdd, "O"),
+        NOT_FIVE(Filter::isNotDivisibleByFive, "5"),
+        NOT_TEN(Filter::isNotDivisibleByTen, "10"),
+        NOT_ONE_HUNDRED(Filter::isNotOneHundred, "100"),
+        PRIME(Filter::isPrime, "P");
 
         private final IntPredicate predicate;
         private final String key;
 
-        Filter(IntPredicate predicate, String key) {
+        FilterType(IntPredicate predicate, String key) {
             this.predicate = predicate;
             this.key = key;
         }
@@ -73,5 +73,5 @@ public final class FilterFactory {
         return target != 100;
     }
 
-    private FilterFactory() {}
+    private Filter() {}
 }

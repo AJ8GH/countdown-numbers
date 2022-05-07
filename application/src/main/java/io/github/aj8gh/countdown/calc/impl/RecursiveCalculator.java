@@ -3,6 +3,7 @@ package io.github.aj8gh.countdown.calc.impl;
 import io.github.aj8gh.countdown.calc.Calculation;
 import io.github.aj8gh.countdown.calc.Operator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecursiveCalculator extends AbstractCalculator {
@@ -18,9 +19,9 @@ public class RecursiveCalculator extends AbstractCalculator {
     @Override
     public Calculation calculateSolution(List<Integer> numbers, int target) {
         this.target = target;
-        var calcs = new Calculation[numbers.size()];
-        for (int i = 0; i < numbers.size(); i++) calcs[i] = new Calculation(numbers.get(i));
-        if (calculateRecursively(calcs, calcs.length)) {
+        var calculations = new ArrayList<>(numbers.stream()
+                .map(Calculation::new).toList());
+        if (calculateRecursively(calculations, numbers.size())) {
             return resetAndGetResult();
         }
         return null;
@@ -31,9 +32,9 @@ public class RecursiveCalculator extends AbstractCalculator {
         return MODE;
     }
 
-    private boolean calculateRecursively(Calculation[] numbers, int inputSize) {
+    private boolean calculateRecursively(List<Calculation> numbers, int inputSize) {
         for (int i = 0; i < inputSize; i++) {
-            if (isSolved(numbers[i], target)) return true;
+            if (isSolved(numbers.get(i), target)) return true;
             for (int j = i + 1; j < inputSize; j++) {
                 if (isSolvedRecursively(numbers, i, j, inputSize)) return true;
             }
@@ -56,22 +57,22 @@ public class RecursiveCalculator extends AbstractCalculator {
         return finalResult;
     }
 
-    private boolean isSolvedRecursively(Calculation[] numbers, int i, int j, int inputSize) {
+    private boolean isSolvedRecursively(List<Calculation> numbers, int i, int j, int inputSize) {
         for (Operator operation : OPERATORS.values()) {
-            var saveI = numbers[i];
-            var saveJ = numbers[j];
+            var saveI = numbers.get(i);
+            var saveJ = numbers.get(j);
             var res = new Calculation(saveI).calculate(operation, new Calculation(saveJ));
 
             if (res.getValue() != 0) {
-                numbers[i] = res;
-                numbers[j] = numbers[inputSize - 1];
+                numbers.set(i, res);
+                numbers.set(j, numbers.get(inputSize - 1));
 
                 if (calculateRecursively(numbers, inputSize - 1)) {
                     if (result == null) result = res;
                     return true;
                 }
-                numbers[i] = saveI;
-                numbers[j] = saveJ;
+                numbers.set(i, saveI);
+                numbers.set(j, saveJ);
             }
         }
         return false;

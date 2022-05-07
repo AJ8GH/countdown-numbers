@@ -33,7 +33,7 @@ class CalculatorTest {
     void tearDown() {
         TIMER.stop();
         System.out.println("==================");
-        System.out.println(TIMER.getLastTime() + " ms");
+        System.out.println(TIMER.getTime() + " ms");
         System.out.println(result.getSolution());
         System.out.println(result.getValue());
         System.out.println(result.getRpn());

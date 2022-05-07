@@ -6,11 +6,10 @@ import io.github.aj8gh.countdown.util.Random;
 import io.github.aj8gh.countdown.util.Timer;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntPredicate;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
-import static io.github.aj8gh.countdown.gen.FilterFactory.Filter.IN_RANGE;
+import static io.github.aj8gh.countdown.gen.Filter.FilterType.IN_RANGE;
 
 public class Generator {
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
@@ -22,10 +21,10 @@ public class Generator {
     private static final Random RANDOM = new Random();
 
     private final List<Integer> questionNumbers = new ArrayList<>();
-    private final AtomicInteger attempts = new AtomicInteger(1);
     private final CalculatorManager calculator;
     private final Timer timer = new Timer();
 
+    private long attempts = 1;
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
     private Set<IntPredicate> filters = new HashSet<>(Set.of(filter));
@@ -49,7 +48,7 @@ public class Generator {
     private Calculation calculateTarget(int numberOfLarge) {
         var result = calculator.calculateTarget(questionNumbers);
         while (!filter.test(result.getValue())) {
-            attempts.incrementAndGet();
+            calculator.switchMode(++attempts);
             setUp();
             generateQuestionNumbers(numberOfLarge);
             result = calculator.calculateTarget(questionNumbers);
@@ -75,7 +74,7 @@ public class Generator {
         }
     }
 
-    private void setUp() {
+    public void setUp() {
         Collections.shuffle(LARGE_NUMBERS);
         this.largeNumbers = new LinkedList<>(LARGE_NUMBERS);
         this.questionNumbers.clear();
@@ -96,7 +95,7 @@ public class Generator {
 
     public void reset() {
         setUp();
-        attempts.getAndSet(1);
+        this.attempts = 1;
     }
 
     public List<Integer> getQuestionNumbers() {
@@ -108,11 +107,11 @@ public class Generator {
     }
 
     public double getTime() {
-        return timer.getLastTime();
+        return timer.getTime();
     }
 
-    public int getAttempts() {
-        return attempts.get();
+    public long getAttempts() {
+        return attempts;
     }
 
     public CalculationMode getMode() {

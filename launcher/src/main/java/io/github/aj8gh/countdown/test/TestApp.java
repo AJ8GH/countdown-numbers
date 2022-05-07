@@ -1,6 +1,9 @@
 package io.github.aj8gh.countdown.test;
 
+import io.github.aj8gh.countdown.BaseApp;
 import io.github.aj8gh.countdown.conf.AppConfig;
+import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
+import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.in.InputSupplier;
 import io.github.aj8gh.countdown.sol.Solver;
 import org.slf4j.Logger;
@@ -18,19 +21,21 @@ import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTI
 
 public class TestApp implements Consumer<String[]> {
     private static final Logger LOG = LoggerFactory.getLogger(TestApp.class);
-    private static final AppConfig CONFIG = new AppConfig();
-    private static final Solver SOLVER = CONFIG.solver();
-    private static final List<Result> RESULTS = new ArrayList<>();
+    private final List<Result> results = new ArrayList<>();
 
+    private final Solver solver;
+    private final Generator generator;
     private final InputSupplier inputSupplier;
 
-    public TestApp(InputSupplier inputSupplier) {
+
+    public TestApp(BaseApp baseApp, InputSupplier inputSupplier) {
         this.inputSupplier = inputSupplier;
-        SOLVER.setCaching(false);
+        this.solver = baseApp.solver();
+        this.generator = baseApp.genAdaptor().getGenerator();
+        solver.setCaching(false);
     }
 
     public void accept(String[] args) {
-        testMultipleInputs(Inputs.TRICKY);
         test(inputSupplier.getSolverInput());
     }
 
@@ -48,28 +53,28 @@ public class TestApp implements Consumer<String[]> {
 
     private void runWithMode(CalculationMode mode,
                              List<Integer> input) {
-        SOLVER.warmUp();
-        SOLVER.setMode(mode);
-        SOLVER.solve(input);
+        solver.warmUp();
+        solver.setMode(mode);
+        solver.solve(input);
         saveResult();
-        SOLVER.reset();
+        solver.reset();
     }
 
     private void saveResult() {
-        RESULTS.add(new Result(
-                SOLVER.getMode(),
-                SOLVER.getTime(),
-                SOLVER.getAttempts(),
-                SOLVER.getSolution().getSolution(),
-                SOLVER.getSolution().getValue(),
-                SOLVER.getSolution().getRpn())
+        results.add(new Result(
+                solver.getMode(),
+                solver.getTime(),
+                solver.getAttempts(),
+                solver.getSolution().getSolution(),
+                solver.getSolution().getValue(),
+                solver.getSolution().getRpn())
         );
     }
 
     private void logResults() {
-        RESULTS.sort(Comparator.comparing(Result::time));
-        RESULTS.forEach(r -> LOG.info("{} : {}ms : {} attempts : {} = {} : {}",
+        results.sort(Comparator.comparing(Result::time));
+        results.forEach(r -> LOG.info("{} : {}ms : {} attempts : {} = {} : {}",
                 r.mode(), r.time(), r.attempts(), r.solution(), r.result(), r.rpn()));
-        RESULTS.clear();
+        results.clear();
     }
 }

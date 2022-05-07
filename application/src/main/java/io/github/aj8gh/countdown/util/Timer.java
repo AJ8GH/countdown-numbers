@@ -24,12 +24,8 @@ public class Timer {
         }
     }
 
-    public double getLastTime() {
-        if (times.isEmpty()) return -1;
-        return format(times.get(times.size() - 1));
-    }
-
-    public double getTotalTime() {
+    public double getTime() {
+        if (times.size() == 1) return times.get(0);
         return format(times.stream().reduce(Double::sum).orElse(-1.0));
     }
 

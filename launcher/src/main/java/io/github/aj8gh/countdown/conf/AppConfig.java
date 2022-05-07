@@ -1,11 +1,14 @@
 package io.github.aj8gh.countdown.conf;
 
+import io.github.aj8gh.countdown.BaseApp;
 import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.cli.CliInputSupplier;
 import io.github.aj8gh.countdown.cli.CliApp;
 import io.github.aj8gh.countdown.game.GameApp;
 import io.github.aj8gh.countdown.calc.Calculator;
-import io.github.aj8gh.countdown.gen.FilterFactory;
+import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
+import io.github.aj8gh.countdown.gen.Filter;
+import io.github.aj8gh.countdown.gen.GenAdaptor;
 import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.in.file.FileInputSupplier;
 import io.github.aj8gh.countdown.in.InputSupplier;
@@ -36,12 +39,13 @@ public class AppConfig {
     private static final PropsConfig PROPS = new PropsConfig();
 
     public Consumer<String[]> app() {
+        var baseApp = new BaseApp(genAdaptor(), solver(), outputHandler());
         if (PROPS.getString("app.runner").equals("cli")) {
-            return new CliApp(outputHandler(), new CliInputSupplier(), generator(), solver());
+            return new CliApp(baseApp, new CliInputSupplier());
         } else if (PROPS.getString("app.runner").equals("test")) {
-            return new TestApp(inputSupplier());
+            return new TestApp(baseApp, inputSupplier());
         }
-        return new GameApp(outputHandler(), inputSupplier(), generator(), solver());
+        return new GameApp(baseApp, inputSupplier());
     }
 
     public Generator generator() {
@@ -56,7 +60,7 @@ public class AppConfig {
         generator.setWarmUps(PROPS.getInt("generator.warmups"));
         generator.setTimeScale(PROPS.getInt("generator.timer.scale"));
         PROPS.getStrings("generator.filters").stream()
-                .map(FilterFactory.Filter::valueOf)
+                .map(Filter.FilterType::valueOf)
                 .forEach(f -> generator.addFilter(f.getPredicate()));
         return generator;
     }
@@ -95,6 +99,15 @@ public class AppConfig {
                     PROPS.getInt("input.generator"));
         }
         return new RandomInputSupplier(generator());
+    }
+
+    public GenAdaptor genAdaptor() {
+        var difficultyAnalyser = new DifficultyAnalyser(solver());
+        difficultyAnalyser.setRuns(PROPS.getInt("generator.difficulty.runs"));
+        difficultyAnalyser.setMinDifficulty(PROPS.getDouble("generator.difficulty.min"));
+        var genAdaptor = new GenAdaptor(generator(), difficultyAnalyser);
+        genAdaptor.setCheckDifficulty(PROPS.getBoolean("generator.difficulty.check"));
+        return genAdaptor;
     }
 
     private SlackHandler slackHandler() {

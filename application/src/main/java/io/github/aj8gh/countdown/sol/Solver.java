@@ -92,7 +92,7 @@ public class Solver {
     }
 
     public double getTime() {
-        return timer.getLastTime();
+        return timer.getTime();
     }
 
     public long getAttempts() {
