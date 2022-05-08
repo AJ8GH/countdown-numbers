@@ -1,9 +1,8 @@
 package io.github.aj8gh.countdown.out.file;
 
 import io.github.aj8gh.countdown.gen.GenResult;
-import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.out.OutputHandler;
-import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.sol.SolResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +24,8 @@ public class FileHandler implements OutputHandler {
     }
 
     @Override
-    public void handleSolver(Solver solver) {
-        serializer.serializeSolver(solver, buildFilePath(solOutFile));
+    public void handleSolver(SolResult result) {
+        serializer.serializeSolver(result, buildFilePath(solOutFile));
     }
 
     @Override
@@ -34,7 +33,7 @@ public class FileHandler implements OutputHandler {
         serializer.serializeGenerator(genResult, buildFilePath(genOutFile));
         if (createSolverInput) {
             var file = buildFilePath(solInFile);
-            serializer.createSolverInput(genResult.questionNumbers(), file);
+            serializer.createSolverInput(genResult.getQuestionNumbers(), file);
         }
     }
 

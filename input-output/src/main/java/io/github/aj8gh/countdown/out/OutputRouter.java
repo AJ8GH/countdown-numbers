@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.out;
 
 import io.github.aj8gh.countdown.gen.GenResult;
-import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.sol.SolResult;
 
 import java.util.Map;
 import java.util.Set;
@@ -17,9 +17,9 @@ public class OutputRouter implements OutputHandler {
     }
 
     @Override
-    public void handleSolver(Solver solver) {
+    public void handleSolver(SolResult result) {
         activeHandlers.forEach(type -> handlers.get(type)
-                .handleSolver(solver));
+                .handleSolver(result));
     }
 
     @Override

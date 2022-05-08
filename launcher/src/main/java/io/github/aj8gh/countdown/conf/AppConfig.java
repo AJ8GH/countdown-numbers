@@ -21,6 +21,8 @@ import io.github.aj8gh.countdown.out.file.FileHandler;
 import io.github.aj8gh.countdown.out.file.Serializer;
 import io.github.aj8gh.countdown.out.slack.SlackClient;
 import io.github.aj8gh.countdown.out.slack.SlackHandler;
+import io.github.aj8gh.countdown.sol.SolAdaptor;
+import io.github.aj8gh.countdown.sol.SolutionCache;
 import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.test.TestApp;
 import io.github.aj8gh.countdown.util.Timer;
@@ -40,7 +42,7 @@ public class AppConfig {
     private static final PropsConfig PROPS = new PropsConfig();
 
     public Consumer<String[]> app() {
-        var baseApp = new BaseApp(genAdaptor(), solver(), outputHandler());
+        var baseApp = new BaseApp(genAdaptor(), solAdaptor(), outputHandler());
         if (PROPS.getString("app.runner").equals("cli")) {
             return new CliApp(baseApp, new CliInputSupplier());
         } else if (PROPS.getString("app.runner").equals("test")) {
@@ -65,6 +67,17 @@ public class AppConfig {
         return generator;
     }
 
+    public SolAdaptor solAdaptor() {
+        var timer = new Timer();
+        timer.setTimescale(PROPS.getInt("solver.timer.scale"));
+        var solAdaptor = new SolAdaptor(new SolutionCache(), timer, solver());
+        solAdaptor.setCaching(PROPS.getBoolean("solver.caching"));
+        solAdaptor.setMaxNumbers(PROPS.getInt("solver.maxNumbers"));
+        solAdaptor.setMaxNumberThreshold(PROPS.getInt("solver.maxNumber.threshold"));
+        solAdaptor.setCheckDifficulty(PROPS.getBoolean("solver.difficulty.check"));
+        return solAdaptor;
+    }
+
     public Solver solver() {
         var calculatorManager = calculatorManager();
         calculatorManager.setSwitchModes(PROPS.getBoolean("solver.switch.modes"));
@@ -74,11 +87,7 @@ public class AppConfig {
 
         var solver = new Solver(generator(), calculatorManager);
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));
-        solver.setTimeScale(PROPS.getInt("solver.timer.scale"));
-        solver.setCaching(PROPS.getBoolean("solver.caching"));
         solver.setWarmUps(PROPS.getInt("solver.warmups"));
-        solver.setMaxNumbers(PROPS.getInt("solver.maxNumbers"));
-        solver.setMaxNumberThreshold(PROPS.getInt("solver.maxNumber.threshold"));
         return solver;
     }
 

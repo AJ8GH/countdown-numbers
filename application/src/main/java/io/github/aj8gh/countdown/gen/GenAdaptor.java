@@ -21,6 +21,12 @@ public class GenAdaptor {
     public GenResult generate(int numberOfLarge) {
         generator.warmUp();
         timer.start();
+        runGenerator(numberOfLarge);
+        timer.stop();
+        return recordResult();
+    }
+
+    private void runGenerator(int numberOfLarge) {
         generator.generate(numberOfLarge);
         if (checkDifficulty) {
             while (!difficultyAnalyser.isDifficult(generator.getQuestionNumbers())) {
@@ -28,8 +34,6 @@ public class GenAdaptor {
                 generator.generate(numberOfLarge);
             }
         }
-        timer.stop();
-        return recordResult();
     }
 
     private GenResult recordResult() {

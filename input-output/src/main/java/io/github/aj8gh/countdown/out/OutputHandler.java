@@ -4,7 +4,7 @@ import io.github.aj8gh.countdown.gen.GenResult;
 import io.github.aj8gh.countdown.out.console.ConsoleHandler;
 import io.github.aj8gh.countdown.out.file.FileHandler;
 import io.github.aj8gh.countdown.out.slack.SlackHandler;
-import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.sol.SolResult;
 
 public interface OutputHandler {
     enum OutputType {
@@ -23,6 +23,6 @@ public interface OutputHandler {
         }
     }
 
-    void handleSolver(Solver solver);
-    void handleGenerator(GenResult generator);
+    void handleSolver(SolResult solResult);
+    void handleGenerator(GenResult genResult);
 }

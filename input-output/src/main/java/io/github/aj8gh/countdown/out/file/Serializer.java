@@ -1,7 +1,7 @@
 package io.github.aj8gh.countdown.out.file;
 
 import io.github.aj8gh.countdown.gen.GenResult;
-import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.sol.SolResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +17,15 @@ public class Serializer {
     private static final String COLON = ":";
 
     public void serializeGenerator(GenResult genResult, String file) {
-        var data = genResult.questionNumbers().toString() +
-                COLON + genResult.target() +
-                COLON + genResult.time();
+        var data = genResult.getQuestionNumbers().toString() +
+                COLON + genResult.getTarget() +
+                COLON + genResult.getTime();
         serialize(file, data);
 
     }
 
-    public void serializeSolver(Solver solver, String file) {
-        var data = solver.getSolution() + COLON + solver.getTime();
+    public void serializeSolver(SolResult solResult, String file) {
+        var data = solResult.getSolution() + COLON + solResult.getTime();
         serialize(file, data);
     }
 

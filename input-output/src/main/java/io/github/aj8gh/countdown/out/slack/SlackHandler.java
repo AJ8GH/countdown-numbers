@@ -2,7 +2,7 @@ package io.github.aj8gh.countdown.out.slack;
 
 import io.github.aj8gh.countdown.gen.GenResult;
 import io.github.aj8gh.countdown.out.OutputHandler;
-import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.sol.SolResult;
 
 import static io.github.aj8gh.countdown.out.OutputHandler.OutputType.SLACK;
 
@@ -16,8 +16,8 @@ public class SlackHandler implements OutputHandler {
     }
 
     @Override
-    public void handleSolver(Solver solver) {
-        slackClient.postMessage(channel, getSolverMessage(solver));
+    public void handleSolver(SolResult solResult) {
+        slackClient.postMessage(channel, getSolverMessage(solResult));
     }
 
     @Override
@@ -25,16 +25,16 @@ public class SlackHandler implements OutputHandler {
         slackClient.postMessage(channel, getGeneratorMessage(genResult));
     }
 
-    private String getSolverMessage(Solver solver) {
+    private String getSolverMessage(SolResult solResult) {
         return String.format("Solution: %s = %s%nrpn: %s%ntime: %s%nattempts: %s",
-                solver.getSolution(), solver.getSolution().getValue(), solver.getSolution().getRpn(),
-                solver.getTime(), solver.getAttempts());
+                solResult.getSolution(), solResult.getTarget(), solResult.getRpn(),
+                solResult.getTime(), solResult.getAttempts());
     }
 
     private String getGeneratorMessage(GenResult result) {
         return String.format("Question: %s%nMethod: %s = %s%nrpn: %s%ntime: %s%nattempts: %s",
-                result.questionNumbers(), result.target(), result.target(),
-                result.rpn(), result.time(), result.attempts());
+                result.getQuestionNumbers(), result.getSolution(), result.getTarget(),
+                result.getRpn(), result.getTime(), result.getAttempts());
     }
 
     public void setChannel(String channel) {

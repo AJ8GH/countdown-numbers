@@ -1,19 +1,16 @@
-package io.github.aj8gh.countdown.gen;
+package io.github.aj8gh.countdown.sol;
 
 import io.github.aj8gh.countdown.calc.Calculator;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.List;
-
 @Value
 @Builder
-public class GenResult {
-    long attempts;
+public class SolResult {
     String solution;
     String rpn;
-    List<Integer> questionNumbers;
     int target;
+    long attempts;
     double time;
     Calculator.CalculationMode mode;
 }

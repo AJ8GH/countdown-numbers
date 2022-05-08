@@ -1,9 +1,8 @@
 package io.github.aj8gh.countdown.out.console;
 
 import io.github.aj8gh.countdown.gen.GenResult;
-import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.out.OutputHandler;
-import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.sol.SolResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,7 @@ public class ConsoleHandler implements OutputHandler {
 
     @Override
     public void handleGenerator(GenResult result) {
-        var formattedNumbers = result.questionNumbers()
+        var formattedNumbers = result.getQuestionNumbers()
                 .toString().replaceAll("[^\\d\s]", "");
         LOG.info("""
                         
@@ -30,17 +29,17 @@ public class ConsoleHandler implements OutputHandler {
                 ============================================================================
                 """,
                 formattedNumbers,
-                result.solution(),
-                result.target(),
-                result.rpn(),
-                result.attempts(),
-                result.time(),
-                result.mode()
+                result.getSolution(),
+                result.getTarget(),
+                result.getRpn(),
+                result.getAttempts(),
+                result.getTime(),
+                result.getMode()
         );
     }
 
     @Override
-    public void handleSolver(Solver solver) {
+    public void handleSolver(SolResult result) {
         LOG.info("""
                         
                         ============================================================================
@@ -52,12 +51,12 @@ public class ConsoleHandler implements OutputHandler {
                         Mode:           {}
                         ============================================================================
                         """,
-                solver.getSolution(),
-                solver.getSolution().getValue(),
-                solver.getSolution().getRpn(),
-                solver.getAttempts(),
-                solver.getTime(),
-                solver.getMode()
+                result.getSolution(),
+                result.getTarget(),
+                result.getRpn(),
+                result.getAttempts(),
+                result.getTime(),
+                result.getMode()
         );
     }
 

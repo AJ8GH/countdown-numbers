@@ -1,12 +1,10 @@
 package io.github.aj8gh.countdown.game;
 
 import io.github.aj8gh.countdown.BaseApp;
-import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
 import io.github.aj8gh.countdown.gen.GenAdaptor;
-import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.in.InputSupplier;
 import io.github.aj8gh.countdown.out.OutputHandler;
-import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.sol.SolAdaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +18,12 @@ public class GameApp implements Consumer<String[]> {
     private final OutputHandler outputHandler;
     private final InputSupplier inputSupplier;
     private final GenAdaptor generator;
-    private final Solver solver;
+    private final SolAdaptor solver;
 
     public GameApp(BaseApp baseApp, InputSupplier inputSupplier) {
         this.outputHandler = baseApp.outputHandler();
         this.generator = baseApp.genAdaptor();
-        this.solver = baseApp.solver();
+        this.solver = baseApp.solAdaptor();
         this.inputSupplier = inputSupplier;
     }
 
@@ -48,9 +46,7 @@ public class GameApp implements Consumer<String[]> {
 
     private void solve() {
         var input = inputSupplier.getSolverInput();
-        solver.warmUp();
-        solver.solve(input);
-        outputHandler.handleSolver(solver);
+        outputHandler.handleSolver(solver.solve(input));
     }
 
     private void generate() {
