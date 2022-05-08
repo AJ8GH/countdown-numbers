@@ -39,8 +39,8 @@ public class SolAdaptor {
     private void runSolver(List<Integer> inputNumbers) {
         if (isCached(inputNumbers)) return;
         this.solution = solver.solve(inputNumbers);
-        if (checkDifficulty && solver.getAttempts() < maxNumberThreshold) { // TODO: fix attempts check for recursive mode
-            while (solution.getNumbers() > maxNumbers) {
+        if (checkDifficulty) { // TODO: fix attempts check for recursive mode
+            while (solver.getAttempts() < maxNumberThreshold && solution.getNumbers() > maxNumbers) {
                 this.solution = solver.solve(inputNumbers);
             }
         }

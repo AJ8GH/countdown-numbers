@@ -45,6 +45,7 @@ public class GenAdaptor {
                 .attempts(generator.getAttempts())
                 .time(timer.getTime())
                 .mode(generator.getMode())
+                .difficulty(difficultyAnalyser.getDifficulty())
                 .build();
 
         return result;

@@ -16,4 +16,5 @@ public class GenResult {
     int target;
     double time;
     Calculator.CalculationMode mode;
+    double difficulty;
 }

@@ -25,6 +25,7 @@ public class ConsoleHandler implements OutputHandler {
                 RPN:            {}
                 Attempts:       {}
                 Time:           {} ms
+                Difficulty:     {}
                 Mode:           {}
                 ============================================================================
                 """,
@@ -34,6 +35,7 @@ public class ConsoleHandler implements OutputHandler {
                 result.getRpn(),
                 result.getAttempts(),
                 result.getTime(),
+                result.getDifficulty(),
                 result.getMode()
         );
     }

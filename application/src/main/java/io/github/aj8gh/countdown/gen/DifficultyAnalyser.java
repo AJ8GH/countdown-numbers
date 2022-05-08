@@ -1,7 +1,9 @@
 package io.github.aj8gh.countdown.gen;
 
+import io.github.aj8gh.countdown.calc.Calculation;
 import io.github.aj8gh.countdown.sol.Solver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DifficultyAnalyser {
@@ -15,6 +17,7 @@ public class DifficultyAnalyser {
 
     private int runs = DEFAULT_RUNS;
     private double minDifficulty = DEFAULT_DIFFICULTY;
+    private double difficulty = DEFAULT_DIFFICULTY;
 
     public DifficultyAnalyser(Solver solver) {
         solver.setWarmUps(DEFAULT_WARM_UPS);
@@ -23,15 +26,18 @@ public class DifficultyAnalyser {
 
     public boolean isDifficult(List<Integer> numbers) {
         var difficultRuns = 0;
+        ArrayList<Calculation> res = new ArrayList<>();
         for (int i = 0; i < runs; i++) {
             solver.solve(numbers);
+            res.add(solver.getSolution());
             if (solver.getSolution().getNumbers() >= maxNumbers) {
                 difficultRuns++;
             }
             solver.reset();
         }
         if (difficultRuns == 0) return false;
-        return difficultRuns / (double) runs >= minDifficulty;
+        this.difficulty = difficultRuns / (double) runs;
+        return difficulty >= minDifficulty;
     }
 
     public void setRuns(int runs) {
@@ -44,5 +50,9 @@ public class DifficultyAnalyser {
 
     public void setMaxNumbers(int maxNumbers) {
         this.maxNumbers = maxNumbers;
+    }
+
+    public double getDifficulty() {
+        return difficulty;
     }
 }

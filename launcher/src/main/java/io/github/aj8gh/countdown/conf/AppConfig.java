@@ -107,7 +107,7 @@ public class AppConfig {
                     PROPS.getInts("input.solver"),
                     PROPS.getInt("input.generator"));
         }
-        return new RandomInputSupplier(generator());
+        return new RandomInputSupplier(genAdaptor());
     }
 
     public GenAdaptor genAdaptor() {
