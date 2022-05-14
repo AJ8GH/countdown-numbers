@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>${project.groupId}.${project.parent.artifactId}.Main</mainClass>
         <imageConfig>classes/imageConfig.json</imageConfig>
+        <reflectConfig>classes/reflectConfig.json</reflectConfig>
 
         <dsi.version>2.7.0</dsi.version>
         <jmh.version>1.34</jmh.version>
@@ -84,6 +85,10 @@
                         <buildArgs>
                             --allow-incomplete-classpath
                             -H:ResourceConfigurationFiles=${imageConfig}
+                            -H:ReflectionConfigurationFiles=${reflectConfig}
+                            -H:+ReportExceptionStackTraces
+                            --report-unsupported-elements-at-runtime
+                            --no-fallback
                         </buildArgs>
                     </configuration>
                     <executions>

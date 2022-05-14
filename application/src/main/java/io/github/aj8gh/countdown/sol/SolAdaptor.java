@@ -66,7 +66,12 @@ public class SolAdaptor {
                 .mode(solver.getMode())
                 .build();
         solver.reset();
+        timer.reset();
         return solResult;
+    }
+
+    public int getExtraNumbers() {
+        return DEFAULT_MAX_NUMBERS - solution.getNumbers();
     }
 
     public SolResult getResult() {

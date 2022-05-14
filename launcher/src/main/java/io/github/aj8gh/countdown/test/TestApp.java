@@ -22,9 +22,8 @@ public class TestApp implements Consumer<String[]> {
     private final SolAdaptor solver;
     private final InputSupplier inputSupplier;
 
-
-    public TestApp(BaseApp baseApp, InputSupplier inputSupplier) {
-        this.inputSupplier = inputSupplier;
+    public TestApp(BaseApp baseApp) {
+        this.inputSupplier = baseApp.inputSupplier();
         this.solver = baseApp.solAdaptor();
         solver.setCaching(false);
     }
@@ -33,15 +32,16 @@ public class TestApp implements Consumer<String[]> {
         test(inputSupplier.getSolverInput());
     }
 
-    private void test(List<Integer> input) {
-        runWithMode(INTERMEDIATE, input);
-        runWithMode(SEQUENTIAL, input);
-        runWithMode(RECURSIVE, input);
-        logResults();
+    private void test(List<List<Integer>> inputs) {
+        for (var input : inputs) {
+            runWithMode(INTERMEDIATE, input);
+            runWithMode(SEQUENTIAL, input);
+            runWithMode(RECURSIVE, input);
+            logResults();
+        }
     }
 
-    private void runWithMode(CalculationMode mode,
-                             List<Integer> input) {
+    private void runWithMode(CalculationMode mode, List<Integer> input) {
         solver.getSolver().setMode(mode);
         solver.solve(input);
         saveResult();

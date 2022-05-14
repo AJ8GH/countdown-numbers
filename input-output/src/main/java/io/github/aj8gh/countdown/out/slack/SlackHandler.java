@@ -25,6 +25,11 @@ public class SlackHandler implements OutputHandler {
         slackClient.postMessage(channel, getGeneratorMessage(genResult));
     }
 
+    @Override
+    public void handleGenInput(int numLarge) {
+        slackClient.postMessage(channel, "Number of large: " + numLarge);
+    }
+
     private String getSolverMessage(SolResult solResult) {
         return String.format("Solution: %s = %s%nrpn: %s%ntime: %s%nattempts: %s",
                 solResult.getSolution(), solResult.getTarget(), solResult.getRpn(),

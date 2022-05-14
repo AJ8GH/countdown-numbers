@@ -29,7 +29,7 @@ public class GenAdaptor {
     private void runGenerator(int numberOfLarge) {
         generator.generate(numberOfLarge);
         if (checkDifficulty) {
-            while (!difficultyAnalyser.isDifficult(generator.getQuestionNumbers())) {
+            while (!difficultyAnalyser.isDifficultMaxNumbers(generator.getQuestionNumbers())) {
                 generator.setUp();
                 generator.generate(numberOfLarge);
             }
@@ -47,7 +47,8 @@ public class GenAdaptor {
                 .mode(generator.getMode())
                 .difficulty(difficultyAnalyser.getDifficulty())
                 .build();
-
+        timer.reset();
+        generator.reset();
         return result;
     }
 

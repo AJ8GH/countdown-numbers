@@ -5,21 +5,21 @@ import io.github.aj8gh.countdown.in.InputSupplier;
 import java.util.List;
 
 public class PropsInputSupplier implements InputSupplier {
-    private final List<Integer> testInput;
-    private final int numLarge;
+    private final List<List<Integer>> solInput;
+    private final List<Integer> genInput;
 
-    public PropsInputSupplier(List<Integer> testInput, int numLarge) {
-        this.testInput = testInput;
-        this.numLarge = numLarge;
+    public PropsInputSupplier(List<List<Integer>> solInput, List<Integer> genInput) {
+        this.solInput = solInput;
+        this.genInput = genInput;
     }
 
     @Override
-    public List<Integer> getSolverInput() {
-        return testInput;
+    public List<List<Integer>> getSolverInput() {
+        return solInput;
     }
 
     @Override
-    public int getGeneratorInput() {
-        return numLarge;
+    public List<Integer> getGeneratorInput() {
+        return genInput;
     }
 }

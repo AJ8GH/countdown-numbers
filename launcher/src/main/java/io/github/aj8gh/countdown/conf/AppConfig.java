@@ -5,6 +5,7 @@ import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.cli.CliInputSupplier;
 import io.github.aj8gh.countdown.cli.CliApp;
 import io.github.aj8gh.countdown.game.GameApp;
+import io.github.aj8gh.countdown.game.SimpleApp;
 import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
 import io.github.aj8gh.countdown.gen.Filter;
@@ -18,6 +19,7 @@ import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.out.OutputRouter;
 import io.github.aj8gh.countdown.in.file.Deserializer;
 import io.github.aj8gh.countdown.out.file.FileHandler;
+import io.github.aj8gh.countdown.out.file.FileProvider;
 import io.github.aj8gh.countdown.out.file.Serializer;
 import io.github.aj8gh.countdown.out.slack.SlackClient;
 import io.github.aj8gh.countdown.out.slack.SlackHandler;
@@ -40,15 +42,21 @@ import static java.util.stream.Collectors.toSet;
 
 public class AppConfig {
     private static final PropsConfig PROPS = new PropsConfig();
+    private static final String APP_RUNNER = "app.runner";
 
     public Consumer<String[]> app() {
-        var baseApp = new BaseApp(genAdaptor(), solAdaptor(), outputHandler());
-        if (PROPS.getString("app.runner").equals("cli")) {
+        var baseApp = new BaseApp(genAdaptor(), solAdaptor(), outputHandler(), inputSupplier());
+        if (PROPS.getString(APP_RUNNER).equals("cli")) {
             return new CliApp(baseApp, new CliInputSupplier());
-        } else if (PROPS.getString("app.runner").equals("test")) {
-            return new TestApp(baseApp, inputSupplier());
+        } else if (PROPS.getString(APP_RUNNER).equals("test")) {
+            return new TestApp(baseApp);
+        } else if (PROPS.getString(APP_RUNNER).equals("game")) {
+            var outputHandler = outputHandler();
+            ((OutputRouter) outputHandler).enableHandler(FILE);
+            baseApp = new BaseApp(genAdaptor(), solAdaptor(), outputHandler(), new FileInputSupplier(deserializer()));
+            return new GameApp(baseApp, PROPS.getInt("app.runs"));
         }
-        return new GameApp(baseApp, inputSupplier());
+        return new SimpleApp(baseApp);
     }
 
     public Generator generator() {
@@ -103,11 +111,16 @@ public class AppConfig {
         if (PROPS.getString("input.type").equalsIgnoreCase("FILE")) {
             return new FileInputSupplier(deserializer());
         } else if (PROPS.getString("input.type").equalsIgnoreCase("PROPS")) {
+            var solInput = Arrays.stream(PROPS.getString("input.solver").split(":"))
+                    .map(s -> Arrays.stream(s.split(","))
+                            .map(e -> Integer.valueOf(e.trim()))
+                            .toList())
+                    .toList();
             return new PropsInputSupplier(
-                    PROPS.getInts("input.solver"),
-                    PROPS.getInt("input.generator"));
+                    solInput,
+                    PROPS.getInts("input.generator"));
         }
-        return new RandomInputSupplier(genAdaptor());
+        return new RandomInputSupplier(genAdaptor(), PROPS.getInt("app.runs"));
     }
 
     public GenAdaptor genAdaptor() {
@@ -136,11 +149,14 @@ public class AppConfig {
     }
 
     private FileHandler fileHandler() {
-        var fileHandler = new FileHandler(new Serializer());
-        fileHandler.setIoDir(PROPS.getString("inputOutput.dir"));
-        fileHandler.setGenOutFile(PROPS.getString("output.generator.file"));
-        fileHandler.setSolOutFile(PROPS.getString("output.solver.file"));
-        fileHandler.setSolInFile(PROPS.getString("input.solver.file"));
+        var files = FileProvider.builder()
+                .ioDir(PROPS.getString("inputOutput.dir"))
+                .genInFile(PROPS.getString("input.generator.file"))
+                .genOutFile(PROPS.getString("output.generator.file"))
+                .solInFile(PROPS.getString("input.solver.file"))
+                .solOutFile(PROPS.getString("output.solver.file"))
+                .build();
+        var fileHandler = new FileHandler(new Serializer(), files, PROPS.getBoolean("input.startup.clearFiles"));
         fileHandler.setCreateSolverInput(PROPS.getBoolean("output.create.solver.input"));
         return fileHandler;
     }

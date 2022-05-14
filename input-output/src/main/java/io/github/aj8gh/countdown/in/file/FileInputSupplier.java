@@ -12,12 +12,12 @@ public class FileInputSupplier implements InputSupplier {
     }
 
     @Override
-    public List<Integer> getSolverInput() {
+    public List<List<Integer>> getSolverInput() {
         return deserializer.forSolver();
     }
 
     @Override
-    public int getGeneratorInput() {
+    public List<Integer> getGeneratorInput() {
         return deserializer.forGenerator();
     }
 }

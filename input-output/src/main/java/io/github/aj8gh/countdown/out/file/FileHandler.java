@@ -6,6 +6,9 @@ import io.github.aj8gh.countdown.sol.SolResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import static io.github.aj8gh.countdown.out.OutputHandler.OutputType.FILE;
 
 public class FileHandler implements OutputHandler {
@@ -15,12 +18,19 @@ public class FileHandler implements OutputHandler {
     private final Serializer serializer;
     private boolean createSolverInput;
     private String ioDir;
+    private String genInFile;
     private String genOutFile;
-    private String solOutFile;
     private String solInFile;
+    private String solOutFile;
 
-    public FileHandler(Serializer serializer) {
+    public FileHandler(Serializer serializer, FileProvider files, boolean clearFiles) {
         this.serializer = serializer;
+        this.ioDir = files.getIoDir();
+        this.genInFile = files.getGenInFile();
+        this.genOutFile = files.getGenOutFile();
+        this.solInFile = files.getSolInFile();
+        this.solOutFile = files.getSolOutFile();
+        if (clearFiles) clearFiles();
     }
 
     @Override
@@ -37,30 +47,34 @@ public class FileHandler implements OutputHandler {
         }
     }
 
+    @Override
+    public void handleGenInput(int numLarge) {
+        var filePath = buildFilePath(genInFile);
+        serializer.createGeneratorInput(filePath, String.valueOf(numLarge));
+    }
+
+
     private String buildFilePath(String file) {
-        var filePath = ioDir + file;
-        LOG.info("*** Writing to {} ***", file);
-        return filePath;
+        return ioDir + file;
+    }
+
+    private void clearFiles() {
+        clearFile(buildFilePath(genOutFile));
+        clearFile(buildFilePath(genInFile));
+        clearFile(buildFilePath(solInFile));
+        clearFile(buildFilePath(solOutFile));
+    }
+
+    private void clearFile(String filePath) {
+        try (var pw = new PrintWriter(filePath)) {
+            LOG.info("File {} cleared", filePath);
+        } catch (IOException e) {
+            LOG.error("Error clearing file {}", filePath);
+        }
     }
 
     public void setCreateSolverInput(boolean createSolverInput) {
         this.createSolverInput = createSolverInput;
-    }
-
-    public void setIoDir(String ioDir) {
-        this.ioDir = ioDir;
-    }
-
-    public void setGenOutFile(String genOutFile) {
-        this.genOutFile = genOutFile;
-    }
-
-    public void setSolOutFile(String solOutFile) {
-        this.solOutFile = solOutFile;
-    }
-
-    public void setSolInFile(String solInFile) {
-        this.solInFile = solInFile;
     }
 
     public OutputType getType() {

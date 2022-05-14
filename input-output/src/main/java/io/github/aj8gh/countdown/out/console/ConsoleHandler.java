@@ -62,6 +62,11 @@ public class ConsoleHandler implements OutputHandler {
         );
     }
 
+    @Override
+    public void handleGenInput(int numLarge) {
+        LOG.info("Number of Large: {}", numLarge);
+    }
+
     public OutputType getType() {
         return TYPE;
     }

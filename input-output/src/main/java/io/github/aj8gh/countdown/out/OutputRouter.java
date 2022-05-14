@@ -28,6 +28,12 @@ public class OutputRouter implements OutputHandler {
                 .handleGenerator(result));
     }
 
+    @Override
+    public void handleGenInput(int numLarge) {
+        activeHandlers.forEach(type -> handlers.get(type)
+                .handleGenInput(numLarge));
+    }
+
     public void enableHandler(OutputType type) {
         activeHandlers.add(type);
     }

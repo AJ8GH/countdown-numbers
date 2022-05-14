@@ -25,4 +25,5 @@ public interface OutputHandler {
 
     void handleSolver(SolResult solResult);
     void handleGenerator(GenResult genResult);
+    void handleGenInput(int numLarge);
 }

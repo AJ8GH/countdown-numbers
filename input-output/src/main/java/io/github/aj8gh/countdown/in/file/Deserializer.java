@@ -27,27 +27,35 @@ public class Deserializer {
         this.genInFile = buildFilePath(genInFile);
     }
 
-    public int forGenerator() {
+    public List<Integer> forGenerator() {
         LOG.info("*** Reading from {} ***", genInFile);
         try (var reader = new Scanner(new FileReader(genInFile))) {
-            return reader.nextInt();
+            List<Integer> inputs = new ArrayList<>();
+            while (reader.hasNextInt()) {
+                inputs.add(reader.nextInt());
+            }
+            return inputs;
         } catch (IOException e) {
             LOG.error("Error reading generator input file {}, {}", genInFile, e.getMessage());
-            return -1;
+            return Collections.emptyList();
         }
     }
 
-    public List<Integer> forSolver() {
+    public List<List<Integer>> forSolver() {
         LOG.info("*** Reading from {} ***", solInFile);
         try (var reader = new Scanner(new FileReader(solInFile))) {
-            var line = reader.nextLine();
-            var questionAndTarget = line.split(COLON);
-            var question = new ArrayList<>(Arrays
-                    .stream(questionAndTarget[0].split(COMMA))
-                    .map(Integer::valueOf)
-                    .toList());
-            question.add(Integer.valueOf(questionAndTarget[1]));
-            return question;
+            List<List<Integer>> inputs = new ArrayList<>();
+            while (reader.hasNextLine()) {
+                var line = reader.nextLine();
+                var questionAndTarget = line.split(COLON);
+                var question = new ArrayList<>(Arrays
+                        .stream(questionAndTarget[0].split(COMMA))
+                        .map(Integer::valueOf)
+                        .toList());
+                question.add(Integer.valueOf(questionAndTarget[1]));
+                inputs.add(question);
+            }
+            return inputs;
         } catch (IOException e) {
             LOG.error("Error reading solver input file {}, {}", solInFile, e.getMessage());
             return Collections.emptyList();
