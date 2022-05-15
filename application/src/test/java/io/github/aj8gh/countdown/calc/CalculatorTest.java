@@ -8,6 +8,7 @@ import io.github.aj8gh.countdown.calc.rpn.RpnParser;
 import io.github.aj8gh.countdown.util.Timer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -88,6 +89,7 @@ class CalculatorTest {
         assertEquals(target, RPN_PARSER.parse(result.getRpn()));
     }
 
+    @Disabled("Not ready")
     @ParameterizedTest
     @MethodSource(value = { "getInputs", "getDifficultInputs" })
     void calculateSolution_Rpn(List<Integer> numbers) {

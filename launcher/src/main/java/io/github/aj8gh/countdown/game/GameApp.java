@@ -19,18 +19,15 @@ import java.util.stream.Stream;
 public class GameApp implements Consumer<String[]> {
     private static final Logger LOG = LoggerFactory.getLogger(GameApp.class);
     private static final Random RANDOM = new Random();
-    private static final int DEFAULT_BALLS = 6;
 
     private final List<GenResult> genResults = new ArrayList<>();
     private final List<SolResult> solResults = new ArrayList<>();
-    private final int runs;
-    private int balls = DEFAULT_BALLS;
-
-    private final SolAdaptor solAdaptor;
-    private final GenAdaptor genAdaptor;
-    private final OutputHandler outputHandler;
     private final InputSupplier inputSupplier;
+    private final OutputHandler outputHandler;
+    private final GenAdaptor genAdaptor;
+    private final SolAdaptor solAdaptor;
 
+    private int runs;
 
     public GameApp(BaseApp baseApp, int runs) {
         this.solAdaptor = baseApp.solAdaptor();
@@ -46,49 +43,49 @@ public class GameApp implements Consumer<String[]> {
     }
 
     private void runApp() {
+        LOG.info("Running game for {} balls", runs);
         createGenInputs();
         generate();
         solve();
     }
 
     private void createGenInputs() {
+        LOG.info("Creating generator inputs");
         for (int i = 0; i < runs; i++) {
             outputHandler.handleGenInput(RANDOM.nextInt(5));
         }
     }
 
     private void generate() {
+        LOG.info("Generating solver inputs");
         for (int genInput : inputSupplier.getGeneratorInput()) {
             outputHandler.handleGenerator(genAdaptor.generate(genInput));
             genResults.add(genAdaptor.getResult());
         }
         var time = reduceResults(genResults.stream().map(GenResult::getTime));
-        LOG.info("Generator total time: {}", time);
+        LOG.info("Generator total time: {}, {} sets of numbers", time, genResults.size());
     }
 
     private void solve() {
+        LOG.info("Solving...");
         for (List<Integer> solInput : inputSupplier.getSolverInput()) {
             outputHandler.handleSolver(solAdaptor.solve(solInput));
             solResults.add(solAdaptor.getResult());
             if (solAdaptor.getExtraNumbers() > 0) {
-                balls -= solAdaptor.getExtraNumbers();
-                LOG.info("{} balls down after {} solves!", solAdaptor.getExtraNumbers(), solResults.size());
+                runs -= solAdaptor.getExtraNumbers();
+                LOG.info("{} balls down, {} balls left after {} solves!",
+                        solAdaptor.getExtraNumbers(), Math.max(0, runs), solResults.size());
             }
-            if (balls <= 0) {
+            if (runs <= 0) {
                 LOG.info("Generator balled out in {} solves!", solResults.size());
                 break;
             }
         }
         var time = reduceResults(solResults.stream().map(SolResult::getTime));
-        LOG.info("Solver total time: {}", time);
-
+        LOG.info("Solver total time: {}, {} solves", time, solResults.size());
     }
 
     private double reduceResults(Stream<Double> times) {
         return times.reduce(0.0, Double::sum);
-    }
-
-    public void setBalls(int balls) {
-        this.balls = balls;
     }
 }

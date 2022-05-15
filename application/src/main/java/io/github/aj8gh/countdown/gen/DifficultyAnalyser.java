@@ -5,6 +5,10 @@ import io.github.aj8gh.countdown.sol.Solver;
 import java.util.List;
 
 public class DifficultyAnalyser {
+    public enum Mode {
+        ATTEMPTS, NUMBERS
+    }
+
     private static final double DEFAULT_DIFFICULTY = 0.0;
     private static final int DEFAULT_RUNS = 100;
     private static final int DEFAULT_WARM_UPS = 0;
@@ -12,20 +16,30 @@ public class DifficultyAnalyser {
     private static final int DEFAULT_MIN_ATTEMPTS = 50_000;
 
     private final Solver solver;
-    private int maxNumbers = DEFAULT_MAX_NUMBERS;
-    private int minAttempts = DEFAULT_MIN_ATTEMPTS;
+    private final Mode mode;
 
-    private int runs = DEFAULT_RUNS;
     private double minDifficulty = DEFAULT_DIFFICULTY;
     private double difficulty = DEFAULT_DIFFICULTY;
+    private int maxNumbers = DEFAULT_MAX_NUMBERS;
+    private int minAttempts = DEFAULT_MIN_ATTEMPTS;
+    private int runs = DEFAULT_RUNS;
 
-    public DifficultyAnalyser(Solver solver) {
+    public DifficultyAnalyser(Solver solver, Mode mode) {
         solver.setWarmUps(DEFAULT_WARM_UPS);
         this.solver = solver;
+        this.mode = mode;
     }
 
-    public boolean isDifficultAttempts(int attempts) {
-        return attempts >= minAttempts;
+    public boolean isDifficult(List<Integer> numbers) {
+        return mode.equals(Mode.ATTEMPTS) ?
+                isDifficultAttempts(numbers) :
+                isDifficultMaxNumbers(numbers);
+    }
+
+    public boolean isDifficultAttempts(List<Integer> numbers) {
+//        solver.solve(numbers);
+//        return attempts >= minAttempts;
+        return false;
     }
 
     public boolean isDifficultMaxNumbers(List<Integer> numbers) {

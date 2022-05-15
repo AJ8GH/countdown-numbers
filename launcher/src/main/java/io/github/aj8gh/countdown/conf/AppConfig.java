@@ -1,23 +1,21 @@
 package io.github.aj8gh.countdown.conf;
 
 import io.github.aj8gh.countdown.BaseApp;
+import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.calc.CalculatorManager;
-import io.github.aj8gh.countdown.cli.CliInputSupplier;
-import io.github.aj8gh.countdown.cli.CliApp;
 import io.github.aj8gh.countdown.game.GameApp;
 import io.github.aj8gh.countdown.game.SimpleApp;
-import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
 import io.github.aj8gh.countdown.gen.Filter;
 import io.github.aj8gh.countdown.gen.GenAdaptor;
 import io.github.aj8gh.countdown.gen.Generator;
-import io.github.aj8gh.countdown.in.file.FileInputSupplier;
 import io.github.aj8gh.countdown.in.InputSupplier;
+import io.github.aj8gh.countdown.in.file.Deserializer;
+import io.github.aj8gh.countdown.in.file.FileInputSupplier;
 import io.github.aj8gh.countdown.in.props.PropsInputSupplier;
 import io.github.aj8gh.countdown.in.rand.RandomInputSupplier;
 import io.github.aj8gh.countdown.out.OutputHandler;
 import io.github.aj8gh.countdown.out.OutputRouter;
-import io.github.aj8gh.countdown.in.file.Deserializer;
 import io.github.aj8gh.countdown.out.file.FileHandler;
 import io.github.aj8gh.countdown.out.file.FileProvider;
 import io.github.aj8gh.countdown.out.file.Serializer;
@@ -46,17 +44,11 @@ public class AppConfig {
 
     public Consumer<String[]> app() {
         var baseApp = new BaseApp(genAdaptor(), solAdaptor(), outputHandler(), inputSupplier());
-        if (PROPS.getString(APP_RUNNER).equals("cli")) {
-            return new CliApp(baseApp, new CliInputSupplier());
-        } else if (PROPS.getString(APP_RUNNER).equals("test")) {
-            return new TestApp(baseApp);
-        } else if (PROPS.getString(APP_RUNNER).equals("game")) {
-            var outputHandler = outputHandler();
-            ((OutputRouter) outputHandler).enableHandler(FILE);
-            baseApp = new BaseApp(genAdaptor(), solAdaptor(), outputHandler(), new FileInputSupplier(deserializer()));
-            return new GameApp(baseApp, PROPS.getInt("app.runs"));
-        }
-        return new SimpleApp(baseApp);
+        return switch (PROPS.getString(APP_RUNNER).toUpperCase()) {
+            case ("TEST") -> new TestApp(baseApp);
+            case ("GAME") -> new GameApp(baseApp, PROPS.getInt("app.runs"));
+            default -> new SimpleApp(baseApp);
+        };
     }
 
     public Generator generator() {
@@ -124,7 +116,8 @@ public class AppConfig {
     }
 
     public GenAdaptor genAdaptor() {
-        var difficultyAnalyser = new DifficultyAnalyser(solver());
+        var difficultyMode = DifficultyAnalyser.Mode.valueOf(PROPS.getString("generator.difficulty.mode").toUpperCase());
+        var difficultyAnalyser = new DifficultyAnalyser(solver(), difficultyMode);
         difficultyAnalyser.setRuns(PROPS.getInt("generator.difficulty.runs"));
         difficultyAnalyser.setMinDifficulty(PROPS.getDouble("generator.difficulty.min"));
         var timer = new Timer();
