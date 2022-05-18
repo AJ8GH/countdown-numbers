@@ -24,7 +24,10 @@ public class AppConfig {
     private static final PropsConfig PROPS = new PropsConfig();
 
     public Gamer gamer() {
-        return new Gamer(genAdaptor(), solAdaptor(), timer(), serializer());
+        var gamer = new Gamer(genAdaptor(), solAdaptor(), timer(), serializer());
+        var readInterval = PROPS.getInt("gamer.readInterval");
+        gamer.setReadInterval(readInterval);
+        return gamer;
     }
 
     public Generator generator() {
@@ -36,7 +39,7 @@ public class AppConfig {
 
         var generator = new Generator(calculatorManager);
         generator.setMode(Calculator.CalculationMode.valueOf(PROPS.getString("generator.mode")));
-        generator.setWarmUps(PROPS.getInt("generator.warmups"));
+        generator.setWarmups(PROPS.getInt("generator.warmups"));
         PROPS.getStrings("generator.filters").stream()
                 .map(Filter.FilterType::valueOf)
                 .forEach(f -> generator.addFilter(f.getPredicate()));
@@ -52,7 +55,7 @@ public class AppConfig {
 
         var solver = new Solver(generator(), calculatorManager);
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));
-        solver.setWarmUps(PROPS.getInt("solver.warmups"));
+        solver.setWarmups(PROPS.getInt("solver.warmups"));
         return solver;
     }
 

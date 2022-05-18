@@ -76,4 +76,8 @@ public class SolAdaptor {
     public void reset() {
         solver.reset();
     }
+
+    public void warmup() {
+        solver.warmUp();
+    }
 }

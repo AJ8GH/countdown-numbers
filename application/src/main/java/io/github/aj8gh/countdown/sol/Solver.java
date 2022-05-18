@@ -15,7 +15,7 @@ public class Solver {
     private final CalculatorManager calculator;
     private final Generator generator;
 
-    private int warmUps = DEFAULT_WARM_UPS;
+    private int warmups = DEFAULT_WARM_UPS;
     private long attempts = 1;
     private Calculation solution;
 
@@ -46,7 +46,7 @@ public class Solver {
 
     public void warmUp() {
         var mode = getMode();
-        for (int i = 0; i < warmUps; i++) {
+        for (int i = 0; i < warmups; i++) {
             generator.generate(i % 5);
             solve(generator.getQuestionNumbers());
             generator.reset();
@@ -79,7 +79,7 @@ public class Solver {
         calculator.setSwitchModes(switchModes);
     }
 
-    public void setWarmUps(int warmUps) {
-        this.warmUps = warmUps;
+    public void setWarmups(int warmups) {
+        this.warmups = warmups;
     }
 }

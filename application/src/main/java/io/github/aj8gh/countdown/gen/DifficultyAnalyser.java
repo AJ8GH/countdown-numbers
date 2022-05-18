@@ -25,7 +25,7 @@ public class DifficultyAnalyser {
     private int runs = DEFAULT_RUNS;
 
     public DifficultyAnalyser(Solver solver, Mode mode) {
-        solver.setWarmUps(DEFAULT_WARM_UPS);
+        solver.setWarmups(DEFAULT_WARM_UPS);
         this.solver = solver;
         this.mode = mode;
     }

@@ -46,4 +46,8 @@ public class GenAdaptor {
     public Calculation getSolution() {
         return result;
     }
+
+    public void warmup() {
+        generator.warmup();
+    }
 }

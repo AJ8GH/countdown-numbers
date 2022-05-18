@@ -25,11 +25,10 @@ public class Gamer {
     private final Timer timer;
     private final Serializer serializer;
 
+    private boolean tail = true;
     private String genOutFilePath;
     private String solOutFilePath;
-    private boolean tail = true;
-    private int readIntervalMillis = 100;
-    private int warmUps;
+    private int readInterval;
     private long offset;
 
     public Gamer(GenAdaptor generator, SolAdaptor solver,
@@ -42,22 +41,22 @@ public class Gamer {
 
     public void tailGenFile(String genInFilePath, String genOutFilePath) {
         this.genOutFilePath = genOutFilePath;
-        tail(new File(genInFilePath), this::generate);
+        tail(new File(genInFilePath), generator::warmup, this::generate);
     }
 
     public void tailSolFile(String solInFilePath, String solOutFilePath) {
         this.solOutFilePath = solOutFilePath;
-        tail(new File(solInFilePath), this::solve);
+        tail(new File(solInFilePath), solver::warmup, this::solve);
     }
 
-    public void tail(File file, Consumer<String> handler) {
+    public void tail(File file, Runnable warmup, Consumer<String> handler) {
         try {
             LOG.info("*** Tailing {} ***", file);
             while (tail) {
-                Thread.sleep(readIntervalMillis);
+                Thread.sleep(readInterval);
                 var fileLength = file.length();
                 if (fileLength > offset) {
-                    deserialize(file, handler);
+                    deserialize(file, warmup, handler);
                 }
             }
         } catch (Exception e) {
@@ -65,10 +64,10 @@ public class Gamer {
         }
     }
 
-    private void deserialize(File file, Consumer<String> handler) throws IOException {
+    private void deserialize(File file, Runnable warmup, Consumer<String> handler) throws IOException {
         try (var randomAccessFile = new RandomAccessFile(file, "r")) {
             randomAccessFile.seek(offset);
-            warmUp();
+            warmup.run();
             String input;
             while ((input = randomAccessFile.readLine()) != null) {
                 timer.start();
@@ -104,23 +103,11 @@ public class Gamer {
         serializer.serializeSolver(rpn, timer.getTime(), solOutFilePath);
     }
 
-
-    private void warmUp() {
-        for (int i = 0; i < warmUps; i++) {
-            generator.generate(i % 5);
-            solver.solve(generator.getQuestionNumbers());
-        }
-    }
-
-    public void setReadIntervalMillis(int readIntervalMillis) {
-        this.readIntervalMillis = readIntervalMillis;
+    public void setReadInterval(int readInterval) {
+        this.readInterval = readInterval;
     }
 
     public void setTail(boolean tail) {
         this.tail = tail;
-    }
-
-    public void setWarmUps(int warmUps) {
-        this.warmUps = warmUps;
     }
 }

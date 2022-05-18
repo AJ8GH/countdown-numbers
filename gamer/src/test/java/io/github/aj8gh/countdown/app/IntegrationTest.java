@@ -40,8 +40,8 @@ class IntegrationTest {
         rpnParser = new RpnParser();
         rpnConverter = new RpnConverter();
 
-        solver.setWarmUps(WARM_UPS);
-        generator.setWarmUps(WARM_UPS);
+        solver.setWarmups(WARM_UPS);
+        generator.setWarmups(WARM_UPS);
     }
 
     @ParameterizedTest
@@ -67,7 +67,7 @@ class IntegrationTest {
     }
 
     private void testGenerator(int i) {
-        generator.warmUp();
+        generator.warmup();
         generator.generate(i % 5);
         var target = generator.getTarget().getValue();
         assertTrue(target >= MIN_TARGET && target <= MAX_TARGET);

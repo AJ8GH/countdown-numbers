@@ -26,7 +26,7 @@ public class Generator {
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
     private Calculation target;
-    private int warmUps = DEFAULT_WARMUPS;
+    private int warmups = DEFAULT_WARMUPS;
 
     public Generator(CalculatorManager calculator) {
         this.calculator = calculator;
@@ -100,12 +100,12 @@ public class Generator {
         calculator.setMode(mode);
     }
 
-    public void setWarmUps(int warmUps) {
-        this.warmUps = warmUps;
+    public void setWarmups(int warmups) {
+        this.warmups = warmups;
     }
 
-    public void warmUp() {
-        for (int i = 0; i < warmUps; i++) {
+    public void warmup() {
+        for (int i = 0; i < warmups; i++) {
             generate(i % MAX_NUM_LARGE);
             reset();
         }
