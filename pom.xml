@@ -11,8 +11,7 @@
 
     <modules>
         <module>application</module>
-        <module>launcher</module>
-        <module>input-output</module>
+        <module>gamer</module>
     </modules>
 
     <properties>
@@ -85,10 +84,6 @@
                         <buildArgs>
                             --allow-incomplete-classpath
                             -H:ResourceConfigurationFiles=${imageConfig}
-                            -H:ReflectionConfigurationFiles=${reflectConfig}
-                            -H:+ReportExceptionStackTraces
-                            --report-unsupported-elements-at-runtime
-                            --no-fallback
                         </buildArgs>
                     </configuration>
                     <executions>
@@ -154,12 +149,7 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>input-output</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>launcher</artifactId>
+                <artifactId>gamer</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

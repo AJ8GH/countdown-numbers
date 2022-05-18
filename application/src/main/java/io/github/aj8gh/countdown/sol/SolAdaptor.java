@@ -2,7 +2,6 @@ package io.github.aj8gh.countdown.sol;
 
 import io.github.aj8gh.countdown.calc.Calculation;
 import io.github.aj8gh.countdown.calc.Calculator;
-import io.github.aj8gh.countdown.util.Timer;
 
 import java.util.List;
 
@@ -12,9 +11,7 @@ public class SolAdaptor {
 
     private final SolutionCache cache;
     private final Solver solver;
-    private final Timer timer;
 
-    private SolResult solResult;
     private Calculation solution;
     private boolean caching;
     private boolean checkDifficulty;
@@ -22,28 +19,22 @@ public class SolAdaptor {
     private long maxNumberThreshold = DEFAULT_MAX_NUMBER_THRESHOLD;
 
 
-    public SolAdaptor(SolutionCache cache, Timer timer, Solver solver) {
+    public SolAdaptor(SolutionCache cache, Solver solver) {
         this.cache = cache;
-        this.timer = timer;
         this.solver = solver;
     }
 
-    public SolResult solve(List<Integer> inputNumbers) {
-        solver.warmUp(); // TODO - change this
-        timer.start();
-        runSolver(inputNumbers);
-        timer.stop();
-        return recordResult();
-    }
-
-    private void runSolver(List<Integer> inputNumbers) {
-        if (isCached(inputNumbers)) return;
-        this.solution = solver.solve(inputNumbers);
-        if (checkDifficulty) { // TODO: fix attempts check for recursive mode
-            while (solver.getAttempts() < maxNumberThreshold && solution.getNumbers() > maxNumbers) {
-                this.solution = solver.solve(inputNumbers);
+    public Calculation solve(List<Integer> inputNumbers) {
+        if (!isCached(inputNumbers)) {
+            this.solution = solver.solve(inputNumbers);
+            if (checkDifficulty) { // TODO: fix attempts check for recursive mode
+                while (solver.getAttempts() < maxNumberThreshold && solution.getNumbers() > maxNumbers) {
+                    this.solution = solver.solve(inputNumbers);
+                }
             }
         }
+        solver.reset();
+        return solution;
     }
 
     private boolean isCached(List<Integer> question) {
@@ -56,26 +47,8 @@ public class SolAdaptor {
         return false;
     }
 
-    private SolResult recordResult() {
-        this.solResult = SolResult.builder()
-                .solution(solution.getSolution())
-                .rpn(solution.getRpn())
-                .target(solution.getValue())
-                .attempts(solver.getAttempts())
-                .time(timer.getTime())
-                .mode(solver.getMode())
-                .build();
-        solver.reset();
-        timer.reset();
-        return solResult;
-    }
-
-    public int getExtraNumbers() {
-        return DEFAULT_MAX_NUMBERS - solution.getNumbers();
-    }
-
-    public SolResult getResult() {
-        return solResult;
+    public Calculation getSolution() {
+        return solution;
     }
 
     public void setCheckDifficulty(boolean checkDifficulty) {
@@ -98,7 +71,7 @@ public class SolAdaptor {
         this.caching = caching;
     }
 
-    public Solver getSolver() {
-        return solver;
+    public void reset() {
+        solver.reset();
     }
 }

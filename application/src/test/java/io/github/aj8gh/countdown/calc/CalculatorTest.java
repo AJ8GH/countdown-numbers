@@ -1,13 +1,11 @@
 package io.github.aj8gh.countdown.calc;
 
-import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
-import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
+import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
+import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.calc.rpn.RpnParser;
-import io.github.aj8gh.countdown.util.Timer;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -20,27 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CalculatorTest {
-    private static final Timer TIMER = new Timer();
     private static final RpnParser RPN_PARSER = new RpnParser();
     private final AtomicInteger attempts = new AtomicInteger(1);
     private Calculation result;
 
-    @BeforeEach
-    void setUp() {
-        TIMER.start();
-    }
-
     @AfterEach
     void tearDown() {
-        TIMER.stop();
         System.out.println("==================");
-        System.out.println(TIMER.getTime() + " ms");
-        System.out.println(result.getSolution());
         System.out.println(result.getValue());
         System.out.println(result.getRpn());
         System.out.println("Attempts: " + attempts);
         System.out.println("==================");
-        TIMER.reset();
         attempts.set(1);
     }
 

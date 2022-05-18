@@ -1,66 +1,54 @@
 package io.github.aj8gh.countdown.gen;
 
-import io.github.aj8gh.countdown.util.Timer;
+import io.github.aj8gh.countdown.calc.Calculation;
+
+import java.util.List;
 
 public class GenAdaptor {
     private final Generator generator;
     private final DifficultyAnalyser difficultyAnalyser;
-    private final Timer timer;
 
+    private Calculation result;
+    private List<Integer> questionNumbers;
     private boolean checkDifficulty;
-    private GenResult result;
 
     public GenAdaptor(Generator generator,
-                      DifficultyAnalyser difficultyAnalyser,
-                      Timer timer) {
+                      DifficultyAnalyser difficultyAnalyser) {
         this.generator = generator;
         this.difficultyAnalyser = difficultyAnalyser;
-        this.timer = timer;
     }
 
-    public GenResult generate(int numberOfLarge) {
-        generator.warmUp();
-        timer.start();
+    public Calculation generate(int numberOfLarge) {
         runGenerator(numberOfLarge);
-        timer.stop();
-        return recordResult();
+        return getSolution();
     }
 
     private void runGenerator(int numberOfLarge) {
-        generator.generate(numberOfLarge);
+        this.result = generator.generate(numberOfLarge);
         if (checkDifficulty) {
             while (!difficultyAnalyser.isDifficultMaxNumbers(generator.getQuestionNumbers())) {
                 generator.setUp();
-                generator.generate(numberOfLarge);
+                this.result = generator.generate(numberOfLarge);
             }
         }
-    }
-
-    private GenResult recordResult() {
-        this.result = GenResult.builder()
-                .questionNumbers(generator.getQuestionNumbers())
-                .target(generator.getTarget().getValue())
-                .solution(generator.getTarget().getSolution())
-                .rpn(generator.getTarget().getRpn())
-                .attempts(generator.getAttempts())
-                .time(timer.getTime())
-                .mode(generator.getMode())
-                .difficulty(difficultyAnalyser.getDifficulty())
-                .build();
-        timer.reset();
+        this.questionNumbers = generator.getQuestionNumbers();
+        result.getRpn();
         generator.reset();
-        return result;
     }
 
     public void setCheckDifficulty(boolean checkDifficulty) {
         this.checkDifficulty = checkDifficulty;
     }
 
-    public GenResult getResult() {
-        return result;
-    }
-
     public Generator getGenerator() {
         return generator;
+    }
+
+    public List<Integer> getQuestionNumbers() {
+        return questionNumbers;
+    }
+
+    public Calculation getSolution() {
+        return result;
     }
 }
