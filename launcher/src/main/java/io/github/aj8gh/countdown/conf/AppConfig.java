@@ -45,7 +45,6 @@ public class AppConfig {
     public Consumer<String[]> app() {
         var baseApp = new BaseApp(genAdaptor(), solAdaptor(), outputHandler(), inputSupplier());
         return switch (PROPS.getString(APP_RUNNER).toUpperCase()) {
-            case ("TEST") -> new TestApp(baseApp);
             case ("GAME") -> new GameApp(baseApp, PROPS.getInt("app.runs"));
             default -> new SimpleApp(baseApp);
         };
@@ -92,7 +91,7 @@ public class AppConfig {
     }
 
     public OutputHandler outputHandler() {
-        var activeHandlers = PROPS.getStrings("output.types").stream()
+        var activeHandler = PROPS.getStrings("output.types").stream()
                 .map(OutputHandler.OutputType::valueOf)
                 .collect(toSet());
         var outputHandlers = getOutputHandlers();
@@ -127,27 +126,17 @@ public class AppConfig {
         return genAdaptor;
     }
 
-    private SlackHandler slackHandler() {
-        var slackClient = new SlackClient(PROPS.getString("slack.oauth.token"));
-        var slackHandler = new SlackHandler(slackClient);
-        slackHandler.setChannel(PROPS.getString("output.slack.channel"));
-        return slackHandler;
-    }
-
     private Deserializer deserializer() {
-        var ioDir = PROPS.getString("inputOutput.dir");
-        var solInFile = PROPS.getString("input.solver.file");
-        var genInFile = PROPS.getString("input.generator.file");
-        return new Deserializer(ioDir, solInFile, genInFile);
+        return new Deserializer();
     }
 
     private FileHandler fileHandler() {
+        var ioDir = PROPS.getString("inputOutput.dir");
         var files = FileProvider.builder()
-                .ioDir(PROPS.getString("inputOutput.dir"))
-                .genInFile(PROPS.getString("input.generator.file"))
-                .genOutFile(PROPS.getString("output.generator.file"))
-                .solInFile(PROPS.getString("input.solver.file"))
-                .solOutFile(PROPS.getString("output.solver.file"))
+                .genInFile(ioDir + PROPS.getString("input.generator.file"))
+                .genOutFile(ioDir + PROPS.getString("output.generator.file"))
+                .solInFile(ioDir + PROPS.getString("input.solver.file"))
+                .solOutFile(ioDir + PROPS.getString("output.solver.file"))
                 .build();
         var fileHandler = new FileHandler(new Serializer(), files, PROPS.getBoolean("input.startup.clearFiles"));
         fileHandler.setCreateSolverInput(PROPS.getBoolean("output.create.solver.input"));
@@ -166,20 +155,6 @@ public class AppConfig {
                         return (Calculator) type.getConstructor().newInstance();
                     } catch (Exception e) {
                         throw new IllegalStateException("Error building Calculator map", e);
-                    }
-                }));
-    }
-
-    private Map<OutputHandler.OutputType, OutputHandler> getOutputHandlers() {
-        return Arrays.stream(OutputHandler.OutputType.values())
-                .collect(toMap(Function.identity(), type -> {
-                    try {
-                        if (type.equals(FILE)) return fileHandler();
-                        if (type.equals(SLACK)) return slackHandler();
-                        var handlerType = Class.forName(type.handlerType().getName());
-                        return (OutputHandler) handlerType.getConstructor().newInstance();
-                    } catch (Exception e) {
-                        throw new IllegalStateException("Error building handlers", e);
                     }
                 }));
     }

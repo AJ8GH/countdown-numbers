@@ -6,7 +6,6 @@ import lombok.Value;
 @Value
 @Builder
 public class FileProvider {
-    String ioDir;
     String genInFile;
     String genOutFile;
     String solInFile;

@@ -29,7 +29,7 @@ public class SolAdaptor {
     }
 
     public SolResult solve(List<Integer> inputNumbers) {
-        solver.warmUp();
+        solver.warmUp(); // TODO - change this
         timer.start();
         runSolver(inputNumbers);
         timer.stop();

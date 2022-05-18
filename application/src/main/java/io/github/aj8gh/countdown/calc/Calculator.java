@@ -5,37 +5,19 @@ import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.toMap;
 
 public interface Calculator {
     enum CalculationMode {
-        INTERMEDIATE("I", IntermediateCalculator.class),
-        SEQUENTIAL("S", SequentialCalculator.class),
-        RECURSIVE("R", RecursiveCalculator.class),
-        RPN("P", RpnCalculator.class);
+        INTERMEDIATE(IntermediateCalculator.class),
+        SEQUENTIAL(SequentialCalculator.class),
+        RECURSIVE(RecursiveCalculator.class),
+        RPN(RpnCalculator.class);
 
-        private static final Map<String, CalculationMode> FROM_STRING_MAP = Arrays
-                .stream(CalculationMode.values())
-                .collect(toMap(CalculationMode::letter, Function.identity()));
-        private final String letter;
         private final Class<? extends Calculator> type;
 
-        public static CalculationMode fromString(String letter) {
-            return FROM_STRING_MAP.get(letter);
-        }
-
-        <T extends Calculator> CalculationMode(String letter, Class<T> type) {
-            this.letter = letter;
+        <T extends Calculator> CalculationMode(Class<T> type) {
             this.type = type;
-        }
-
-        public String letter() {
-            return letter;
         }
 
         public Class<? extends Calculator> type() {
@@ -44,8 +26,6 @@ public interface Calculator {
     }
 
     Calculation calculateTarget(List<Integer> numbers);
-
     Calculation calculateSolution(List<Integer> numbers, int target);
-
     CalculationMode getMode();
 }
