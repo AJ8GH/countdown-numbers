@@ -25,7 +25,6 @@ public class Generator {
     private long attempts = 1;
     private Queue<Integer> largeNumbers;
     private IntPredicate filter = DEFAULT_FILTER;
-    private Set<IntPredicate> filters = new HashSet<>(Set.of(filter));
     private Calculation target;
     private int warmUps = DEFAULT_WARMUPS;
 
@@ -76,17 +75,8 @@ public class Generator {
         this.questionNumbers.clear();
     }
 
-    public Generator addFilter(IntPredicate predicate) {
-        if (!filters.contains(predicate)) {
-            this.filter = filter.and(predicate);
-            filters.add(predicate);
-        }
-        return this;
-    }
-
-    public void resetFilters() {
-        this.filter = DEFAULT_FILTER;
-        this.filters = Set.of(DEFAULT_FILTER);
+    public void addFilter(IntPredicate predicate) {
+        this.filter = filter.and(predicate);
     }
 
     public void reset() {
@@ -100,10 +90,6 @@ public class Generator {
 
     public Calculation getTarget() {
         return target;
-    }
-
-    public long getAttempts() {
-        return attempts;
     }
 
     public CalculationMode getMode() {

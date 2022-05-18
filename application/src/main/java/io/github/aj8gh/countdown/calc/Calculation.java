@@ -1,15 +1,12 @@
 package io.github.aj8gh.countdown.calc;
 
-import io.github.aj8gh.countdown.calc.rpn.RpnConverter;
 
 public class Calculation {
     private static final String LEFT_PARENTHESIS = "(";
     private static final String RIGHT_PARENTHESIS = ")";
-    private static final RpnConverter RPN_CONVERTER = new RpnConverter();
 
     private StringBuilder solution;
     private int value;
-    private String rpn;
     private int numbers = 1;
 
     public Calculation(int x) {
@@ -65,17 +62,6 @@ public class Calculation {
 
     public int getValue() {
         return value;
-    }
-
-    public String getSolution() {
-        return solution.toString();
-    }
-
-    public String getRpn() {
-        if (rpn == null) {
-            this.rpn = RPN_CONVERTER.convert(solution.toString());
-        }
-        return rpn;
     }
 
     @Override

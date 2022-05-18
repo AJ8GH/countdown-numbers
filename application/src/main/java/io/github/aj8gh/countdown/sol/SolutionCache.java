@@ -21,7 +21,7 @@ public class SolutionCache {
         cache.put(key, solution);
     }
 
-    private final record Key(List<Integer> question) {
+    private record Key(List<Integer> question) {
         private Key {
             question = new ArrayList<>(question);
             question.sort(Integer::compareTo);

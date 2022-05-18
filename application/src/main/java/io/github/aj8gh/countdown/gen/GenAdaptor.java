@@ -32,16 +32,11 @@ public class GenAdaptor {
             }
         }
         this.questionNumbers = generator.getQuestionNumbers();
-        result.getRpn();
         generator.reset();
     }
 
     public void setCheckDifficulty(boolean checkDifficulty) {
         this.checkDifficulty = checkDifficulty;
-    }
-
-    public Generator getGenerator() {
-        return generator;
     }
 
     public List<Integer> getQuestionNumbers() {

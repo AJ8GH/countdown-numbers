@@ -2,7 +2,6 @@ package io.github.aj8gh.countdown.calc;
 
 import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
-import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
 
 import java.util.List;
@@ -11,8 +10,7 @@ public interface Calculator {
     enum CalculationMode {
         INTERMEDIATE(IntermediateCalculator.class),
         SEQUENTIAL(SequentialCalculator.class),
-        RECURSIVE(RecursiveCalculator.class),
-        RPN(RpnCalculator.class);
+        RECURSIVE(RecursiveCalculator.class);
 
         private final Class<? extends Calculator> type;
 

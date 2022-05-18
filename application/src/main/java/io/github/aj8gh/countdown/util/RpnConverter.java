@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.calc.rpn;
+package io.github.aj8gh.countdown.util;
 
 import io.github.aj8gh.countdown.calc.Operator;
 

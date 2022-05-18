@@ -1,6 +1,5 @@
 package io.github.aj8gh.countdown.game;
 
-import io.github.aj8gh.countdown.calc.Calculation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,13 +12,13 @@ public class Serializer {
     private static final Logger LOG = LoggerFactory.getLogger(Serializer.class);
     private static final String COLON = ":";
 
-    public void serializeGenerator(Calculation genResult, long time, String file) {
-        var data = genResult.getRpn() + COLON + genResult.getValue() + COLON + time + "\n";
+    public void serializeGenerator(String rpn, int target, long time, String file) {
+        var data = rpn + COLON + target + COLON + time + "\n";
         serialize(file, data);
     }
 
-    public void serializeSolver(Calculation solResult, long time, String file) {
-        var data = solResult.getRpn() + COLON + time + "\n";
+    public void serializeSolver(String rpn, long time, String file) {
+        var data = rpn + COLON + time + "\n";
         serialize(file, data);
     }
 

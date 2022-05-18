@@ -8,12 +8,4 @@ public class Random {
     public int nextInt(int bound) {
         return RAND.nextInt(bound);
     }
-
-    public long nextLong(long bound) {
-        return RAND.nextLong(bound);
-    }
-
-    public boolean nextBoolean() {
-        return RAND.nextBoolean();
-    }
 }

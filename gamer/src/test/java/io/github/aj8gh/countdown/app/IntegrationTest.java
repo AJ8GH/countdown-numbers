@@ -1,7 +1,8 @@
 package io.github.aj8gh.countdown.app;
 
 import io.github.aj8gh.countdown.calc.Calculator;
-import io.github.aj8gh.countdown.calc.rpn.RpnParser;
+import io.github.aj8gh.countdown.util.RpnConverter;
+import io.github.aj8gh.countdown.util.RpnParser;
 import io.github.aj8gh.countdown.conf.AppConfig;
 import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.sol.Solver;
@@ -28,6 +29,7 @@ class IntegrationTest {
     private Solver solver;
     private Generator generator;
     private RpnParser rpnParser;
+    private RpnConverter rpnConverter;
 
     @BeforeEach
     void setUp() {
@@ -36,6 +38,7 @@ class IntegrationTest {
         solver.setSwitchModes(true);
         generator = config.generator();
         rpnParser = new RpnParser();
+        rpnConverter = new RpnConverter();
 
         solver.setWarmUps(WARM_UPS);
         generator.setWarmUps(WARM_UPS);
@@ -68,15 +71,17 @@ class IntegrationTest {
         generator.generate(i % 5);
         var target = generator.getTarget().getValue();
         assertTrue(target >= MIN_TARGET && target <= MAX_TARGET);
-        assertEquals(target, rpnParser.parse(generator.getTarget().getRpn()));
+        var rpn = rpnConverter.convert(generator.getTarget().toString());
+        assertEquals(target, rpnParser.parse(rpn));
     }
 
     private void testSolver(int target) {
-            solver.warmUp();
-            solver.solve(generator.getQuestionNumbers());
-            var result = solver.getSolution().getValue();
-            assertEquals(target, result);
-            assertEquals(result, rpnParser.parse(solver.getSolution().getRpn()));
+        solver.warmUp();
+        solver.solve(generator.getQuestionNumbers());
+        var result = solver.getSolution().getValue();
+        assertEquals(target, result);
+        var rpn = rpnConverter.convert(solver.getSolution().toString());
+        assertEquals(result, rpnParser.parse(rpn));
     }
 
     private void tearDown() {

@@ -2,11 +2,10 @@ package io.github.aj8gh.countdown.calc;
 
 import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
-import io.github.aj8gh.countdown.calc.impl.RpnCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
-import io.github.aj8gh.countdown.calc.rpn.RpnParser;
+import io.github.aj8gh.countdown.util.RpnConverter;
+import io.github.aj8gh.countdown.util.RpnParser;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -19,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CalculatorTest {
     private static final RpnParser RPN_PARSER = new RpnParser();
+    private static final RpnConverter RPN_CONVERTER = new RpnConverter();
     private final AtomicInteger attempts = new AtomicInteger(1);
     private Calculation result;
 
@@ -26,7 +26,7 @@ class CalculatorTest {
     void tearDown() {
         System.out.println("==================");
         System.out.println(result.getValue());
-        System.out.println(result.getRpn());
+        System.out.println(RPN_CONVERTER.convert(result.toString()));
         System.out.println("Attempts: " + attempts);
         System.out.println("==================");
         attempts.set(1);
@@ -45,7 +45,7 @@ class CalculatorTest {
             attempts.incrementAndGet();
         }
         assertEquals(target, result.getValue());
-        assertEquals(target, RPN_PARSER.parse(result.getRpn()));
+        assertEquals(target, RPN_PARSER.parse(RPN_CONVERTER.convert(result.toString())));
     }
 
     @ParameterizedTest
@@ -61,7 +61,7 @@ class CalculatorTest {
             attempts.incrementAndGet();
         }
         assertEquals(target, result.getValue());
-        assertEquals(target, RPN_PARSER.parse(result.getRpn()));
+        assertEquals(target, RPN_PARSER.parse(RPN_CONVERTER.convert(result.toString())));
     }
 
     @ParameterizedTest
@@ -74,21 +74,7 @@ class CalculatorTest {
         result = calculator.calculateSolution(numbers, target);
         assertNotNull(result, "Expected GenResult to not be null");
         assertEquals(target, result.getValue());
-        assertEquals(target, RPN_PARSER.parse(result.getRpn()));
-    }
-
-    @Disabled("Not ready")
-    @ParameterizedTest
-    @MethodSource(value = { "getInputs", "getDifficultInputs" })
-    void calculateSolution_Rpn(List<Integer> numbers) {
-        var calculator = new RpnCalculator();
-        numbers = new ArrayList<>(numbers);
-        var target = numbers.remove(numbers.size() - 1);
-
-        result = calculator.calculateSolution(numbers, target);
-        assertNotNull(result, "Expected GenResult to not be null");
-        assertEquals(target, result.getValue());
-        assertEquals(target, RPN_PARSER.parse(result.getRpn()));
+        assertEquals(target, RPN_PARSER.parse(RPN_CONVERTER.convert(result.toString())));
     }
 
     private static List<List<Integer>> getInputs() {

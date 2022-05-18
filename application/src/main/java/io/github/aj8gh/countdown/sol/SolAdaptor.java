@@ -33,16 +33,18 @@ public class SolAdaptor {
                 }
             }
         }
+        cache.put(inputNumbers, solution);
         solver.reset();
         return solution;
     }
 
     private boolean isCached(List<Integer> question) {
-        if (!caching) return false;
-        var cachedSolution = cache.get(question);
-        if (cachedSolution != null) {
-            this.solution = cachedSolution;
-            return true;
+        if (caching) {
+            var cachedSolution = cache.get(question);
+            if (cachedSolution != null) {
+                this.solution = cachedSolution;
+                return true;
+            }
         }
         return false;
     }
