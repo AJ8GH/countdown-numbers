@@ -68,7 +68,7 @@ public class Gamer {
                     }
                 }
         } catch (Exception e) {
-            LOG.error("Error reading generator input file {}", file, e);
+            LOG.error("Error whilst tailing file {}", file, e);
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
