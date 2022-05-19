@@ -6,6 +6,7 @@ import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
 import io.github.aj8gh.countdown.game.Gamer;
+import io.github.aj8gh.countdown.game.GamerBuilder;
 import io.github.aj8gh.countdown.game.Serializer;
 import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
 import io.github.aj8gh.countdown.gen.Filter;
@@ -17,6 +18,8 @@ import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.game.Timer;
 
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
@@ -24,7 +27,13 @@ public class AppConfig {
     private static final PropsConfig PROPS = new PropsConfig();
 
     public Gamer gamer() {
-        var gamer = new Gamer(genAdaptor(), solAdaptor(), timer(), serializer());
+        var gamer = new Gamer(GamerBuilder.builder()
+                .scheduler(Executors.newSingleThreadScheduledExecutor())
+                .serializer(serializer())
+                .generator(genAdaptor())
+                .solver(solAdaptor())
+                .timer(timer())
+                .build());
         var readInterval = PROPS.getInt("gamer.readInterval");
         gamer.setReadInterval(readInterval);
         return gamer;

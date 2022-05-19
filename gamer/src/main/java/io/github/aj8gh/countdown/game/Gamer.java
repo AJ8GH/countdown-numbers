@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -23,23 +22,23 @@ public class Gamer {
     private static final String COMMA = ",";
     private static final String COLON = ":";
 
+    private final ScheduledExecutorService scheduler;
+    private final Serializer serializer;
     private final GenAdaptor generator;
     private final SolAdaptor solver;
     private final Timer timer;
-    private final Serializer serializer;
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private File inputFile;
     private String outputFile;
     private int readInterval;
     private long offset;
 
-    public Gamer(GenAdaptor generator, SolAdaptor solver,
-                 Timer timer, Serializer serializer) {
-        this.generator = generator;
-        this.solver = solver;
-        this.timer = timer;
-        this.serializer = serializer;
+    public Gamer(GamerBuilder builder) {
+        this.serializer = builder.getSerializer();
+        this.scheduler = builder.getScheduler();
+        this.generator = builder.getGenerator();
+        this.solver = builder.getSolver();
+        this.timer = builder.getTimer();
     }
 
     public void runGenerator(String inputFile, String outputFile) {
