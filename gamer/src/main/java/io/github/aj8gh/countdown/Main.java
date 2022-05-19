@@ -16,21 +16,18 @@ public class Main {
     private static String outputFile;
 
     public static void main(String[] args) {
-        LOG.info("*** jonasa Countdown app running ***");
+        LOG.info("*** Countdown App Running ***");
         inputFile = args[0];
         outputFile = args[1];
-        if (inputFile.contains(GEN)) {
-            runGenerator();
-        } else if (inputFile.contains(SOL)) {
-            runSolver();
-        }
+        if (inputFile.contains(GEN)) runGenerator();
+        if (inputFile.contains(SOL)) runSolver();
     }
 
     private static void runGenerator() {
-        GAMER.tailGenFile(inputFile, outputFile);
+        GAMER.runGenerator(inputFile, outputFile);
     }
 
     private static void runSolver() {
-        GAMER.tailSolFile(inputFile, outputFile);
+        GAMER.runSolver(inputFile, outputFile);
     }
 }

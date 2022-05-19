@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
@@ -24,10 +27,10 @@ public class Gamer {
     private final SolAdaptor solver;
     private final Timer timer;
     private final Serializer serializer;
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    private boolean tail = true;
-    private String genOutFilePath;
-    private String solOutFilePath;
+    private File inputFile;
+    private String outputFile;
     private int readInterval;
     private long offset;
 
@@ -39,35 +42,31 @@ public class Gamer {
         this.serializer = serializer;
     }
 
-    public void tailGenFile(String genInFilePath, String genOutFilePath) {
-        this.genOutFilePath = genOutFilePath;
-        tail(new File(genInFilePath), generator::warmup, this::generate);
+    public void runGenerator(String inputFile, String outputFile) {
+        this.outputFile = outputFile;
+        this.inputFile = new File(inputFile);
+        tail(generator::warmup, this::generate);
     }
 
-    public void tailSolFile(String solInFilePath, String solOutFilePath) {
-        this.solOutFilePath = solOutFilePath;
-        tail(new File(solInFilePath), solver::warmup, this::solve);
+    public void runSolver(String inputFile, String outputFile) {
+        this.outputFile = outputFile;
+        this.inputFile = new File(inputFile);
+        tail(solver::warmup, this::solve);
     }
 
-    public void tail(File file, Runnable warmup, Consumer<String> handler) {
-        try {
-            LOG.info("*** Tailing {} ***", file);
-            while (tail) {
-                Thread.sleep(readInterval);
-                var fileLength = file.length();
-                if (fileLength > offset) {
-                    deserialize(file, warmup, handler);
-                }
+    public void tail(Runnable warmup, Consumer<String> handler) {
+        LOG.info("*** Tailing {} ***", inputFile);
+        scheduler.scheduleAtFixedRate(() -> {
+            if (inputFile.length() > offset) {
+                warmup.run();
+                deserialize(handler);
             }
-        } catch (Exception e) {
-            handleException(file, e);
-        }
+        }, readInterval, readInterval, TimeUnit.MILLISECONDS);
     }
 
-    private void deserialize(File file, Runnable warmup, Consumer<String> handler) throws IOException {
-        try (var randomAccessFile = new RandomAccessFile(file, "r")) {
+    private void deserialize(Consumer<String> handler) {
+        try (var randomAccessFile = new RandomAccessFile(inputFile, "r")) {
             randomAccessFile.seek(offset);
-            warmup.run();
             String input;
             while ((input = randomAccessFile.readLine()) != null) {
                 timer.start();
@@ -75,6 +74,8 @@ public class Gamer {
                 timer.reset();
             }
             offset = randomAccessFile.getFilePointer();
+        } catch (IOException e) {
+            handleException(inputFile, e);
         }
     }
 
@@ -89,7 +90,7 @@ public class Gamer {
         var result = generator.generate(Integer.parseInt(numLarge));
         var rpn = RPN_CONVERTER.convert(result.toString());
         timer.stop();
-        serializer.serializeGenerator(rpn, result.getValue(), timer.getTime(), genOutFilePath);
+        serializer.serializeGenerator(rpn, result.getValue(), timer.getTime(), outputFile);
     }
 
     private void solve(String numbers) {
@@ -100,14 +101,10 @@ public class Gamer {
         question.add(Integer.valueOf(questionAndTarget[1]));
         var rpn = RPN_CONVERTER.convert(solver.solve(question).toString());
         timer.stop();
-        serializer.serializeSolver(rpn, timer.getTime(), solOutFilePath);
+        serializer.serializeSolver(rpn, timer.getTime(), outputFile);
     }
 
     public void setReadInterval(int readInterval) {
         this.readInterval = readInterval;
-    }
-
-    public void setTail(boolean tail) {
-        this.tail = tail;
     }
 }
