@@ -1,4 +1,4 @@
-package io.github.aj8gh.countdown.game;
+package io.github.aj8gh.countdown.ser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

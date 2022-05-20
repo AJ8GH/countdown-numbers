@@ -34,7 +34,7 @@ public class Calculation {
         int result;
         Calculation first = this;
         Calculation second = calculation;
-        if (operator.isCommutative() || value > calculation.getValue()) {
+        if (value > calculation.getValue()) {
             result = operator.apply(value, calculation.getValue());
         } else {
             result = operator.apply(calculation.getValue(), value);

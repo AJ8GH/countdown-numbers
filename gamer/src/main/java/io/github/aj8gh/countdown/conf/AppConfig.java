@@ -5,9 +5,10 @@ import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
+import io.github.aj8gh.countdown.ser.Deserializer;
 import io.github.aj8gh.countdown.game.Gamer;
 import io.github.aj8gh.countdown.game.GamerBuilder;
-import io.github.aj8gh.countdown.game.Serializer;
+import io.github.aj8gh.countdown.ser.Serializer;
 import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
 import io.github.aj8gh.countdown.gen.Filter;
 import io.github.aj8gh.countdown.gen.GenAdaptor;
@@ -19,7 +20,6 @@ import io.github.aj8gh.countdown.game.Timer;
 
 import java.util.Map;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
@@ -29,6 +29,7 @@ public class AppConfig {
     public Gamer gamer() {
         var gamer = new Gamer(GamerBuilder.builder()
                 .scheduler(Executors.newSingleThreadScheduledExecutor())
+                .deserializer(deserializer())
                 .serializer(serializer())
                 .generator(genAdaptor())
                 .solver(solAdaptor())
@@ -89,6 +90,10 @@ public class AppConfig {
 
     private Serializer serializer() {
         return new Serializer();
+    }
+
+    private Deserializer deserializer() {
+        return new Deserializer();
     }
 
     private Timer timer() {
