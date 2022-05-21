@@ -11,10 +11,6 @@ public class Timer {
         Unit(long nanosInUnit) {
             this.nanos = nanosInUnit;
         }
-
-        public long getNanos() {
-            return nanos;
-        }
     }
 
     private final Unit unit;
@@ -37,7 +33,7 @@ public class Timer {
     }
 
     public long getTime() {
-        return time / unit.getNanos();
+        return time / unit.nanos;
     }
 
     public void reset() {
