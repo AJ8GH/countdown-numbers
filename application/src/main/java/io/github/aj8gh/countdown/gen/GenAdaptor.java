@@ -1,16 +1,13 @@
 package io.github.aj8gh.countdown.gen;
 
 import io.github.aj8gh.countdown.calc.Calculation;
-
-import java.util.List;
+import io.github.aj8gh.countdown.util.DifficultyAnalyser;
 
 public class GenAdaptor {
     private final Generator generator;
     private final DifficultyAnalyser difficultyAnalyser;
-
-    private Calculation result;
-    private List<Integer> questionNumbers;
     private boolean checkDifficulty;
+    private Calculation result;
 
     public GenAdaptor(Generator generator,
                       DifficultyAnalyser difficultyAnalyser) {
@@ -26,21 +23,16 @@ public class GenAdaptor {
     private void runGenerator(int numberOfLarge) {
         this.result = generator.generate(numberOfLarge);
         if (checkDifficulty) {
-            while (!difficultyAnalyser.isDifficultMaxNumbers(generator.getQuestionNumbers())) {
+            while (!difficultyAnalyser.isDifficult(generator.getQuestionNumbers())) {
                 generator.setUp();
                 this.result = generator.generate(numberOfLarge);
             }
         }
-        this.questionNumbers = generator.getQuestionNumbers();
         generator.reset();
     }
 
     public void setCheckDifficulty(boolean checkDifficulty) {
         this.checkDifficulty = checkDifficulty;
-    }
-
-    public List<Integer> getQuestionNumbers() {
-        return questionNumbers;
     }
 
     public Calculation getSolution() {

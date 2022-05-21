@@ -8,19 +8,24 @@ import org.slf4j.LoggerFactory;
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final AppConfig APP_CONFIG = new AppConfig();
+    private static final Gamer GAMER = APP_CONFIG.gamer();
     private static final String SOL = "sol";
     private static final String GEN = "gen";
 
-    private static final Gamer GAMER = APP_CONFIG.gamer();
     private static String inputFile;
     private static String outputFile;
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         LOG.info("*** Countdown App Running ***");
-        inputFile = args[0];
-        outputFile = args[1];
+        parse(args);
         if (inputFile.contains(GEN)) runGenerator();
         if (inputFile.contains(SOL)) runSolver();
+    }
+
+    private static void parse(String... args) {
+        if (args.length < 2) throw new IllegalArgumentException("Needs 2 args");
+        inputFile = args[0];
+        outputFile = args[1];
     }
 
     private static void runGenerator() {

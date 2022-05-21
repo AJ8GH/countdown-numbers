@@ -12,9 +12,7 @@ import static io.github.aj8gh.countdown.gen.Filter.FilterType.IN_RANGE;
 
 public class Generator {
     private static final List<Integer> LARGE_NUMBERS = Arrays.asList(25, 50, 75, 100);
-    private static final IntPredicate DEFAULT_FILTER = IN_RANGE.getPredicate();
     private static final int MAX_SMALL_NUMBER = 10;
-    private static final int DEFAULT_WARMUPS = 20;
     private static final int TOTAL_NUMBERS = 6;
     private static final int MAX_NUM_LARGE = 4;
     private static final Random RANDOM = new Random();
@@ -24,9 +22,9 @@ public class Generator {
 
     private long attempts = 1;
     private Queue<Integer> largeNumbers;
-    private IntPredicate filter = DEFAULT_FILTER;
+    private IntPredicate filter = IN_RANGE.getPredicate();
     private Calculation target;
-    private int warmups = DEFAULT_WARMUPS;
+    private int warmups;
 
     public Generator(CalculatorManager calculator) {
         this.calculator = calculator;
@@ -90,10 +88,6 @@ public class Generator {
 
     public Calculation getTarget() {
         return target;
-    }
-
-    public CalculationMode getMode() {
-        return calculator.getMode();
     }
 
     public void setMode(CalculationMode mode) {

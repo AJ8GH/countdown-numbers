@@ -9,7 +9,7 @@ import io.github.aj8gh.countdown.ser.Deserializer;
 import io.github.aj8gh.countdown.game.Gamer;
 import io.github.aj8gh.countdown.game.GamerBuilder;
 import io.github.aj8gh.countdown.ser.Serializer;
-import io.github.aj8gh.countdown.gen.DifficultyAnalyser;
+import io.github.aj8gh.countdown.util.DifficultyAnalyser;
 import io.github.aj8gh.countdown.gen.Filter;
 import io.github.aj8gh.countdown.gen.GenAdaptor;
 import io.github.aj8gh.countdown.gen.Generator;
@@ -79,13 +79,21 @@ public class AppConfig {
     }
 
     private GenAdaptor genAdaptor() {
-        var difficultyMode = DifficultyAnalyser.Mode.valueOf(PROPS.getString("generator.difficulty.mode").toUpperCase());
-        var difficultyAnalyser = new DifficultyAnalyser(solver(), difficultyMode);
+        var difficultyAnalyser = difficultyAnalyser();
         difficultyAnalyser.setRuns(PROPS.getInt("generator.difficulty.runs"));
         difficultyAnalyser.setMinDifficulty(PROPS.getDouble("generator.difficulty.min"));
+        difficultyAnalyser.setMaxNumbers(PROPS.getInt("generator.difficulty.maxNumbers"));
+        difficultyAnalyser.setMinAttempts(PROPS.getInt("generator.difficulty.minAttempts"));
+
         var genAdaptor = new GenAdaptor(generator(), difficultyAnalyser);
         genAdaptor.setCheckDifficulty(PROPS.getBoolean("generator.difficulty.check"));
         return genAdaptor;
+    }
+
+    private DifficultyAnalyser difficultyAnalyser() {
+        var difficultyMode = DifficultyAnalyser.Mode.valueOf(PROPS.getString("generator.difficulty.mode").toUpperCase());
+        return new DifficultyAnalyser(solver(), difficultyMode);
+
     }
 
     private Serializer serializer() {
@@ -97,7 +105,8 @@ public class AppConfig {
     }
 
     private Timer timer() {
-        return new Timer();
+        var timeUnit = Timer.Unit.valueOf(PROPS.getString("timer.unit"));
+        return new Timer(timeUnit);
     }
 
     private CalculatorManager calculatorManager() {

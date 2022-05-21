@@ -1,10 +1,29 @@
 package io.github.aj8gh.countdown.game;
 
 public class Timer {
-    private static final int NANOS_IN_MICRO = 1_000;
+    public enum Unit {
+        MILLI(1_000_000),
+        MICRO(1_000),
+        NANO(1);
 
+        private final long nanos;
+
+        Unit(long nanosInUnit) {
+            this.nanos = nanosInUnit;
+        }
+
+        public long getNanos() {
+            return nanos;
+        }
+    }
+
+    private final Unit unit;
     private long startTime;
     private long time;
+
+    public Timer(Unit unit) {
+        this.unit = unit;
+    }
 
     public void start() {
         this.startTime = System.nanoTime();
@@ -18,7 +37,7 @@ public class Timer {
     }
 
     public long getTime() {
-        return time / NANOS_IN_MICRO;
+        return time / unit.getNanos();
     }
 
     public void reset() {
