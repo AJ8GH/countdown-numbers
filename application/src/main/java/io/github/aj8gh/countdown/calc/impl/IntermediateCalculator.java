@@ -2,8 +2,9 @@ package io.github.aj8gh.countdown.calc.impl;
 
 import io.github.aj8gh.countdown.calc.Calculation;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 public class IntermediateCalculator extends AbstractCalculator {
     private static final CalculationMode MODE = CalculationMode.INTERMEDIATE;
@@ -24,9 +25,9 @@ public class IntermediateCalculator extends AbstractCalculator {
     }
 
     private Calculation calculate(List<Integer> numbers, int target) {
-        var results = new ArrayList<>(numbers.stream()
+        var results = numbers.stream()
                 .map(Calculation::new)
-                .toList());
+                .collect(toList());
 
         while (results.size() > 1) {
             var first = results.remove(RANDOM.nextInt(results.size()));

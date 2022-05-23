@@ -12,7 +12,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public abstract class AbstractCalculator implements Calculator {
-    static final Random RANDOM = new Random();
+    protected static final Random RANDOM = new Random();
     static final Map<Integer, Operator> OPERATORS = Arrays.stream(Operator.values())
             .collect(toUnmodifiableMap(Enum::ordinal, Function.identity()));
 

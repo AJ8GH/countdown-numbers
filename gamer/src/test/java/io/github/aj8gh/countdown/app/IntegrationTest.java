@@ -36,6 +36,8 @@ class IntegrationTest {
         var config = new AppConfig();
         solver = config.solver();
         solver.setSwitchModes(true);
+        solver.setUseAllNumbers(false);
+        solver.setUseAllNumbersThreshold(10000);
         generator = config.generator();
         rpnParser = new RpnParser();
         rpnConverter = new RpnConverter();

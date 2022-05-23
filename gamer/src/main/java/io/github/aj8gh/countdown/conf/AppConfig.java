@@ -62,7 +62,6 @@ public class AppConfig {
         calculatorManager.setIntermediateThreshold(PROPS.getLong("solver.intermediate.threshold"));
         calculatorManager.setSequentialThreshold(PROPS.getLong("solver.sequential.threshold"));
         calculatorManager.setRecursiveThreshold(PROPS.getLong("solver.recursive.threshold"));
-
         var solver = new Solver(generator(), calculatorManager);
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));
         solver.setWarmups(PROPS.getInt("solver.warmups"));
@@ -70,11 +69,11 @@ public class AppConfig {
     }
 
     private SolAdaptor solAdaptor() {
-        var solAdaptor = new SolAdaptor(new SolutionCache(), solver());
+        var solver = solver();
+        solver.setUseAllNumbersThreshold(PROPS.getInt("solver.useAllNumbers.threshold"));
+        solver.setUseAllNumbers(PROPS.getBoolean("solver.useAllNumbers"));
+        var solAdaptor = new SolAdaptor(new SolutionCache(), solver);
         solAdaptor.setCaching(PROPS.getBoolean("solver.caching"));
-        solAdaptor.setMaxNumbers(PROPS.getInt("solver.maxNumbers"));
-        solAdaptor.setMaxNumberThreshold(PROPS.getInt("solver.maxNumber.threshold"));
-        solAdaptor.setCheckDifficulty(PROPS.getBoolean("solver.difficulty.check"));
         return solAdaptor;
     }
 

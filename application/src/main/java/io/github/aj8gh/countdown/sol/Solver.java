@@ -1,10 +1,9 @@
 package io.github.aj8gh.countdown.sol;
 
+import io.github.aj8gh.countdown.calc.Calculation;
 import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.gen.Generator;
-import io.github.aj8gh.countdown.calc.Calculation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
@@ -14,10 +13,10 @@ public class Solver {
 
     private final CalculatorManager calculator;
     private final Generator generator;
-
     private int warmups = DEFAULT_WARM_UPS;
     private long attempts = 1;
     private Calculation solution;
+    private boolean useAllNumbers = true;
 
     public Solver(Generator generator, CalculatorManager calculator) {
         this.generator = generator;
@@ -25,19 +24,15 @@ public class Solver {
     }
 
     public Calculation solve(List<Integer> question) {
-        this.solution = calculate(new ArrayList<>(question));
-        return solution;
-    }
-
-    private Calculation calculate(List<Integer> question) {
         int target = question.remove(question.size() - 1);
         if (containsTarget(question, target)) return new Calculation(target);
-        Calculation calculation = calculator.calculateSolution(question, target);
-        while (calculation.getValue() != target) {
-            calculation = calculator.calculateSolution(question, target);
-            calculator.switchMode(++attempts);
+        calculator.setUseAllNumbers(useAllNumbers);
+        solution = calculator.calculateSolution(question, target);
+        while (solution.getValue() != target) {
+            calculator.adjust(++attempts);
+            solution = calculator.calculateSolution(question, target);
         }
-        return calculation;
+        return solution;
     }
 
     private boolean containsTarget(List<Integer> question, int target) {
@@ -46,12 +41,14 @@ public class Solver {
 
     public void warmUp() {
         var mode = getMode();
+        calculator.setUseAllNumbers(true);
         for (int i = 0; i < warmups; i++) {
             generator.generate(i % 5);
             solve(generator.getQuestionNumbers());
             generator.reset();
             reset();
         }
+        calculator.setUseAllNumbers(useAllNumbers);
         setMode(mode);
     }
 
@@ -81,5 +78,14 @@ public class Solver {
 
     public void setWarmups(int warmups) {
         this.warmups = warmups;
+    }
+
+    public void setUseAllNumbers(boolean useAllNumbers) {
+        this.useAllNumbers = useAllNumbers;
+        calculator.setUseAllNumbers(useAllNumbers);
+    }
+
+    public void setUseAllNumbersThreshold(long useAllNumbersThreshold) {
+        calculator.setUseAllNumbersThreshold(useAllNumbersThreshold);
     }
 }
