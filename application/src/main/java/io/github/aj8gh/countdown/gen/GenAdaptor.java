@@ -7,7 +7,6 @@ public class GenAdaptor {
     private final Generator generator;
     private final DifficultyAnalyser difficultyAnalyser;
     private boolean checkDifficulty;
-    private Calculation result;
 
     public GenAdaptor(Generator generator,
                       DifficultyAnalyser difficultyAnalyser) {
@@ -16,27 +15,19 @@ public class GenAdaptor {
     }
 
     public Calculation generate(int numberOfLarge) {
-        runGenerator(numberOfLarge);
-        return getSolution();
-    }
-
-    private void runGenerator(int numberOfLarge) {
-        this.result = generator.generate(numberOfLarge);
+        var result = generator.generate(numberOfLarge);
         if (checkDifficulty) {
             while (!difficultyAnalyser.isDifficult(generator.getQuestionNumbers())) {
                 generator.setUp();
-                this.result = generator.generate(numberOfLarge);
+                result = generator.generate(numberOfLarge);
             }
         }
         generator.reset();
+        return result;
     }
 
     public void setCheckDifficulty(boolean checkDifficulty) {
         this.checkDifficulty = checkDifficulty;
-    }
-
-    public Calculation getSolution() {
-        return result;
     }
 
     public void warmup() {

@@ -4,17 +4,11 @@ import io.github.aj8gh.countdown.calc.Calculation;
 import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.calc.Operator;
 
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Random;
-import java.util.function.Function;
-
-import static java.util.stream.Collectors.toUnmodifiableMap;
 
 public abstract class AbstractCalculator implements Calculator {
     protected static final Random RANDOM = new Random();
-    static final Map<Integer, Operator> OPERATORS = Arrays.stream(Operator.values())
-            .collect(toUnmodifiableMap(Enum::ordinal, Function.identity()));
+    static final Operator[] OPERATORS = Operator.values();
 
     Calculation doCalculation(Calculation calculation, Integer number) {
         var value = calculation.getValue();
@@ -35,6 +29,6 @@ public abstract class AbstractCalculator implements Calculator {
     }
 
     Operator getOperator() {
-        return OPERATORS.get(RANDOM.nextInt(OPERATORS.size()));
+        return OPERATORS[RANDOM.nextInt(OPERATORS.length)];
     }
 }

@@ -58,7 +58,7 @@ public class RecursiveCalculator extends AbstractCalculator {
     }
 
     private boolean isSolvedRecursively(List<Calculation> numbers, int i, int j, int inputSize) {
-        for (Operator operation : OPERATORS.values()) {
+        for (Operator operation : OPERATORS) {
             var saveI = numbers.get(i);
             var saveJ = numbers.get(j);
             var res = new Calculation(saveI).calculate(operation, new Calculation(saveJ));

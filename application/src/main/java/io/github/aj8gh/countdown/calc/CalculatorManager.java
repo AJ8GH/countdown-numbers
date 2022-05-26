@@ -40,10 +40,6 @@ public class CalculatorManager extends AbstractCalculator {
         return calculator.calculateSolution(input, target);
     }
 
-    public void setUseAllNumbers(boolean useAllNumbers) {
-        this.useAllNumbers = useAllNumbers;
-    }
-
     public void adjust(long attempts) {
         if ((!useAllNumbers && attempts > useAllNumbersThreshold) || getMode().equals(RECURSIVE)) {
             setUseAllNumbers(true);
@@ -85,5 +81,9 @@ public class CalculatorManager extends AbstractCalculator {
 
     public void setUseAllNumbersThreshold(long useAllNumbersThreshold) {
         this.useAllNumbersThreshold = useAllNumbersThreshold;
+    }
+    
+    public void setUseAllNumbers(boolean useAllNumbers) {
+        this.useAllNumbers = useAllNumbers;
     }
 }

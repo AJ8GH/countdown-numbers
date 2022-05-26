@@ -9,14 +9,13 @@ import java.util.List;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
 public class Solver {
-    private static final int DEFAULT_WARM_UPS = 20;
-
     private final CalculatorManager calculator;
     private final Generator generator;
-    private int warmups = DEFAULT_WARM_UPS;
-    private long attempts = 1;
-    private Calculation solution;
+
     private boolean useAllNumbers = true;
+    private long attempts = 1;
+    private int warmups;
+    private Calculation solution;
 
     public Solver(Generator generator, CalculatorManager calculator) {
         this.generator = generator;

@@ -1,7 +1,6 @@
 package io.github.aj8gh.countdown.sol;
 
 import io.github.aj8gh.countdown.calc.Calculation;
-import io.github.aj8gh.countdown.calc.Calculator;
 
 import java.util.List;
 
@@ -33,10 +32,6 @@ public class SolAdaptor {
             }
         }
         return false;
-    }
-
-    public void setMode(Calculator.CalculationMode mode) {
-        solver.setMode(mode);
     }
 
     public void setCaching(boolean caching) {
