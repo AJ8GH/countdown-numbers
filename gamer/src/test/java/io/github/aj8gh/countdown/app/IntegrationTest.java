@@ -78,7 +78,7 @@ class IntegrationTest {
     }
 
     private void testSolver(int target) {
-        solver.warmUp();
+        solver.warmup();
         solver.solve(generator.getQuestionNumbers());
         var result = solver.getSolution().getValue();
         assertEquals(target, result);

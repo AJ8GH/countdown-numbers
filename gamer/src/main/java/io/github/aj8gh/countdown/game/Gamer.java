@@ -1,9 +1,9 @@
 package io.github.aj8gh.countdown.game;
 
-import io.github.aj8gh.countdown.gen.GenAdaptor;
+import io.github.aj8gh.countdown.gen.Generator;
 import io.github.aj8gh.countdown.ser.Deserializer;
 import io.github.aj8gh.countdown.ser.Serializer;
-import io.github.aj8gh.countdown.sol.SolAdaptor;
+import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.util.RpnConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,8 @@ public class Gamer {
     private final ScheduledExecutorService scheduler;
     private final Serializer serializer;
     private final Deserializer deserializer;
-    private final GenAdaptor generator;
-    private final SolAdaptor solver;
+    private final Generator generator;
+    private final Solver solver;
     private final Timer timer;
 
     private File inputFile;

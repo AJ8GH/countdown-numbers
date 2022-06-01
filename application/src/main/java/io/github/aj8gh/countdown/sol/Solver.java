@@ -10,19 +10,25 @@ import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
 public class Solver {
     private final CalculatorManager calculator;
+    private final SolutionCache cache;
     private final Generator generator;
 
     private boolean useAllNumbers = true;
+    private boolean caching;
     private long attempts = 1;
     private int warmups;
     private Calculation solution;
 
-    public Solver(Generator generator, CalculatorManager calculator) {
+    public Solver(Generator generator,
+                  CalculatorManager calculator,
+                  SolutionCache cache) {
         this.generator = generator;
         this.calculator = calculator;
+        this.cache = cache;
     }
 
     public Calculation solve(List<Integer> question) {
+        if (isCached(question)) return solution;
         int target = question.remove(question.size() - 1);
         if (containsTarget(question, target)) return new Calculation(target);
         calculator.setUseAllNumbers(useAllNumbers);
@@ -31,14 +37,26 @@ public class Solver {
             calculator.adjust(++attempts);
             solution = calculator.calculateSolution(question, target);
         }
+        cache.put(question, solution);
         return solution;
+    }
+
+    private boolean isCached(List<Integer> question) {
+        if (caching) {
+            var cachedSolution = cache.get(question);
+            if (cachedSolution != null) {
+                this.solution = cachedSolution;
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean containsTarget(List<Integer> question, int target) {
         return target == 100 && question.contains(target);
     }
 
-    public void warmUp() {
+    public void warmup() {
         var mode = getMode();
         calculator.setUseAllNumbers(true);
         for (int i = 0; i < warmups; i++) {
@@ -53,10 +71,6 @@ public class Solver {
 
     public void reset() {
         this.attempts = 1;
-    }
-
-    public long getAttempts() {
-        return attempts;
     }
 
     public CalculationMode getMode() {
@@ -86,5 +100,9 @@ public class Solver {
 
     public void setUseAllNumbersThreshold(long useAllNumbersThreshold) {
         calculator.setUseAllNumbersThreshold(useAllNumbersThreshold);
+    }
+
+    public void setCaching(boolean caching) {
+        this.caching = caching;
     }
 }

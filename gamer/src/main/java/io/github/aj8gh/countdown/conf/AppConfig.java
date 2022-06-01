@@ -9,11 +9,8 @@ import io.github.aj8gh.countdown.ser.Deserializer;
 import io.github.aj8gh.countdown.game.Gamer;
 import io.github.aj8gh.countdown.game.GamerBuilder;
 import io.github.aj8gh.countdown.ser.Serializer;
-import io.github.aj8gh.countdown.util.DifficultyAnalyser;
 import io.github.aj8gh.countdown.gen.Filter;
-import io.github.aj8gh.countdown.gen.GenAdaptor;
 import io.github.aj8gh.countdown.gen.Generator;
-import io.github.aj8gh.countdown.sol.SolAdaptor;
 import io.github.aj8gh.countdown.sol.SolutionCache;
 import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.game.Timer;
@@ -31,8 +28,8 @@ public class AppConfig {
                 .scheduler(Executors.newSingleThreadScheduledExecutor())
                 .deserializer(deserializer())
                 .serializer(serializer())
-                .generator(genAdaptor())
-                .solver(solAdaptor())
+                .generator(generator())
+                .solver(solver())
                 .timer(timer())
                 .build());
         var readInterval = PROPS.getInt("gamer.readInterval");
@@ -62,37 +59,18 @@ public class AppConfig {
         calculatorManager.setIntermediateThreshold(PROPS.getLong("solver.intermediate.threshold"));
         calculatorManager.setSequentialThreshold(PROPS.getLong("solver.sequential.threshold"));
         calculatorManager.setRecursiveThreshold(PROPS.getLong("solver.recursive.threshold"));
-        var solver = new Solver(generator(), calculatorManager);
+
+        var solver = new Solver(generator(), calculatorManager, solutionCache());
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));
+        solver.setUseAllNumbersThreshold(PROPS.getInt("solver.useAllNumbers.threshold"));
+        solver.setUseAllNumbers(PROPS.getBoolean("solver.useAllNumbers"));
+        solver.setCaching(PROPS.getBoolean("solver.caching"));
         solver.setWarmups(PROPS.getInt("solver.warmups"));
         return solver;
     }
 
-    private SolAdaptor solAdaptor() {
-        var solver = solver();
-        solver.setUseAllNumbersThreshold(PROPS.getInt("solver.useAllNumbers.threshold"));
-        solver.setUseAllNumbers(PROPS.getBoolean("solver.useAllNumbers"));
-        var solAdaptor = new SolAdaptor(new SolutionCache(), solver);
-        solAdaptor.setCaching(PROPS.getBoolean("solver.caching"));
-        return solAdaptor;
-    }
-
-    private GenAdaptor genAdaptor() {
-        var difficultyAnalyser = difficultyAnalyser();
-        difficultyAnalyser.setRuns(PROPS.getInt("generator.difficulty.runs"));
-        difficultyAnalyser.setMinDifficulty(PROPS.getDouble("generator.difficulty.min"));
-        difficultyAnalyser.setMaxNumbers(PROPS.getInt("generator.difficulty.maxNumbers"));
-        difficultyAnalyser.setMinAttempts(PROPS.getInt("generator.difficulty.minAttempts"));
-
-        var genAdaptor = new GenAdaptor(generator(), difficultyAnalyser);
-        genAdaptor.setCheckDifficulty(PROPS.getBoolean("generator.difficulty.check"));
-        return genAdaptor;
-    }
-
-    private DifficultyAnalyser difficultyAnalyser() {
-        var difficultyMode = DifficultyAnalyser.Mode.valueOf(PROPS.getString("generator.difficulty.mode").toUpperCase());
-        return new DifficultyAnalyser(solver(), difficultyMode);
-
+    private SolutionCache solutionCache() {
+        return new SolutionCache();
     }
 
     private Serializer serializer() {
