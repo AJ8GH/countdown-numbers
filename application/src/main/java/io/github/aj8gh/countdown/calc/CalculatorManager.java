@@ -1,6 +1,7 @@
 package io.github.aj8gh.countdown.calc;
 
 import io.github.aj8gh.countdown.calc.impl.AbstractCalculator;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +13,14 @@ import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTI
 
 public class CalculatorManager extends AbstractCalculator {
     private final Map<CalculationMode, Calculator> calculators;
-
-    private boolean switchModes = true;
-    private long intermediateThreshold;
-    private long sequentialThreshold;
-    private long recursiveThreshold;
-    private long useAllNumbersThreshold;
-    private boolean useAllNumbers;
-
     private Calculator calculator;
+
+    @Setter private boolean switchModes = true;
+    @Setter private long intermediateThreshold;
+    @Setter private long sequentialThreshold;
+    @Setter private long recursiveThreshold;
+    @Setter private long optimiseNumbersThreshold;
+    @Setter private boolean optimiseNumbers;
 
     public CalculatorManager(Map<CalculationMode, Calculator> calculators) {
         this.calculators = calculators;
@@ -34,15 +34,15 @@ public class CalculatorManager extends AbstractCalculator {
     @Override
     public Calculation calculateSolution(List<Integer> numbers, int target) {
         var input = new ArrayList<>(numbers);
-        if (!useAllNumbers && !getMode().equals(RECURSIVE)) {
+        if (optimiseNumbers && !getMode().equals(RECURSIVE)) {
             input.remove(RANDOM.nextInt(input.size()));
         }
         return calculator.calculateSolution(input, target);
     }
 
-    public void adjust(long attempts) {
-        if ((!useAllNumbers && attempts > useAllNumbersThreshold) || getMode().equals(RECURSIVE)) {
-            setUseAllNumbers(true);
+    public void adjustMode(long attempts) {
+        if (attempts > optimiseNumbersThreshold) {
+            this.optimiseNumbers = false;
         }
         if (switchModes) {
             if (attempts % intermediateThreshold == 0) {
@@ -61,29 +61,5 @@ public class CalculatorManager extends AbstractCalculator {
 
     public CalculationMode getMode() {
         return calculator.getMode();
-    }
-
-    public void setSwitchModes(boolean switchModes) {
-        this.switchModes = switchModes;
-    }
-
-    public void setSequentialThreshold(long sequentialThreshold) {
-        this.sequentialThreshold = sequentialThreshold;
-    }
-
-    public void setIntermediateThreshold(long intermediateThreshold) {
-        this.intermediateThreshold = intermediateThreshold;
-    }
-
-    public void setRecursiveThreshold(long recursiveThreshold) {
-        this.recursiveThreshold = recursiveThreshold;
-    }
-
-    public void setUseAllNumbersThreshold(long useAllNumbersThreshold) {
-        this.useAllNumbersThreshold = useAllNumbersThreshold;
-    }
-    
-    public void setUseAllNumbers(boolean useAllNumbers) {
-        this.useAllNumbers = useAllNumbers;
     }
 }

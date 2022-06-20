@@ -62,8 +62,8 @@ public class AppConfig {
 
         var solver = new Solver(generator(), calculatorManager, solutionCache());
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));
-        solver.setUseAllNumbersThreshold(PROPS.getInt("solver.useAllNumbers.threshold"));
-        solver.setUseAllNumbers(PROPS.getBoolean("solver.useAllNumbers"));
+        solver.setOptimiseNumbersThreshold(PROPS.getInt("solver.optimiseNumbers.threshold"));
+        solver.setOptimiseNumbers(PROPS.getBoolean("solver.optimiseNumbers"));
         solver.setCaching(PROPS.getBoolean("solver.caching"));
         solver.setWarmups(PROPS.getInt("solver.warmups"));
         return solver;

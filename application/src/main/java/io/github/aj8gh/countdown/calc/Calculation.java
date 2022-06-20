@@ -68,8 +68,4 @@ public class Calculation {
     public String toString() {
         return solution.toString();
     }
-
-    public int getNumbers() {
-        return numbers;
-    }
 }

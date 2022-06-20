@@ -41,7 +41,7 @@ public class Generator {
     private Calculation calculateTarget(int numberOfLarge) {
         var result = calculator.calculateTarget(questionNumbers);
         while (!filter.test(result.getValue())) {
-            calculator.adjust(++attempts);
+            calculator.adjustMode(++attempts);
             setUp();
             generateQuestionNumbers(numberOfLarge);
             result = calculator.calculateTarget(questionNumbers);

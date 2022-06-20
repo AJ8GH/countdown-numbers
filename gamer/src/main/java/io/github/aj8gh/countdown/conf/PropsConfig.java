@@ -19,20 +19,16 @@ public class PropsConfig {
         return props.getProperty(key);
     }
 
-    public int getInt(String key) {
-        return Integer.parseInt(props.getProperty(key));
-    }
-
     public boolean getBoolean(String key) {
         return Boolean.parseBoolean(props.getProperty(key));
     }
 
-    public long getLong(String key) {
-        return Long.parseLong(props.getProperty(key));
+    public int getInt(String key) {
+        return Integer.parseInt(props.getProperty(key).replace("_", ""));
     }
 
-    public double getDouble(String key) {
-        return Double.parseDouble(props.getProperty(key));
+    public long getLong(String key) {
+        return Long.parseLong(props.getProperty(key).replace("_", ""));
     }
 
     public List<String> getStrings(String key) {

@@ -13,7 +13,7 @@ public class Solver {
     private final SolutionCache cache;
     private final Generator generator;
 
-    private boolean useAllNumbers = true;
+    private boolean optimiseNumbers;
     private boolean caching;
     private long attempts = 1;
     private int warmups;
@@ -31,10 +31,10 @@ public class Solver {
         if (isCached(question)) return solution;
         int target = question.remove(question.size() - 1);
         if (containsTarget(question, target)) return new Calculation(target);
-        calculator.setUseAllNumbers(useAllNumbers);
+        calculator.setOptimiseNumbers(optimiseNumbers);
         solution = calculator.calculateSolution(question, target);
         while (solution.getValue() != target) {
-            calculator.adjust(++attempts);
+            calculator.adjustMode(++attempts);
             solution = calculator.calculateSolution(question, target);
         }
         cache.put(question, solution);
@@ -57,16 +57,18 @@ public class Solver {
     }
 
     public void warmup() {
-        var mode = getMode();
-        calculator.setUseAllNumbers(true);
+        var saveMode = getMode();
+        var saveOptimiseNumbers = optimiseNumbers;
+        setOptimiseNumbers(false);
         for (int i = 0; i < warmups; i++) {
             generator.generate(i % 5);
             solve(generator.getQuestionNumbers());
             generator.reset();
             reset();
         }
-        calculator.setUseAllNumbers(useAllNumbers);
-        setMode(mode);
+        calculator.setOptimiseNumbers(optimiseNumbers);
+        setOptimiseNumbers(saveOptimiseNumbers);
+        setMode(saveMode);
     }
 
     public void reset() {
@@ -93,13 +95,13 @@ public class Solver {
         this.warmups = warmups;
     }
 
-    public void setUseAllNumbers(boolean useAllNumbers) {
-        this.useAllNumbers = useAllNumbers;
-        calculator.setUseAllNumbers(useAllNumbers);
+    public void setOptimiseNumbers(boolean optimiseNumbers) {
+        this.optimiseNumbers = optimiseNumbers;
+        calculator.setOptimiseNumbers(optimiseNumbers);
     }
 
-    public void setUseAllNumbersThreshold(long useAllNumbersThreshold) {
-        calculator.setUseAllNumbersThreshold(useAllNumbersThreshold);
+    public void setOptimiseNumbersThreshold(long optimiseNumbersThreshold) {
+        calculator.setOptimiseNumbersThreshold(optimiseNumbersThreshold);
     }
 
     public void setCaching(boolean caching) {
