@@ -16,23 +16,20 @@ public class Main {
     private static String outputFile;
 
     public static void main(String... args) {
-        LOG.info("*** Countdown App Running ***");
+        LOG.info("*** Running Countdown App ***");
         parse(args);
-        if (inputFile.contains(GEN)) runGenerator();
-        if (inputFile.contains(SOL)) runSolver();
+        if (inputFile.contains(GEN)) {
+            GAMER.runGenerator(inputFile, outputFile);
+        } else if (inputFile.contains(SOL)) {
+            GAMER.runSolver(inputFile, outputFile);
+        }
     }
 
     private static void parse(String... args) {
-        if (args.length < 2) throw new IllegalArgumentException("Needs 2 args");
+        if (args.length < 2) {
+            throw new IllegalArgumentException("Needs 2 args");
+        }
         inputFile = args[0];
         outputFile = args[1];
-    }
-
-    private static void runGenerator() {
-        GAMER.runGenerator(inputFile, outputFile);
-    }
-
-    private static void runSolver() {
-        GAMER.runSolver(inputFile, outputFile);
     }
 }

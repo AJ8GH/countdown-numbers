@@ -20,11 +20,12 @@ public class RecursiveCalculator extends AbstractCalculator {
     public Calculation calculateSolution(List<Integer> numbers, int target) {
         this.target = target;
         var calculations = new ArrayList<>(numbers.stream()
-                .map(Calculation::new).toList());
+            .map(Calculation::new)
+            .toList());
         if (calculateRecursively(calculations, numbers.size())) {
             return resetAndGetResult();
         }
-        return null;
+        return new Calculation(0);
     }
 
     @Override
@@ -42,10 +43,10 @@ public class RecursiveCalculator extends AbstractCalculator {
         return false;
     }
 
-    private boolean isSolved(Calculation c, int target) {
+    private boolean isSolved(Calculation calculation, int target) {
         if (result != null) return true;
-        if (c.getValue() == target) {
-            this.result = c;
+        if (calculation.getValue() == target) {
+            this.result = calculation;
             return true;
         }
         return false;
@@ -59,9 +60,9 @@ public class RecursiveCalculator extends AbstractCalculator {
 
     private boolean isSolvedRecursively(List<Calculation> numbers, int i, int j, int inputSize) {
         for (Operator operation : OPERATORS) {
-            var saveI = numbers.get(i);
-            var saveJ = numbers.get(j);
-            var res = new Calculation(saveI).calculate(operation, new Calculation(saveJ));
+            var current = numbers.get(i);
+            var next = numbers.get(j);
+            var res = new Calculation(current).calculate(operation, new Calculation(next));
 
             if (res.getValue() != 0) {
                 numbers.set(i, res);
@@ -71,8 +72,8 @@ public class RecursiveCalculator extends AbstractCalculator {
                     if (result == null) result = res;
                     return true;
                 }
-                numbers.set(i, saveI);
-                numbers.set(j, saveJ);
+                numbers.set(i, current);
+                numbers.set(j, next);
             }
         }
         return false;

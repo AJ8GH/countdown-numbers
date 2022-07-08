@@ -1,15 +1,14 @@
 package io.github.aj8gh.countdown.util;
 
-import io.github.aj8gh.countdown.calc.Operator;
+import static java.util.stream.Collectors.toSet;
 
+import io.github.aj8gh.countdown.calc.Operator;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
 
 public class RpnConverter {
     private static final String LEFT_PARENTHESIS = "(";
@@ -25,17 +24,11 @@ public class RpnConverter {
     private final List<String> rpnBuilder = new LinkedList<>();
 
     public String convert(String solution) {
-        for (String element : getElements(solution)) {
+        for (String element : solution.split(SPACE)) {
             convertElement(element);
         }
         addRemainingOperators();
         return buildAndReturnRpn();
-    }
-
-    private String[] getElements(String input) {
-        return input.replace(LEFT_PARENTHESIS, LEFT_PARENTHESIS + SPACE)
-                .replace(RIGHT_PARENTHESIS, SPACE + RIGHT_PARENTHESIS)
-                .split(SPACE);
     }
 
     private void convertElement(String element) {

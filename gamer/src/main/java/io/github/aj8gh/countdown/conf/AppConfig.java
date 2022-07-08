@@ -1,40 +1,34 @@
 package io.github.aj8gh.countdown.conf;
 
+import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
+
 import io.github.aj8gh.countdown.calc.Calculator;
 import io.github.aj8gh.countdown.calc.CalculatorManager;
 import io.github.aj8gh.countdown.calc.impl.IntermediateCalculator;
 import io.github.aj8gh.countdown.calc.impl.RecursiveCalculator;
 import io.github.aj8gh.countdown.calc.impl.SequentialCalculator;
-import io.github.aj8gh.countdown.ser.Deserializer;
 import io.github.aj8gh.countdown.game.Gamer;
 import io.github.aj8gh.countdown.game.GamerBuilder;
-import io.github.aj8gh.countdown.ser.Serializer;
+import io.github.aj8gh.countdown.game.Timer;
 import io.github.aj8gh.countdown.gen.Filter;
 import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.ser.Deserializer;
+import io.github.aj8gh.countdown.ser.Serializer;
 import io.github.aj8gh.countdown.sol.SolutionCache;
 import io.github.aj8gh.countdown.sol.Solver;
-import io.github.aj8gh.countdown.game.Timer;
-
 import java.util.Map;
-import java.util.concurrent.Executors;
-
-import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 
 public class AppConfig {
     private static final PropsConfig PROPS = new PropsConfig();
 
     public Gamer gamer() {
-        var gamer = new Gamer(GamerBuilder.builder()
-                .scheduler(Executors.newSingleThreadScheduledExecutor())
+        return new Gamer(GamerBuilder.builder()
                 .deserializer(deserializer())
                 .serializer(serializer())
                 .generator(generator())
                 .solver(solver())
                 .timer(timer())
                 .build());
-        var readInterval = PROPS.getInt("gamer.readInterval");
-        gamer.setReadInterval(readInterval);
-        return gamer;
     }
 
     public Generator generator() {
@@ -42,7 +36,6 @@ public class AppConfig {
         calculatorManager.setSwitchModes(PROPS.getBoolean("generator.switch.modes"));
         calculatorManager.setIntermediateThreshold(PROPS.getLong("generator.intermediate.threshold"));
         calculatorManager.setSequentialThreshold(PROPS.getLong("generator.sequential.threshold"));
-        calculatorManager.setRecursiveThreshold(PROPS.getLong("generator.recursive.threshold"));
 
         var generator = new Generator(calculatorManager);
         generator.setMode(Calculator.CalculationMode.valueOf(PROPS.getString("generator.mode")));
@@ -58,7 +51,6 @@ public class AppConfig {
         calculatorManager.setSwitchModes(PROPS.getBoolean("solver.switch.modes"));
         calculatorManager.setIntermediateThreshold(PROPS.getLong("solver.intermediate.threshold"));
         calculatorManager.setSequentialThreshold(PROPS.getLong("solver.sequential.threshold"));
-        calculatorManager.setRecursiveThreshold(PROPS.getLong("solver.recursive.threshold"));
 
         var solver = new Solver(generator(), calculatorManager, solutionCache());
         solver.setMode(CalculationMode.valueOf(PROPS.getString("solver.mode")));

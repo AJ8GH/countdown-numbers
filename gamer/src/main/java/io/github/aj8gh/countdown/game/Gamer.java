@@ -5,21 +5,17 @@ import io.github.aj8gh.countdown.ser.Deserializer;
 import io.github.aj8gh.countdown.ser.Serializer;
 import io.github.aj8gh.countdown.sol.Solver;
 import io.github.aj8gh.countdown.util.RpnConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Gamer {
     private static final Logger LOG = LoggerFactory.getLogger(Gamer.class);
     private static final RpnConverter RPN_CONVERTER = new RpnConverter();
 
-    private final ScheduledExecutorService scheduler;
     private final Serializer serializer;
     private final Deserializer deserializer;
     private final Generator generator;
@@ -28,13 +24,12 @@ public class Gamer {
 
     private File inputFile;
     private String outputFile;
-    private int readInterval;
     private long offset;
+    private boolean running = true;
 
     public Gamer(GamerBuilder builder) {
         this.serializer = builder.getSerializer();
         this.deserializer = builder.getDeserializer();
-        this.scheduler = builder.getScheduler();
         this.generator = builder.getGenerator();
         this.solver = builder.getSolver();
         this.timer = builder.getTimer();
@@ -54,12 +49,12 @@ public class Gamer {
 
     public void tail(Runnable warmup, Consumer<String> handler) {
         LOG.info("*** Tailing {} ***", inputFile);
-        scheduler.scheduleAtFixedRate(() -> {
+        while(running) {
             if (inputFile.length() > offset) {
                 warmup.run();
                 deserialize(handler);
             }
-        }, readInterval, readInterval, TimeUnit.MILLISECONDS);
+        }
     }
 
     private void deserialize(Consumer<String> handler) {
@@ -91,7 +86,7 @@ public class Gamer {
         serializer.serializeSolver(rpn, timer.getTime(), outputFile);
     }
 
-    public void setReadInterval(int readInterval) {
-        this.readInterval = readInterval;
+    public void stop() {
+        this.running = false;
     }
 }

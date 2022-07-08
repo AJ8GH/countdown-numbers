@@ -2,8 +2,8 @@ package io.github.aj8gh.countdown.calc;
 
 
 public class Calculation {
-    private static final String LEFT_PARENTHESIS = "(";
-    private static final String RIGHT_PARENTHESIS = ")";
+    private static final String LEFT_PARENTHESIS = "( ";
+    private static final String RIGHT_PARENTHESIS = " )";
 
     private StringBuilder solution;
     private int value;

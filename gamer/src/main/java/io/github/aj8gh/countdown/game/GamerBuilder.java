@@ -7,12 +7,9 @@ import io.github.aj8gh.countdown.sol.Solver;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.concurrent.ScheduledExecutorService;
-
 @Value
 @Builder
 public class GamerBuilder {
-    ScheduledExecutorService scheduler;
     Deserializer deserializer;
     Serializer serializer;
     Generator generator;

@@ -1,24 +1,23 @@
 package io.github.aj8gh.countdown.app;
 
-import io.github.aj8gh.countdown.calc.Calculator;
-import io.github.aj8gh.countdown.util.RpnConverter;
-import io.github.aj8gh.countdown.util.RpnParser;
-import io.github.aj8gh.countdown.conf.AppConfig;
-import io.github.aj8gh.countdown.gen.Generator;
-import io.github.aj8gh.countdown.sol.Solver;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.List;
-
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.INTERMEDIATE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.RECURSIVE;
 import static io.github.aj8gh.countdown.calc.Calculator.CalculationMode.SEQUENTIAL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import io.github.aj8gh.countdown.calc.Calculator;
+import io.github.aj8gh.countdown.conf.AppConfig;
+import io.github.aj8gh.countdown.gen.Generator;
+import io.github.aj8gh.countdown.sol.Solver;
+import io.github.aj8gh.countdown.util.RpnConverter;
+import io.github.aj8gh.countdown.util.RpnParser;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class IntegrationTest {
     private static final int NUMBER_OF_RUNS = 20;
@@ -37,7 +36,7 @@ class IntegrationTest {
         solver = config.solver();
         solver.setSwitchModes(true);
         solver.setOptimiseNumbers(true);
-        solver.setOptimiseNumbersThreshold(10000);
+        solver.setOptimiseNumbersThreshold(20);
         generator = config.generator();
         rpnParser = new RpnParser();
         rpnConverter = new RpnConverter();
